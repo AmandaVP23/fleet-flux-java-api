@@ -13,4 +13,10 @@ public class GreetingResource {
     public String hello() {
         return "Hello from Quarkus REST";
     }
+
+    @GET
+    @Path("/auth")
+    public String heyAuth() {
+        return "Hello! You're authenticated";
+    }
 }
