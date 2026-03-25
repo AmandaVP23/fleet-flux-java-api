@@ -1,2 +1,9 @@
-.idea
-.vscode
+target/
+.quarkus/
+.idea/
+.vscode/
+*.iml
+*.log
+.DS_Store
+Thumbs.db
+.env*
