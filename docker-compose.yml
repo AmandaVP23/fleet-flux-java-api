@@ -10,7 +10,7 @@ services:
         container_name: postgres
         restart: unless-stopped
         environment:
-            POSTGRES_DB: fleet-flux
+            POSTGRES_DB: fleet-flux-java
             POSTGRES_USER: fleet-flux
             POSTGRES_PASSWORD: fleet-flux-password
         volumes:
@@ -30,7 +30,7 @@ services:
         networks:
             - app-network
         ports:
-            - "8080:8080"
+            - "8081:8080"
         environment:
             KEYCLOAK_ADMIN: admin
             KEYCLOAK_ADMIN_PASSWORD: admin
