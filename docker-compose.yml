@@ -1,0 +1,56 @@
+version: "3.9"
+
+networks:
+    app-network:
+        driver: bridge 
+    
+services:
+    postgres:
+        image: postgres:16
+        container_name: postgres
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: fleet-flux-java
+            POSTGRES_USER: fleet-flux
+            POSTGRES_PASSWORD: fleet-flux-password
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U keycloak"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            
+    keycloak:
+        image: quay.io/keycloak/keycloak:25.0.2
+        container_name: keycloak
+        restart: unless-stopped
+        networks:
+            - app-network
+        ports:
+            - "8081:8080"
+        environment:
+            KEYCLOAK_ADMIN: admin
+            KEYCLOAK_ADMIN_PASSWORD: admin
+                    
+            KC_HTTP_ENABLED: "true"
+            KC_HOSTNAME_STRICT: "false"
+        depends_on:
+            - mailpit
+        command:
+            - start-dev
+
+    mailpit:
+        image: axllent/mailpit:latest
+        container_name: mailpit
+        ports:
+            - "8025:8025" # Web UI
+            - "1025:1025" # SMTP
+        networks:
+            - app-network
+            
+volumes:
+    postgres_data:
+                        
