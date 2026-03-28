@@ -1,5 +1,7 @@
 package dev.amanda;
 
+import dev.amanda.user.domain.Roles;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -18,5 +20,12 @@ public class GreetingResource {
     @Path("/auth")
     public String heyAuth() {
         return "Hello! You're authenticated";
+    }
+
+    @GET
+    @Path("/auth-protected")
+    @RolesAllowed(Roles.SUPER_ADMIN)
+    public String heyAuthProtected() {
+        return "Hello! You're authenticated and you're a super admin";
     }
 }

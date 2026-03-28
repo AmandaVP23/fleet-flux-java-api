@@ -2,7 +2,6 @@ package dev.amanda.startup;
 
 import dev.amanda.config.SuperAdminConfig;
 import dev.amanda.oidc.KeycloakAdmin;
-import dev.amanda.user.domain.Role;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
 import io.quarkus.runtime.StartupEvent;
@@ -11,7 +10,6 @@ import jakarta.enterprise.event.Observes;
 import com.github.lalyos.jfiglet.FigletFont;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.keycloak.representations.idm.UserRepresentation;
 
 @ApplicationScoped
 public class ApplicationStartUp {
@@ -57,7 +55,6 @@ public class ApplicationStartUp {
         superAdmin.setKeycloakId(keycloakId);
         superAdmin.setEmail(superAdminConfig.email());
         superAdmin.setUsername(superAdminConfig.username());
-        superAdmin.setRole(Role.SUPER_ADMIN);
         return superAdmin;
     }
 }
