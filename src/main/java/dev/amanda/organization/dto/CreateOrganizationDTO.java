@@ -8,5 +8,15 @@ public class CreateOrganizationDTO {
     @Length(min = 3, max = 80)
     public String name;
 
-    // todo - add org admin information
+    @NotBlank()
+    @Length(min = 3, max = 80)
+    public String adminFirstName;
+
+    @NotBlank()
+    @Length(min = 3, max = 80)
+    public String adminLastName;
+
+    @NotBlank()
+    @Length(min = 3, max = 80)
+    public String adminEmail;
 }

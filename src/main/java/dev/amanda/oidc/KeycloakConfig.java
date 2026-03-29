@@ -10,7 +10,9 @@ public interface KeycloakConfig {
 
     String clientId();
 
-    String clientSecret();
-
     String grantType();
+
+    String username();
+
+    String password();
 }

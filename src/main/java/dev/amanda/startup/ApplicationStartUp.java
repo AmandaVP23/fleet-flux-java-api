@@ -35,7 +35,7 @@ public class ApplicationStartUp {
 
     @Transactional
     public void createDefaultSuperAdmin() {
-        String keycloakId = keycloakAdmin.getSuperAdminUser()
+        String keycloakId = keycloakAdmin.getUser(superAdminConfig.realm(),  superAdminConfig.email())
                 .orElseGet(() -> keycloakAdmin.createSuperAdminUser())
                 .getId();
 
@@ -54,7 +54,6 @@ public class ApplicationStartUp {
         User superAdmin = new User();
         superAdmin.setKeycloakId(keycloakId);
         superAdmin.setEmail(superAdminConfig.email());
-        superAdmin.setUsername(superAdminConfig.username());
         return superAdmin;
     }
 }

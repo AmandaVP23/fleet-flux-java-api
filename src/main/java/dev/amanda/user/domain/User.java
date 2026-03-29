@@ -1,6 +1,7 @@
 package dev.amanda.user.domain;
 
 
+import dev.amanda.organization.domain.Organization;
 import dev.amanda.shared.domain.BaseEntity;
 import jakarta.persistence.*;
 
@@ -9,13 +10,14 @@ import jakarta.persistence.*;
 public class User extends BaseEntity {
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
     private String email;
 
     @Column(name = "keycloak_id", nullable = false, unique = true)
     private String keycloakId;
+
+    @ManyToOne
+    @JoinColumn(name = "organization_id")
+    private Organization organization;
 
     public String getKeycloakId() {
         return keycloakId;
@@ -33,11 +35,11 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
+    public Organization getOrganization() {
+        return organization;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
     }
 }
