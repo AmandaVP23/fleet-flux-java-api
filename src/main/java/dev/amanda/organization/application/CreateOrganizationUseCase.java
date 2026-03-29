@@ -5,6 +5,8 @@ import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
+import dev.amanda.organization.exceptions.OrganizationAlreadyExistsException;
+import dev.amanda.organization.exceptions.OrganizationWithSameRealmAlreadyExistsException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -15,15 +17,20 @@ public class CreateOrganizationUseCase {
     OrganizationRepository organizationRepository;
 
     public OrganizationResponseDTO execute(CreateOrganizationDTO createOrganizationDTO) {
-        Organization existingOrg = organizationRepository.findByName(createOrganizationDTO.name).orElse(null);
+        // todo trim name
+        // todo test name "    " multiple spaces
+        organizationRepository.findByName(createOrganizationDTO.name).ifPresent(org -> {
+            throw new OrganizationAlreadyExistsException();
+        });
 
-        if (existingOrg != null) {
-            throw new IllegalStateException("Organization with name " + createOrganizationDTO.name + " already exists");
-        }
+        String realmValue = this.getOrganizationRealm(createOrganizationDTO.name);
+        organizationRepository.findByRealm(realmValue).ifPresent(org -> {
+            throw new OrganizationWithSameRealmAlreadyExistsException();
+        });
 
         Organization organization = new Organization();
         organization.setName(createOrganizationDTO.name);
-        organization.setRealm(this.getOrganizationRealm(createOrganizationDTO.name));
+        organization.setRealm(realmValue);
 
         organizationRepository.persist(organization);
 
@@ -34,12 +41,12 @@ public class CreateOrganizationUseCase {
     }
 
     private String getOrganizationRealm(String orgName) {
-        String cleaned = orgName.trim();
-        // Replace spaces (one or more) with underscore
-        cleaned = cleaned.replaceAll("\\s+", "_");
-        // Normalize to remove accents/diacritics
-        cleaned = Normalizer.normalize(cleaned, Normalizer.Form.NFD);
-        cleaned = cleaned.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-        return cleaned;
+        String normalized = Normalizer.normalize(orgName.trim(), Normalizer.Form.NFD);
+        return normalized
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "") // strip accents
+                .replaceAll("[^a-zA-Z0-9\\s]", "")                  // remove punctuation/symbols
+                .trim()                                              // clean up any leading/trailing spaces left behind
+                .replaceAll("\\s+", "_")                            // collapse spaces to underscores
+                .toLowerCase();
     }
 }

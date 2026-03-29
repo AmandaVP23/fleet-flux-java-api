@@ -7,6 +7,7 @@ import dev.amanda.user.domain.Roles;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -25,7 +26,7 @@ public class OrganizationResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response createOrganization(CreateOrganizationDTO createOrganizationDTO) {
+    public Response createOrganization(@Valid CreateOrganizationDTO createOrganizationDTO) {
         OrganizationResponseDTO orgResponseDTO = createOrganizationUseCase.execute(createOrganizationDTO);
         return Response.status(Response.Status.CREATED).entity(orgResponseDTO).build();
     }
