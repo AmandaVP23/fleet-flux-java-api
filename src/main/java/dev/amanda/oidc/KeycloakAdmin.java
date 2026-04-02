@@ -1,11 +1,13 @@
 package dev.amanda.oidc;
 
 import dev.amanda.config.SuperAdminConfig;
+import dev.amanda.organization.exceptions.RealmAlreadyExistsException;
 import dev.amanda.user.domain.Roles;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.keycloak.admin.client.Keycloak;
@@ -14,10 +16,7 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.representations.idm.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -51,6 +50,13 @@ public class KeycloakAdmin {
         RealmRepresentation realm = new RealmRepresentation();
         realm.setRealm(realmName);
         realm.setDisplayName(displayName);
+        realm.setSmtpServer(Map.of(
+                "host", "localhost",
+                "port", "1025",
+                "from", "no-reply@fleet-flux.com",
+                "auth", "false",
+                "starttls", "false"
+        ));
 
         List<ClientRepresentation> clients = new ArrayList<>();
 
@@ -66,7 +72,13 @@ public class KeycloakAdmin {
 
         try {
             this.keycloak.realms().create(realm);
-        } catch (Exception e) {
+        } catch (WebApplicationException e) {
+            Response response = e.getResponse();
+            if (response.getStatus() == Response.Status.CONFLICT.getStatusCode()) {
+                throw new RealmAlreadyExistsException(realmName);
+            }
+            throw new RuntimeException(e);
+        }  catch (Exception e) {
             throw new RuntimeException("Failed to create realm", e);
         }
 
@@ -84,7 +96,7 @@ public class KeycloakAdmin {
                 throw new RuntimeException("Could not find master client for realm: " + realmName);
             }
 
-            String realmClientUUID = clients.get(0).getId();
+            String realmClientUUID = clients.getFirst().getId();
 
             Set<String> desiredRoles = Set.of(
                     "manage-users",
@@ -119,7 +131,7 @@ public class KeycloakAdmin {
                 throw new RuntimeException("Could not find user: " + this.keycloakConfig.username());
             }
 
-            String masterAdminUserId = users.get(0).getId();
+            String masterAdminUserId = users.getFirst().getId();
 
             this.keycloak.realm(this.keycloakConfig.realm())
                     .users()
@@ -144,6 +156,8 @@ public class KeycloakAdmin {
         user.setLastName(lastName);
         user.setEmail(email);
         user.setEnabled(true);
+        user.setRequiredActions(List.of("UPDATE_PASSWORD"));
+        user.setEmailVerified(false);
 
         try (Response response = this.keycloak.realm(realm).users().create(user)) {
             if (response.getStatus() != 201) {
@@ -168,6 +182,11 @@ public class KeycloakAdmin {
                     .roles()
                     .realmLevel()
                     .add(List.of(role));
+
+            this.keycloak.realm(realm)
+                    .users()
+                    .get(createdUserId)
+                    .executeActionsEmail(List.of("UPDATE_PASSWORD"));
 
             return createdUser;
         } catch (Exception e) {

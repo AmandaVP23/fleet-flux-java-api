@@ -8,8 +8,9 @@ import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.organization.exceptions.OrganizationAlreadyExistsException;
 import dev.amanda.organization.exceptions.OrganizationWithSameRealmAlreadyExistsException;
+import dev.amanda.shared.exception.BaseApiException;
+import dev.amanda.shared.exception.GenericApiException;
 import dev.amanda.user.domain.Roles;
-import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.keycloak.representations.idm.RealmRepresentation;
@@ -22,9 +23,6 @@ public class CreateOrganizationUseCase {
 
     @Inject
     KeycloakAdmin keycloakAdmin;
-
-    @Inject
-    UserRepository userRepository;
 
     @Inject
     SaveOrganizationUseCase saveOrganizationUseCase;
@@ -57,8 +55,11 @@ public class CreateOrganizationUseCase {
                 keycloakAdmin.deleteRealm(realmId);
             }
 
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Failed to create organization", e);
+            if (e instanceof BaseApiException) {
+                throw (BaseApiException) e;
+            }
+
+            throw new GenericApiException();
         }
     }
 
