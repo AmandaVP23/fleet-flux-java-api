@@ -8,9 +8,11 @@ import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.organization.exceptions.OrganizationAlreadyExistsException;
 import dev.amanda.organization.exceptions.OrganizationWithSameRealmAlreadyExistsException;
+import dev.amanda.organization.exceptions.UserSameEmailAlreadyExistsException;
 import dev.amanda.shared.exception.BaseApiException;
 import dev.amanda.shared.exception.GenericApiException;
 import dev.amanda.user.domain.Roles;
+import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.keycloak.representations.idm.RealmRepresentation;
@@ -20,6 +22,9 @@ public class CreateOrganizationUseCase {
 
     @Inject
     OrganizationRepository organizationRepository;
+
+    @Inject
+    UserRepository userRepository;
 
     @Inject
     KeycloakAdmin keycloakAdmin;
@@ -40,6 +45,10 @@ public class CreateOrganizationUseCase {
             throw new OrganizationWithSameRealmAlreadyExistsException();
         });
 
+        userRepository.findByEmail(createOrganizationDTO.adminEmail).ifPresent(admin -> {
+            throw new UserSameEmailAlreadyExistsException();
+        });
+
         try {
             RealmRepresentation realmRepresentation = keycloakAdmin.createRealm(realmValue, createOrganizationDTO.name);
             realmId = realmRepresentation.getId();
@@ -47,12 +56,13 @@ public class CreateOrganizationUseCase {
 
             return saveOrganizationUseCase.execute(createOrganizationDTO, realmValue, userKeycloakId);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             if (userKeycloakId != null) {
                 keycloakAdmin.deleteUser(realmValue, userKeycloakId);
             }
 
             if (realmId != null) {
-                keycloakAdmin.deleteRealm(realmId);
+                keycloakAdmin.deleteRealm(realmValue);
             }
 
             if (e instanceof BaseApiException) {
