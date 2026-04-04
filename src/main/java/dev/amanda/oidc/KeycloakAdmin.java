@@ -27,6 +27,9 @@ public class KeycloakAdmin {
     KeycloakConfig keycloakConfig;
 
     @Inject
+    KeycloakSMTPServerConfig keycloakSMTPServerConfig;
+
+    @Inject
     SuperAdminConfig superAdminConfig;
 
     @PostConstruct
@@ -51,19 +54,20 @@ public class KeycloakAdmin {
         realm.setRealm(realmName);
         realm.setDisplayName(displayName);
         realm.setSmtpServer(Map.of(
-                "host", "localhost",
-                "port", "1025",
-                "from", "no-reply@fleet-flux.com",
-                "auth", "false",
-                "starttls", "false"
+                "host", keycloakSMTPServerConfig.host(),
+                "port", String.valueOf(keycloakSMTPServerConfig.port()),
+                "from", keycloakSMTPServerConfig.from(),
+                "auth", keycloakSMTPServerConfig.auth(),
+                "starttls", keycloakSMTPServerConfig.starttls()
         ));
 
         List<ClientRepresentation> clients = new ArrayList<>();
 
         ClientRepresentation webClient = new ClientRepresentation();
-        webClient.setClientId("web");
+        webClient.setClientId("web"); // todo - put this in application properties
         webClient.setRedirectUris(List.of("*"));
         webClient.setEnabled(true);
+        webClient.setPublicClient(true);
 
         clients.add(webClient);
 
@@ -190,9 +194,11 @@ public class KeycloakAdmin {
 
             return createdUser;
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             if (createdUserId != null) {
                 deleteUser(realm, createdUserId);
             }
+            e.printStackTrace();
             throw new RuntimeException("Failed to set up user " + email, e);
         }
     }
@@ -250,8 +256,13 @@ public class KeycloakAdmin {
         }
     }
 
-    public void deleteRealm(String realmId) {
-        this.keycloak.realm(realmId).remove();
+    public void deleteRealm(String realmName) {
+        try {
+            keycloak.realm(realmName).remove();
+        } catch (Exception e) {
+            // todo - print to logger
+            e.printStackTrace();
+        }
     }
 
     private UserRepresentation getSuperAdminUserRepresentation() {

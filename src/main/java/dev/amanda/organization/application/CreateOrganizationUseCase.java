@@ -3,14 +3,17 @@ package dev.amanda.organization.application;
 import java.text.Normalizer;
 
 import dev.amanda.oidc.KeycloakAdmin;
+import dev.amanda.oidc.OrgTenantConfigResolver;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.organization.exceptions.OrganizationAlreadyExistsException;
 import dev.amanda.organization.exceptions.OrganizationWithSameRealmAlreadyExistsException;
+import dev.amanda.organization.exceptions.UserSameEmailAlreadyExistsException;
 import dev.amanda.shared.exception.BaseApiException;
 import dev.amanda.shared.exception.GenericApiException;
 import dev.amanda.user.domain.Roles;
+import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.keycloak.representations.idm.RealmRepresentation;
@@ -22,10 +25,16 @@ public class CreateOrganizationUseCase {
     OrganizationRepository organizationRepository;
 
     @Inject
+    UserRepository userRepository;
+
+    @Inject
     KeycloakAdmin keycloakAdmin;
 
     @Inject
     SaveOrganizationUseCase saveOrganizationUseCase;
+
+    @Inject
+    OrgTenantConfigResolver tenantConfigResolver;
 
     public OrganizationResponseDTO execute(CreateOrganizationDTO createOrganizationDTO) {
         String realmValue = this.getOrganizationRealm(createOrganizationDTO.name);
@@ -40,19 +49,26 @@ public class CreateOrganizationUseCase {
             throw new OrganizationWithSameRealmAlreadyExistsException();
         });
 
+        userRepository.findByEmail(createOrganizationDTO.adminEmail).ifPresent(admin -> {
+            throw new UserSameEmailAlreadyExistsException();
+        });
+
         try {
             RealmRepresentation realmRepresentation = keycloakAdmin.createRealm(realmValue, createOrganizationDTO.name);
             realmId = realmRepresentation.getId();
             userKeycloakId = keycloakAdmin.createRealmUser(realmValue, createOrganizationDTO.adminFirstName, createOrganizationDTO.adminLastName, createOrganizationDTO.adminEmail, Roles.ORG_ADMIN).getId();
 
+            tenantConfigResolver.evictAndReload(realmValue);
             return saveOrganizationUseCase.execute(createOrganizationDTO, realmValue, userKeycloakId);
         } catch (Exception e) {
+            tenantConfigResolver.evict(realmValue);
+
             if (userKeycloakId != null) {
                 keycloakAdmin.deleteUser(realmValue, userKeycloakId);
             }
 
             if (realmId != null) {
-                keycloakAdmin.deleteRealm(realmId);
+                keycloakAdmin.deleteRealm(realmValue);
             }
 
             if (e instanceof BaseApiException) {

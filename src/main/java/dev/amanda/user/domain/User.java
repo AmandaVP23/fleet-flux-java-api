@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 @Table(name = "app_user")
 public class User extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(name = "keycloak_id", nullable = false, unique = true)
