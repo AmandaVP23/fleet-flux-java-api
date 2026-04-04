@@ -64,9 +64,10 @@ public class KeycloakAdmin {
         List<ClientRepresentation> clients = new ArrayList<>();
 
         ClientRepresentation webClient = new ClientRepresentation();
-        webClient.setClientId("web");
+        webClient.setClientId("web"); // todo - put this in application properties
         webClient.setRedirectUris(List.of("*"));
         webClient.setEnabled(true);
+        webClient.setPublicClient(true);
 
         clients.add(webClient);
 

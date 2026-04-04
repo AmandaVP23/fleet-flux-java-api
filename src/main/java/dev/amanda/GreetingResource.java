@@ -1,14 +1,19 @@
 package dev.amanda;
 
 import dev.amanda.user.domain.Roles;
+import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
 @Path("/hello")
 public class GreetingResource {
+    @Inject
+    JsonWebToken jwt;
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -27,5 +32,12 @@ public class GreetingResource {
     @RolesAllowed(Roles.SUPER_ADMIN)
     public String heyAuthProtected() {
         return "Hello! You're authenticated and you're a super admin";
+    }
+
+    @GET
+    @Path("/auth/org")
+    @RolesAllowed(Roles.ORG_ADMIN)
+    public String heyAuthOrgProtected() {
+        return "Hey! You're authenticated and you're an org admin!!";
     }
 }

@@ -3,6 +3,7 @@ package dev.amanda.organization.application;
 import java.text.Normalizer;
 
 import dev.amanda.oidc.KeycloakAdmin;
+import dev.amanda.oidc.OrgTenantConfigResolver;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
@@ -32,6 +33,9 @@ public class CreateOrganizationUseCase {
     @Inject
     SaveOrganizationUseCase saveOrganizationUseCase;
 
+    @Inject
+    OrgTenantConfigResolver tenantConfigResolver;
+
     public OrganizationResponseDTO execute(CreateOrganizationDTO createOrganizationDTO) {
         String realmValue = this.getOrganizationRealm(createOrganizationDTO.name);
         String realmId = null;
@@ -54,9 +58,11 @@ public class CreateOrganizationUseCase {
             realmId = realmRepresentation.getId();
             userKeycloakId = keycloakAdmin.createRealmUser(realmValue, createOrganizationDTO.adminFirstName, createOrganizationDTO.adminLastName, createOrganizationDTO.adminEmail, Roles.ORG_ADMIN).getId();
 
+            tenantConfigResolver.evictAndReload(realmValue);
             return saveOrganizationUseCase.execute(createOrganizationDTO, realmValue, userKeycloakId);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            tenantConfigResolver.evict(realmValue);
+
             if (userKeycloakId != null) {
                 keycloakAdmin.deleteUser(realmValue, userKeycloakId);
             }
