@@ -1,20 +1,14 @@
 package dev.amanda;
 
 import dev.amanda.user.domain.Roles;
-import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 
 @Path("/hello")
 public class GreetingResource {
-    @Inject
-    JsonWebToken jwt;
-
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String hello() {

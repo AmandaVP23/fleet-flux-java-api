@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.util.Base64;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +21,9 @@ public class OrgTenantConfigResolver implements TenantConfigResolver {
 
     @Inject
     KeycloakConfig keycloakConfig;
+
+    @ConfigProperty(name = "quarkus.keycloak.default-web-client-name")
+    String defaultWebClientName;
 
     @Override
     public Uni<OidcTenantConfig> resolve(RoutingContext routingContext, OidcRequestContext<OidcTenantConfig> requestContext) {
@@ -48,8 +52,7 @@ public class OrgTenantConfigResolver implements TenantConfigResolver {
         OidcTenantConfigBuilder builder = OidcTenantConfig.builder()
                 .tenantId(realmName)
                 .authServerUrl(keycloakConfig.serverUrl() + "/realms/" + realmName)
-                .clientId("web");
-//                .applicationType(OidcTenantConfig.ApplicationType.WEB_APP);
+                .clientId(defaultWebClientName);
 
         return builder.build();
     }

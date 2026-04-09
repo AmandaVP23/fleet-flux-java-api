@@ -4,9 +4,13 @@ package dev.amanda.user.domain;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.shared.domain.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "app_user")
+@Getter
+@Setter
 public class User extends BaseEntity {
 
     @Column(nullable = false, unique = true)
@@ -19,27 +23,7 @@ public class User extends BaseEntity {
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
-    public String getKeycloakId() {
-        return keycloakId;
-    }
-
-    public void setKeycloakId(String keycloakId) {
-        this.keycloakId = keycloakId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
-    }
+//    public Optional<Organization> getOrganizationOptional() {
+//        return Optional.ofNullable(organization);
+//    }
 }

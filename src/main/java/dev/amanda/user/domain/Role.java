@@ -1,5 +1,8 @@
 package dev.amanda.user.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum Role {
     SUPER_ADMIN(Roles.SUPER_ADMIN),
     ORG_ADMIN(Roles.ORG_ADMIN),
@@ -9,9 +12,5 @@ public enum Role {
 
     Role(String value) {
         this.value = value;
-    }
-
-    public String getValue() {
-        return value;
     }
 }

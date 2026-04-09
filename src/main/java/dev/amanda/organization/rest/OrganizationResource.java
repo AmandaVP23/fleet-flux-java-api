@@ -1,4 +1,4 @@
-package dev.amanda.organization.api;
+package dev.amanda.organization.rest;
 
 import dev.amanda.organization.application.CreateOrganizationUseCase;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
