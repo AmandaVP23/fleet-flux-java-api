@@ -10,8 +10,11 @@ import jakarta.enterprise.event.Observes;
 import com.github.lalyos.jfiglet.FigletFont;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.extern.jbosslog.JBossLog;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
+@JBossLog
 public class ApplicationStartUp {
     public static final String GREEN = "\u001B[32m";
     public static final String RESET = "\u001B[0m";
@@ -26,7 +29,7 @@ public class ApplicationStartUp {
     UserRepository userRepository;
 
     void onStart(@Observes StartupEvent ev) throws Exception {
-        System.out.println("The application is starting...");
+        log.info("The application is starting...");
         String ascii = FigletFont.convertOneLine("FleetFlux");
         System.out.println(GREEN + ascii + RESET);
 
@@ -41,10 +44,10 @@ public class ApplicationStartUp {
 
         userRepository.findByEmail(superAdminConfig.email())
                 .ifPresentOrElse(
-                        user -> System.out.println("SuperAdmin already exists in DB, skipping creation"),
+                        user -> log.info("SuperAdmin already exists in DB, skipping creation"),
                         () -> {
                             userRepository.persist(buildSuperAdminUser(keycloakId));
-                            System.out.println("SuperAdmin User created!");
+                            log.info("SuperAdmin User created!");
                         }
                 );
 
