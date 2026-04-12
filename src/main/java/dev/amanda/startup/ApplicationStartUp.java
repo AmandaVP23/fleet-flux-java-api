@@ -4,6 +4,7 @@ import dev.amanda.config.SuperAdminConfig;
 import dev.amanda.oidc.KeycloakAdmin;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
+import io.quarkus.arc.profile.IfBuildProfile;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -15,6 +16,7 @@ import org.jboss.logging.Logger;
 
 @ApplicationScoped
 @JBossLog
+@IfBuildProfile("!test")
 public class ApplicationStartUp {
     public static final String GREEN = "\u001B[32m";
     public static final String RESET = "\u001B[0m";

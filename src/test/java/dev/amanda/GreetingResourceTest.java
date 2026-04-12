@@ -1,6 +1,7 @@
 package dev.amanda;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.TestProfile;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -16,5 +17,4 @@ class GreetingResourceTest {
              .statusCode(200)
              .body(is("Hello from Quarkus REST"));
     }
-
 }
