@@ -79,7 +79,9 @@ public class CreateOrganizationUseCaseTest {
     class WhenEverythingIsValid {
         @Test
         void shouldReturnResponseFromSaveUseCase() {
-            var expected = new OrganizationResponseDTO(123L, ORGANIZATION_NAME);
+            var expected = new OrganizationResponseDTO();
+            expected.id = 123L;
+            expected.name = ORGANIZATION_NAME;
 
             when(saveOrganizationUseCase.execute(createDto, EXPECTED_REALM, USER_KC_ID)).thenReturn(expected);
 

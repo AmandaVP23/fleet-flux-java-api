@@ -1,16 +1,15 @@
 package dev.amanda.organization.rest;
 
 import dev.amanda.organization.application.CreateOrganizationUseCase;
+import dev.amanda.organization.application.ListOrganizationUseCase;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
+import dev.amanda.shared.PageResult;
 import dev.amanda.user.domain.Roles;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -18,12 +17,17 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
+import java.util.List;
+
 @Path("/organizations")
 @RolesAllowed(Roles.SUPER_ADMIN)
 public class OrganizationResource {
 
     @Inject
     CreateOrganizationUseCase createOrganizationUseCase;
+
+    @Inject
+    ListOrganizationUseCase listOrganizationUseCase;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -55,5 +59,16 @@ public class OrganizationResource {
     public Response createOrganization(@Valid CreateOrganizationDTO createOrganizationDTO) {
         OrganizationResponseDTO orgResponseDTO = createOrganizationUseCase.execute(createOrganizationDTO);
         return Response.status(Response.Status.CREATED).entity(orgResponseDTO).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public PageResult<OrganizationResponseDTO> listOrganizations(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("size") @DefaultValue("20") int size,
+            @QueryParam("sortBy") @DefaultValue("name") String sortBy,
+            @QueryParam("direction") @DefaultValue("asc") String direction
+    ) {
+        return listOrganizationUseCase.execute(page, size, sortBy, direction);
     }
 }

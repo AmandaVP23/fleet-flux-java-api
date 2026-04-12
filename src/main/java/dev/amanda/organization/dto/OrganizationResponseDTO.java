@@ -1,6 +1,15 @@
 package dev.amanda.organization.dto;
 
-public record OrganizationResponseDTO(
-        Long id,
-        String name
-) {}
+import dev.amanda.organization.domain.Organization;
+
+public class OrganizationResponseDTO {
+    public Long id;
+    public String name;
+
+    public static OrganizationResponseDTO from(Organization organization) {
+        var dto = new OrganizationResponseDTO();
+        dto.id = organization.getId();
+        dto.name = organization.getName();
+        return dto;
+    }
+}
