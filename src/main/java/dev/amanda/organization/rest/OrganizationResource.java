@@ -1,6 +1,7 @@
 package dev.amanda.organization.rest;
 
 import dev.amanda.organization.application.CreateOrganizationUseCase;
+import dev.amanda.organization.application.GetOrganizationByIdUseCase;
 import dev.amanda.organization.application.ListOrganizationUseCase;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
@@ -17,8 +18,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
-import java.util.List;
-
 @Path("/organizations")
 @RolesAllowed(Roles.SUPER_ADMIN)
 public class OrganizationResource {
@@ -28,6 +27,9 @@ public class OrganizationResource {
 
     @Inject
     ListOrganizationUseCase listOrganizationUseCase;
+
+    @Inject
+    GetOrganizationByIdUseCase getOrganizationByIdUseCase;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -63,6 +65,7 @@ public class OrganizationResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(Roles.SUPER_ADMIN)
     public PageResult<OrganizationResponseDTO> listOrganizations(
             @QueryParam("page") @DefaultValue("0") int page,
             @QueryParam("size") @DefaultValue("20") int size,
@@ -70,5 +73,12 @@ public class OrganizationResource {
             @QueryParam("direction") @DefaultValue("asc") String direction
     ) {
         return listOrganizationUseCase.execute(page, size, sortBy, direction);
+    }
+
+    @GET
+    @Path("/{id}")
+    @RolesAllowed(Roles.SUPER_ADMIN)
+    public OrganizationResponseDTO getOrganization(@PathParam("id") long id) {
+        return getOrganizationByIdUseCase.execute(id);
     }
 }
