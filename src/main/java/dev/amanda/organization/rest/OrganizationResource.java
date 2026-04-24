@@ -1,6 +1,7 @@
 package dev.amanda.organization.rest;
 
 import dev.amanda.organization.application.CreateOrganizationUseCase;
+import dev.amanda.organization.application.DeleteOrganizationUseCase;
 import dev.amanda.organization.application.GetOrganizationByIdUseCase;
 import dev.amanda.organization.application.ListOrganizationUseCase;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
@@ -30,6 +31,9 @@ public class OrganizationResource {
 
     @Inject
     GetOrganizationByIdUseCase getOrganizationByIdUseCase;
+
+    @Inject
+    DeleteOrganizationUseCase deleteOrganizationUseCase;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -80,5 +84,13 @@ public class OrganizationResource {
     @RolesAllowed(Roles.SUPER_ADMIN)
     public OrganizationResponseDTO getOrganization(@PathParam("id") long id) {
         return getOrganizationByIdUseCase.execute(id);
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @RolesAllowed(Roles.SUPER_ADMIN)
+    public Response deleteOrganization(@PathParam("id") long id) {
+        deleteOrganizationUseCase.execute(id);
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 }

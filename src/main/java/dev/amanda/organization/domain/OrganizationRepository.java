@@ -1,5 +1,6 @@
 package dev.amanda.organization.domain;
 
+import dev.amanda.organization.exceptions.OrganizationNotFoundException;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -26,5 +27,15 @@ public class OrganizationRepository implements PanacheRepository<Organization> {
 
     public long countAll() {
         return count();
+    }
+
+    public Organization findByIdOrThrow(long id) {
+        Optional<Organization> organization = findByIdOptional(id);
+
+        if (organization.isEmpty()) {
+            throw new OrganizationNotFoundException();
+        }
+
+        return organization.get();
     }
 }

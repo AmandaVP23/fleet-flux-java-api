@@ -8,11 +8,13 @@ import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class GetOrganizationByIdUseCase {
+
     @Inject
     OrganizationRepository organizationRepository;
 
     public OrganizationResponseDTO execute(long id) {
-        Organization organization = organizationRepository.findById(id);
+        Organization organization = organizationRepository.findByIdOrThrow(id);
+
         return OrganizationResponseDTO.from(organization);
     }
 }

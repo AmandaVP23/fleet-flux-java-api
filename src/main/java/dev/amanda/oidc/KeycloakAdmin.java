@@ -265,6 +265,44 @@ public class KeycloakAdmin {
         }
     }
 
+    public void revokeAllSessions(String realm) {
+        keycloak.realm(realm).logoutAll();
+    }
+
+    public void changeRealmUsersEnableState(String realm, boolean isEnable) {
+        List<UserRepresentation> users = keycloak.realm(realm).users().list();
+
+        for (UserRepresentation user : users) {
+            user.setEnabled(isEnable);
+
+            keycloak.realm(realm)
+                    .users()
+                    .get(user.getId())
+                    .update(user);
+        }
+    }
+
+    public void changeRealmClientsEnableState(String realm, boolean isEnable) {
+        List<ClientRepresentation> clients = keycloak.realm(realm).clients().findAll();
+
+        for (ClientRepresentation client : clients) {
+            client.setEnabled(isEnable);
+
+            keycloak.realm(realm)
+                    .clients()
+                    .get(client.getId())
+                    .update(client);
+        }
+    }
+
+    public void changeRealmEnableState(String realm, boolean isEnable) {
+        RealmRepresentation realmRepresentation = keycloak.realm(realm).toRepresentation();
+
+        realmRepresentation.setEnabled(isEnable);
+
+        keycloak.realm(realm).update(realmRepresentation);
+    }
+
     private UserRepresentation getSuperAdminUserRepresentation() {
         CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
         credentialRepresentation.setType("password");

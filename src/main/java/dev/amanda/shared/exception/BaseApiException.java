@@ -1,6 +1,9 @@
 package dev.amanda.shared.exception;
 
-public abstract class BaseApiException extends RuntimeException {
+import lombok.Getter;
+
+@Getter
+public class BaseApiException extends RuntimeException {
     private final ApiError apiError;
     private final String formattedMessage;
 
@@ -15,7 +18,4 @@ public abstract class BaseApiException extends RuntimeException {
         this.apiError = apiError;
         this.formattedMessage = message;
     }
-
-    public ApiError getApiError() { return apiError; }
-    public String getFormattedMessage() { return formattedMessage; }
 }

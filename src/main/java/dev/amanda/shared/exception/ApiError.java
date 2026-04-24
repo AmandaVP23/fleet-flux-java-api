@@ -7,7 +7,9 @@ public enum ApiError {
     ORGANIZATION_WITH_SAME_NAME_ALREADY_EXISTS(100, "Organization with same name already exists", 409),
     ORGANIZATION_WITH_SAME_GENERATED_REALM_ALREADY_EXISTS(101, "Organization with same generated realm already exists", 409),
     REALM_KEYCLOAK_CONFLICT(102, "Keycloak conflict creating realm: %s", 409),
-    USER_WITH_EMAIL_ALREADY_EXISTS(103, "User with same email already exists", 409);
+    USER_WITH_EMAIL_ALREADY_EXISTS(103, "User with same email already exists", 409),
+    ORGANIZATION_NOT_FOUND(104, "Organization not found", 404),
+    ORGANIZATION_INACTIVE(105, "Organization is inactive", 400);
 
     private final int errorCode;
     private final String message;
