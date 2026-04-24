@@ -1,11 +1,9 @@
 package dev.amanda.organization.rest;
 
-import dev.amanda.organization.application.CreateOrganizationUseCase;
-import dev.amanda.organization.application.DeleteOrganizationUseCase;
-import dev.amanda.organization.application.GetOrganizationByIdUseCase;
-import dev.amanda.organization.application.ListOrganizationUseCase;
+import dev.amanda.organization.application.*;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
+import dev.amanda.organization.dto.UpdateOrganizationDTO;
 import dev.amanda.shared.PageResult;
 import dev.amanda.user.domain.Roles;
 import jakarta.annotation.security.RolesAllowed;
@@ -31,6 +29,9 @@ public class OrganizationResource {
 
     @Inject
     GetOrganizationByIdUseCase getOrganizationByIdUseCase;
+
+    @Inject
+    UpdateOrganizationUseCase updateOrganizationUseCase;
 
     @Inject
     DeleteOrganizationUseCase deleteOrganizationUseCase;
@@ -84,6 +85,12 @@ public class OrganizationResource {
     @RolesAllowed(Roles.SUPER_ADMIN)
     public OrganizationResponseDTO getOrganization(@PathParam("id") long id) {
         return getOrganizationByIdUseCase.execute(id);
+    }
+
+    @PATCH
+    @Path("/{id}")
+    public void updateOrganization(@Valid UpdateOrganizationDTO updateOrganizationDTO, @PathParam("id") long id) {
+        updateOrganizationUseCase.execute(id, updateOrganizationDTO);
     }
 
     @DELETE
