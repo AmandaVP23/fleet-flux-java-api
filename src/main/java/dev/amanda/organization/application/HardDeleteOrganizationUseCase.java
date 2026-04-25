@@ -6,23 +6,16 @@ import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.shared.exception.ApiError;
 import dev.amanda.shared.exception.BaseApiException;
-import dev.amanda.user.domain.User;
-import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
-
-import java.util.List;
 
 @Log
 @ApplicationScoped
 public class HardDeleteOrganizationUseCase {
     @Inject
     OrganizationRepository organizationRepository;
-
-    @Inject
-    UserRepository userRepository;
 
     @Inject
     KeycloakAdmin keycloakAdmin;
@@ -39,12 +32,6 @@ public class HardDeleteOrganizationUseCase {
         }
 
         // todo - come back here after more data
-
-        // todo - try to understand if this can be a problem
-//        List<User> users = userRepository.findUsersInOrganization(organization.getId());
-//        for (User user : users) {
-//            userRepository.delete(user);
-//        }
 
         String realm = organization.getRealm();
         organizationRepository.delete(organization);
