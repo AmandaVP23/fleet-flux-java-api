@@ -32,7 +32,6 @@ public class HardDeleteOrganizationUseCase {
         }
 
         // todo - come back here after more data
-
         String realm = organization.getRealm();
         organizationRepository.delete(organization);
 
