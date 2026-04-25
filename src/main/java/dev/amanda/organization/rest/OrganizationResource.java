@@ -34,6 +34,9 @@ public class OrganizationResource {
     UpdateOrganizationUseCase updateOrganizationUseCase;
 
     @Inject
+    RestoreSoftDeletedOrganizationUseCase restoreSoftDeletedOrganizationUseCase;
+
+    @Inject
     DeleteOrganizationUseCase deleteOrganizationUseCase;
 
     @POST
@@ -91,6 +94,14 @@ public class OrganizationResource {
     @Path("/{id}")
     public void updateOrganization(@Valid UpdateOrganizationDTO updateOrganizationDTO, @PathParam("id") long id) {
         updateOrganizationUseCase.execute(id, updateOrganizationDTO);
+    }
+
+    @GET
+    @Path("/{id}/restore")
+    @RolesAllowed(Roles.SUPER_ADMIN)
+    public Response restoreDeletedOrganization(@PathParam("id") long id) {
+        restoreSoftDeletedOrganizationUseCase.execute(id);
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     @DELETE
