@@ -1,10 +1,14 @@
 package dev.amanda.shared.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 
 @MappedSuperclass // allows other entities to inherit fields without creating a separate table
+@Getter
+@Setter
 public abstract class BaseEntity {
 
     @Id
@@ -17,6 +21,9 @@ public abstract class BaseEntity {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = Instant.now();
@@ -27,8 +34,4 @@ public abstract class BaseEntity {
     protected void onUpdate() {
         this.updatedAt = Instant.now();
     }
-
-    public Long getId() { return id; }
-    public Instant getCreatedAt() { return createdAt; }
-    public Instant getUpdatedAt() { return updatedAt; }
 }

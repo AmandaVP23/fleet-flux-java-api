@@ -75,8 +75,6 @@ public class CreateOrganizationUseCase {
                 throw (BaseApiException) e;
             }
 
-            System.out.println(e.getMessage());
-
             throw new GenericApiException();
         }
     }

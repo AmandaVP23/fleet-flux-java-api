@@ -32,9 +32,6 @@ public class SaveOrganizationUseCase {
         organizationRepository.persist(organization);
         userRepository.persist(user);
 
-        return new OrganizationResponseDTO(
-                organization.getId(),
-                organization.getName()
-        );
+        return OrganizationResponseDTO.from(organization);
     }
 }
