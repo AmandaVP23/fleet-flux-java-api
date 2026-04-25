@@ -25,9 +25,30 @@ public class OrganizationRepository implements PanacheRepository<Organization> {
                 .list();
     }
 
+    public List<Organization> findActivePaginated(int page, int size, Sort sort) {
+        return find("deletedAt IS NULL", sort)
+                .page(Page.of(page, size))
+                .list();
+    }
+
+    public List<Organization> findDeletedPaginated(int page, int size, Sort sort) {
+        return find("deletedAt IS NOT NULL", sort)
+                .page(Page.of(page, size))
+                .list();
+    }
+
     public long countAll() {
         return count();
     }
+
+    public long countActive() {
+        return count("deletedAt IS NULL");
+    }
+
+    public long countDeleted() {
+        return count("deletedAt IS NOT NULL");
+    }
+
 
     public Organization findActiveByIdOrThrow(long id) {
         Optional<Organization> organization = findByIdOptional(id);

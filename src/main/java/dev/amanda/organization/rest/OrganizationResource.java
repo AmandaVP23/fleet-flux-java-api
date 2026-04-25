@@ -2,6 +2,7 @@ package dev.amanda.organization.rest;
 
 import dev.amanda.organization.application.*;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
+import dev.amanda.organization.dto.OrganizationFilter;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.organization.dto.UpdateOrganizationDTO;
 import dev.amanda.shared.PageResult;
@@ -25,7 +26,7 @@ public class OrganizationResource {
     CreateOrganizationUseCase createOrganizationUseCase;
 
     @Inject
-    ListOrganizationUseCase listOrganizationUseCase;
+    ListOrganizationsUseCase listOrganizationsUseCase;
 
     @Inject
     GetOrganizationByIdUseCase getOrganizationByIdUseCase;
@@ -78,9 +79,10 @@ public class OrganizationResource {
             @QueryParam("page") @DefaultValue("0") int page,
             @QueryParam("size") @DefaultValue("20") int size,
             @QueryParam("sortBy") @DefaultValue("name") String sortBy,
-            @QueryParam("direction") @DefaultValue("asc") String direction
+            @QueryParam("direction") @DefaultValue("asc") String direction,
+            @QueryParam("filter") @DefaultValue("active") OrganizationFilter filter
     ) {
-        return listOrganizationUseCase.execute(page, size, sortBy, direction);
+        return listOrganizationsUseCase.execute(page, size, sortBy, direction, filter);
     }
 
     @GET
