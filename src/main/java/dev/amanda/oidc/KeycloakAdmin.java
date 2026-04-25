@@ -9,16 +9,21 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
+import lombok.extern.java.Log;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.representations.idm.*;
+import org.keycloak.representations.userprofile.config.UPAttribute;
+import org.keycloak.representations.userprofile.config.UPAttributePermissions;
+import org.keycloak.representations.userprofile.config.UPConfig;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Log
 @ApplicationScoped
 public class KeycloakAdmin {
     private Keycloak keycloak;
@@ -61,6 +66,8 @@ public class KeycloakAdmin {
                 "starttls", keycloakSMTPServerConfig.starttls()
         ));
 
+        ProtocolMapperRepresentation mapper = getProtocolMapperRepresentation();
+
         List<ClientRepresentation> clients = new ArrayList<>();
 
         ClientRepresentation webClient = new ClientRepresentation();
@@ -77,18 +84,83 @@ public class KeycloakAdmin {
         try {
             this.keycloak.realms().create(realm);
         } catch (WebApplicationException e) {
+            log.severe(e.getMessage());
             Response response = e.getResponse();
             if (response.getStatus() == Response.Status.CONFLICT.getStatusCode()) {
                 throw new RealmAlreadyExistsException(realmName);
             }
             throw new RuntimeException(e);
         }  catch (Exception e) {
+            log.severe(e.getMessage());
             throw new RuntimeException("Failed to create realm", e);
         }
 
         grantAdminAccessToNewRealm(realmName);
 
+        try {
+            UPConfig upConfig = this.keycloak.realm(realmName)
+                    .users().userProfile().getConfiguration();
+
+            UPAttribute orgId = new UPAttribute();
+            orgId.setName("organization_id");
+            orgId.setDisplayName("Organization ID");
+
+            UPAttributePermissions perms = new UPAttributePermissions();
+            // Both view and edit must explicitly include "admin"
+            perms.setView(Set.of("admin", "user"));
+            perms.setEdit(Set.of("admin")); // only admins write it
+            orgId.setPermissions(perms);
+
+            upConfig.getAttributes().add(orgId);
+            this.keycloak.realm(realmName).users().userProfile().update(upConfig);
+
+            addOrganizationIdMapper(realmName);
+        } catch (Exception e) {
+            log.severe(e.getMessage());
+        }
+
         return this.keycloak.realm(realmName).toRepresentation();
+    }
+
+    private void addOrganizationIdMapper(String realmName) {
+        ClientRepresentation client = keycloak.realm(realmName)
+                .clients().findByClientId("web").get(0);
+
+        var protocolMappersResource = keycloak.realm(realmName)
+                .clients().get(client.getId())
+                .getProtocolMappers();
+
+        boolean exists = protocolMappersResource.getMappers().stream()
+                .anyMatch(m -> "organization_id".equals(m.getName()));
+
+        if (!exists) {
+            try (Response response = protocolMappersResource
+                    .createMapper(getProtocolMapperRepresentation())) {
+                if (response.getStatus() != 201) {
+                    String body = response.readEntity(String.class);
+                    throw new RuntimeException("Failed to create mapper: " + body);
+                }
+            }
+        }
+    }
+
+    private static ProtocolMapperRepresentation getProtocolMapperRepresentation() {
+        ProtocolMapperRepresentation mapper = new ProtocolMapperRepresentation();
+        mapper.setName("organization_id");
+        mapper.setProtocol("openid-connect");
+        mapper.setProtocolMapper("oidc-usermodel-attribute-mapper");
+
+        Map<String, String> config = new HashMap<>();
+        config.put("user.attribute", "organization_id");
+        config.put("claim.name", "organization_id");
+        config.put("jsonType.label", "String");
+        config.put("access.token.claim", "true");
+        config.put("id.token.claim", "true");
+        config.put("userinfo.token.claim", "true");  // was missing
+        config.put("multivalued",          "false");
+
+        mapper.setConfig(config);
+        return mapper;
     }
 
     private void grantAdminAccessToNewRealm(String realmName) {
@@ -194,12 +266,37 @@ public class KeycloakAdmin {
 
             return createdUser;
         } catch (Exception e) {
+            // todo - log
             System.out.println(e.getMessage());
             if (createdUserId != null) {
                 deleteUser(realm, createdUserId);
             }
             e.printStackTrace();
             throw new RuntimeException("Failed to set up user " + email, e);
+        }
+    }
+
+    public void setUserOrganizationId(String realm, String userId, long organizationId) {
+        UserRepresentation userRepresentation = keycloak.realm(realm).users().get(userId).toRepresentation();
+
+        // Get existing attributes or create a new mutable map
+        Map<String, List<String>> attributes = userRepresentation.getAttributes();
+        if (attributes == null) {
+            attributes = new HashMap<>();
+        }
+
+        // Merge — don't replace
+        attributes.put("organization_id", List.of(String.valueOf(organizationId)));
+        userRepresentation.setAttributes(attributes);
+
+        try {
+            keycloak.realm(realm).users().get(userId).update(userRepresentation);
+        } catch (WebApplicationException e) {
+            String body = e.getResponse().readEntity(String.class);
+            log.severe("Keycloak user update failed: " + body);
+            log.severe(e.getMessage());
+            // todo - throw
+            throw e;
         }
     }
 
@@ -299,11 +396,8 @@ public class KeycloakAdmin {
         List<UserRepresentation> users = keycloak.realm(realm).users().list();
 
         for (UserRepresentation user : users) {
+            // todo - try/catch
             keycloak.realm(realm).users().delete(user.getId());
-//            keycloak.realm(realm)
-//                    .users()
-//                    .get(user.getId())
-//                    .update(user);
         }
     }
 
