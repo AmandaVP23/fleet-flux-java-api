@@ -295,6 +295,28 @@ public class KeycloakAdmin {
         }
     }
 
+    public void deleteAllRealmUsers(String realm) {
+        List<UserRepresentation> users = keycloak.realm(realm).users().list();
+
+        for (UserRepresentation user : users) {
+            keycloak.realm(realm).users().delete(user.getId());
+//            keycloak.realm(realm)
+//                    .users()
+//                    .get(user.getId())
+//                    .update(user);
+        }
+    }
+
+    public void deleteAllRealmClients(String realm) {
+        List<ClientRepresentation> clients = keycloak.realm(realm).clients().findAll();
+
+        for (ClientRepresentation client : clients) {
+            keycloak.realm(realm)
+                    .clients()
+                    .delete(client.getId());
+        }
+    }
+
     public void changeRealmEnableState(String realm, boolean isEnable) {
         RealmRepresentation realmRepresentation = keycloak.realm(realm).toRepresentation();
 

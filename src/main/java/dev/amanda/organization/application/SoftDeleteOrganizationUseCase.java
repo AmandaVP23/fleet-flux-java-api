@@ -15,7 +15,7 @@ import java.time.Instant;
 
 @Log
 @ApplicationScoped
-public class DeleteOrganizationUseCase {
+public class SoftDeleteOrganizationUseCase {
 
     @Inject
     OrganizationRepository organizationRepository;
