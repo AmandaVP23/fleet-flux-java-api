@@ -1,56 +1,138 @@
-# fleet-flux-java-api
+# Fleet Flux Java API
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Simple Quarkus-based API with PostgreSQL, Keycloak, and Mailpit for local development.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+---
 
-## Running the application in dev mode
+## Prerequisites
 
-You can run your application in dev mode that enables live coding using:
-```shell script
+* Java 25+
+* Maven (or use `./mvnw`)
+* Docker + Docker Compose
+* `curl` and `jq` (for scripts)
+
+---
+
+## Run the application (dev mode)
+
+```bash
 ./mvnw compile quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+* API: http://localhost:8080
+* Dev UI: http://localhost:8080/q/dev/
 
-## Packaging and running the application
+---
 
-The application can be packaged using:
-```shell script
+## Run tests
+
+```bash
+./mvnw test
+```
+
+---
+
+## Package the application
+
+```bash
 ./mvnw package
 ```
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+Run it:
 
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
+```bash
+java -jar target/quarkus-app/quarkus-run.jar
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+---
 
-## Creating a native executable
+## Docker Compose (infra services)
 
-You can create a native executable using: 
-```shell script
-./mvnw package -Dnative
+Start all dependencies:
+
+```bash
+docker compose up -d
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
+### Services
+
+* **PostgreSQL** → `localhost:5432`
+
+    * DB: `fleet-flux-java`
+    * User: `fleet-flux`
+    * Password: `fleet-flux-password`
+
+* **Keycloak** → http://localhost:8081
+
+    * User: `admin`
+    * Password: `admin`
+
+* **Mailpit (email testing)** → http://localhost:8025
+
+Stop services:
+
+```bash
+docker compose down
 ```
 
-You can then execute your native executable with: `./target/fleet-flux-java-api-1.0.0-SNAPSHOT-runner`
+---
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
+## Keycloak cleanup script
 
-## Provided Code
+This script deletes all Keycloak realms except protected ones (`master`, `fleet-flux-admin`).
 
-### REST
+### Run it
 
-Easily start your REST Web Services
+```bash
+./clean-realms.sh
+```
 
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+### Config (optional)
+
+You can override defaults:
+
+```bash
+KEYCLOAK_URL=http://localhost:8081 \
+ADMIN_USER=admin \
+ADMIN_PASS=admin \
+./clean-realms.sh
+```
+
+### What it does
+
+* Authenticates with Keycloak admin API
+* Fetches all realms
+* Deletes everything except protected ones
+* Prints a summary
+
+---
+
+## Typical workflow
+
+1. Start infra:
+
+   ```bash
+   docker compose up -d
+   ```
+
+2. Run API:
+
+   ```bash
+   ./mvnw quarkus:dev
+   ```
+
+3. Run tests:
+
+   ```bash
+   ./mvnw test
+   ```
+
+4. (Optional) Reset Keycloak:
+
+   ```bash
+   ./clean-realms.sh
+   ```
+
+---
+
+That’s it — minimal setup to get the project running locally.
