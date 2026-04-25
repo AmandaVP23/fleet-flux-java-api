@@ -38,7 +38,9 @@ public class OrganizationResource {
     RestoreSoftDeletedOrganizationUseCase restoreSoftDeletedOrganizationUseCase;
 
     @Inject
-    DeleteOrganizationUseCase deleteOrganizationUseCase;
+    SoftDeleteOrganizationUseCase softDeleteOrganizationUseCase;
+    @Inject
+    HardDeleteOrganizationUseCase hardDeleteOrganizationUseCase;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -110,7 +112,15 @@ public class OrganizationResource {
     @Path("/{id}")
     @RolesAllowed(Roles.SUPER_ADMIN)
     public Response deleteOrganization(@PathParam("id") long id) {
-        deleteOrganizationUseCase.execute(id);
+        softDeleteOrganizationUseCase.execute(id);
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @DELETE
+    @Path("/{id}/hard-delete")
+    @RolesAllowed(Roles.SUPER_ADMIN)
+    public Response hardDeleteOrganization(@PathParam("id") long id) {
+        hardDeleteOrganizationUseCase.execute(id);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 }
