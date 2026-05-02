@@ -32,6 +32,7 @@ import static org.mockito.Mockito.*;
 
 @QuarkusTest
 public class CreateOrganizationUseCaseTest {
+
     @Inject
     CreateOrganizationUseCase createOrganizationUseCase;
 
@@ -53,6 +54,7 @@ public class CreateOrganizationUseCaseTest {
     private CreateOrganizationDTO createDto;
     private RealmRepresentation realmRepresentation;
     private UserRepresentation userRepresentation;
+    private OrganizationResponseDTO organizationResponseDTO;
 
     private static final String ORGANIZATION_NAME = "Example Corp";
     private static final String EXPECTED_REALM = "example_corp";
@@ -72,9 +74,16 @@ public class CreateOrganizationUseCaseTest {
 
         userRepresentation = new UserRepresentation();
         userRepresentation.setId(USER_KC_ID);
+
+        organizationResponseDTO = new OrganizationResponseDTO();
+        organizationResponseDTO.setName(ORGANIZATION_NAME);
+        organizationResponseDTO.setId(123L);
+
         when(keycloakAdmin.createRealm(anyString(), anyString())).thenReturn(realmRepresentation);
         when(keycloakAdmin.createRealmUser(anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(userRepresentation);
+
+        when(saveOrganizationUseCase.execute(any(CreateOrganizationDTO.class), anyString(), anyString())).thenReturn(organizationResponseDTO);
     }
 
     @Nested
