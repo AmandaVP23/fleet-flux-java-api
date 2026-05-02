@@ -29,6 +29,7 @@ public class User extends BaseEntity {
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 }

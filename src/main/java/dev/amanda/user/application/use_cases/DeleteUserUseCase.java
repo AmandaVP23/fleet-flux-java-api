@@ -12,6 +12,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.time.Instant;
+
 @ApplicationScoped
 public class DeleteUserUseCase {
 
@@ -36,9 +38,15 @@ public class DeleteUserUseCase {
             throw new BaseApiException(ApiError.NOT_ALLOWED);
         }
 
+        if (user.getDeletedAt() != null) {
+            throw new UserNotFoundException();
+        }
+
         String orgRealm = user.getOrganization().getRealm();
 
-        keycloakAdmin.deleteUser(orgRealm, user.getKeycloakId());
-        userRepository.delete(user);
+        keycloakAdmin.changeUserEnableState(orgRealm, user.getKeycloakId(), false);
+
+        user.setDeletedAt(Instant.now());
+        userRepository.persist(user);
     }
 }
