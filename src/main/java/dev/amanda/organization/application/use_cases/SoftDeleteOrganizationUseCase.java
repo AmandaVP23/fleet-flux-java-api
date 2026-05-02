@@ -1,4 +1,4 @@
-package dev.amanda.organization.application;
+package dev.amanda.organization.application.use_cases;
 
 import dev.amanda.oidc.KeycloakAdmin;
 import dev.amanda.oidc.OrgTenantConfigResolver;

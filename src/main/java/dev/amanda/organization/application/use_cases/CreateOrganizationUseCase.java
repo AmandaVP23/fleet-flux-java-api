@@ -1,4 +1,4 @@
-package dev.amanda.organization.application;
+package dev.amanda.organization.application.use_cases;
 
 import java.text.Normalizer;
 

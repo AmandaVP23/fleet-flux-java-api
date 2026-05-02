@@ -32,7 +32,6 @@ public class AuthContextProvider {
 
     public Long getOrganizationId() {
         String value = jwt.getClaim("organization_id");
-        System.out.println("organizationId: " + value);
         return value != null ? Long.valueOf(value) : null;
     }
 

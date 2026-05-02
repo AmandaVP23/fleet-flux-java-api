@@ -29,10 +29,6 @@ public class UsersResource {
     public UserResponseDTO createUser(@Valid CreateUserRequestDTO dto) {
         AuthContext auth = authProvider.get();
 
-//        Map<String, Object> obj = new HashMap<>();
-//
-//        obj.put("message", "NOT IMPLEMENTED YET");
-//        return Response.status(400).entity(obj).build();
         return createUserUseCase.execute(dto, auth);
     }
 }

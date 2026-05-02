@@ -1,5 +1,6 @@
-package dev.amanda.organization.application;
+package dev.amanda.organization.application.use_cases;
 
+import dev.amanda.organization.application.mappers.OrganizationMapper;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
@@ -12,9 +13,12 @@ public class GetOrganizationByIdUseCase {
     @Inject
     OrganizationRepository organizationRepository;
 
+    @Inject
+    OrganizationMapper organizationMapper;
+
     public OrganizationResponseDTO execute(long id) {
         Organization organization = organizationRepository.findByIdOrThrow(id);
 
-        return OrganizationResponseDTO.from(organization);
+        return organizationMapper.toDto(organization);
     }
 }

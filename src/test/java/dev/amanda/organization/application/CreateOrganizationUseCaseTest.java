@@ -2,6 +2,8 @@ package dev.amanda.organization.application;
 
 import dev.amanda.oidc.KeycloakAdmin;
 import dev.amanda.oidc.OrgTenantConfigResolver;
+import dev.amanda.organization.application.use_cases.CreateOrganizationUseCase;
+import dev.amanda.organization.application.use_cases.SaveOrganizationUseCase;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
@@ -77,18 +79,18 @@ public class CreateOrganizationUseCaseTest {
 
     @Nested
     class WhenEverythingIsValid {
-//        @Test
-//        void shouldReturnResponseFromSaveUseCase() {
-//            var expected = new OrganizationResponseDTO();
-//            expected.setId(123L);
-//            expected.setName(ORGANIZATION_NAME);
-//
-//            when(saveOrganizationUseCase.execute(createDto, EXPECTED_REALM, USER_KC_ID)).thenReturn(expected);
-//
-//            var result = createOrganizationUseCase.execute(createDto);
-//
-//            assertThat(result).isEqualTo(expected);
-//        }
+        @Test
+        void shouldReturnResponseFromSaveUseCase() {
+            var expected = new OrganizationResponseDTO();
+            expected.setId(123L);
+            expected.setName(ORGANIZATION_NAME);
+
+            when(saveOrganizationUseCase.execute(createDto, EXPECTED_REALM, USER_KC_ID)).thenReturn(expected);
+
+            var result = createOrganizationUseCase.execute(createDto);
+
+            assertThat(result).isEqualTo(expected);
+        }
 
         @Test
         void shouldCreateRealmWithGeneratedRealmValue() {

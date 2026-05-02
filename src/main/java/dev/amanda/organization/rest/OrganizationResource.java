@@ -1,6 +1,6 @@
 package dev.amanda.organization.rest;
 
-import dev.amanda.organization.application.*;
+import dev.amanda.organization.application.use_cases.*;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationFilter;
 import dev.amanda.organization.dto.OrganizationResponseDTO;

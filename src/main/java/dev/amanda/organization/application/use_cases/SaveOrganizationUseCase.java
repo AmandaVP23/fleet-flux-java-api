@@ -1,5 +1,6 @@
-package dev.amanda.organization.application;
+package dev.amanda.organization.application.use_cases;
 
+import dev.amanda.organization.application.mappers.OrganizationMapper;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
@@ -18,6 +19,9 @@ public class SaveOrganizationUseCase {
     @Inject
     UserRepository userRepository;
 
+    @Inject
+    OrganizationMapper organizationMapper;
+
     @Transactional
     public OrganizationResponseDTO execute(CreateOrganizationDTO dto, String realm, String userKeycloakId) {
         Organization organization = new Organization();
@@ -34,6 +38,6 @@ public class SaveOrganizationUseCase {
         organizationRepository.persist(organization);
         userRepository.persist(user);
 
-        return OrganizationResponseDTO.from(organization);
+        return organizationMapper.toDto(organization);
     }
 }

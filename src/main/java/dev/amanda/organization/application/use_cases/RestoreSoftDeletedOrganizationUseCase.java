@@ -1,4 +1,4 @@
-package dev.amanda.organization.application;
+package dev.amanda.organization.application.use_cases;
 
 import dev.amanda.oidc.KeycloakAdmin;
 import dev.amanda.oidc.OrgTenantConfigResolver;
@@ -13,7 +13,7 @@ import lombok.extern.java.Log;
 
 @Log
 @ApplicationScoped
-public class HardDeleteOrganizationUseCase {
+public class RestoreSoftDeletedOrganizationUseCase {
     @Inject
     OrganizationRepository organizationRepository;
 
@@ -28,23 +28,21 @@ public class HardDeleteOrganizationUseCase {
         Organization organization = organizationRepository.findByIdOrThrow(id);
 
         if (organization.getDeletedAt() == null) {
-            throw new BaseApiException(ApiError.ORGANIZATION_NOT_INACTIVE, "Organization is not soft deleted");
+            throw new BaseApiException(ApiError.ORGANIZATION_NOT_INACTIVE, "Organization is not deleted");
         }
 
-        // todo - come back here after more data
-        String realm = organization.getRealm();
-        organizationRepository.delete(organization);
+        organization.setDeletedAt(null);
 
-        keycloakAdmin.revokeAllSessions(realm);
+        String realm =  organization.getRealm();
 
-        keycloakAdmin.deleteAllRealmUsers(realm);
+        keycloakAdmin.changeRealmUsersEnableState(realm, true);
 
-        keycloakAdmin.deleteAllRealmClients(realm);
+        keycloakAdmin.changeRealmClientsEnableState(realm, true);
 
-        keycloakAdmin.deleteRealm(realm);
+        keycloakAdmin.changeRealmEnableState(realm, true);
 
-        tenantConfigResolver.evict(realm);
+        tenantConfigResolver.evictAndReload(realm);
 
-        log.info("Hard delete organization " + organization.getId() + " name: " + organization.getName() + " realm: " + realm);
+        log.info("Restored deleted organization with id " + id);
     }
 }

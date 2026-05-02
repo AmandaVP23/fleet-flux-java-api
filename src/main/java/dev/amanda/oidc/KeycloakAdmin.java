@@ -266,8 +266,7 @@ public class KeycloakAdmin {
 
             return createdUser;
         } catch (Exception e) {
-            // todo - log
-            System.out.println(e.getMessage());
+            log.severe("Failed to create user: " + createdUserId + " " + e.getMessage());
             if (createdUserId != null) {
                 deleteUser(realm, createdUserId);
             }
@@ -339,12 +338,17 @@ public class KeycloakAdmin {
     }
 
     public Optional<UserRepresentation> getUser(String realm, String userEmail) {
-        List<UserRepresentation> userRepresentationList = this.keycloak
-                .realm(realm)
-                .users()
-                .searchByEmail(userEmail,  true);
+        try {
+            List<UserRepresentation> userRepresentationList = this.keycloak
+                    .realm(realm)
+                    .users()
+                    .searchByEmail(userEmail,  true);
 
-        return userRepresentationList.stream().findFirst();
+            return userRepresentationList.stream().findFirst();
+        } catch (Exception e) {
+            log.severe(e.getMessage());
+            throw e;
+        }
     }
 
     public void deleteUser(String realm, String userKeycloakId) {

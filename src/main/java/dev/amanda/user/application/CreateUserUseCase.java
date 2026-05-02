@@ -4,6 +4,7 @@ import dev.amanda.oidc.AuthContext;
 import dev.amanda.oidc.KeycloakAdmin;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
+import dev.amanda.user.application.mappers.UserMapper;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
@@ -25,6 +26,9 @@ public class CreateUserUseCase {
 
     @Inject
     UserRepository userRepository;
+
+    @Inject
+    UserMapper userMapper;
 
     @Transactional
     public UserResponseDTO execute(CreateUserRequestDTO dto, AuthContext authContext) {
@@ -54,7 +58,7 @@ public class CreateUserUseCase {
 
             userRepository.persist(user);
 
-            return UserResponseDTO.from(user);
+            return userMapper.toDto(user);
         } catch (Exception e) {
             if (userKeycloakId != null) {
                 keycloakAdmin.deleteUser(organization.getRealm(), userKeycloakId);

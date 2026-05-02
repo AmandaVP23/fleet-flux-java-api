@@ -1,5 +1,6 @@
-package dev.amanda.organization.application;
+package dev.amanda.organization.application.use_cases;
 
+import dev.amanda.organization.application.mappers.OrganizationMapper;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.OrganizationFilter;
@@ -22,6 +23,9 @@ public class ListOrganizationsUseCase {
     @Inject
     OrganizationRepository organizationRepository;
 
+    @Inject
+    OrganizationMapper organizationMapper;
+
     public PageResult<OrganizationResponseDTO> execute(int page, int size, String sortBy, String direction, OrganizationFilter filter) {
         validate(page, size, sortBy, direction);
 
@@ -40,7 +44,7 @@ public class ListOrganizationsUseCase {
         };
 
         List<OrganizationResponseDTO> data = organizations.stream()
-                .map(OrganizationResponseDTO::from)
+                .map(organizationMapper::toDto)
                 .toList();
 
         return new PageResult<>(data, total, page, size);
