@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.time.Instant;
+import java.util.Objects;
 
 @ApplicationScoped
 public class DeleteUserUseCase {
@@ -26,7 +27,12 @@ public class DeleteUserUseCase {
     @Transactional
     public void execute(long id, AuthContext authContext) {
         // todo - if organization will have no org admins left?
+
         User user = userRepository.findByIdOrThrow(id);
+
+        if (Objects.equals(user.getKeycloakId(), authContext.getUserId())) {
+            throw new BaseApiException(ApiError.NOT_ALLOWED, "You are not allowed to delete yourself");
+        }
 
         long userOrgId = user.getOrganization().getId();
 
