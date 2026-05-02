@@ -1,11 +1,10 @@
-package dev.amanda.user.application;
+package dev.amanda.user.application.use_cases;
 
 import dev.amanda.oidc.AuthContext;
 import dev.amanda.oidc.KeycloakAdmin;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.user.application.mappers.UserMapper;
-import dev.amanda.user.domain.Roles;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
 import dev.amanda.user.dto.CreateUserRequestDTO;
@@ -45,7 +44,7 @@ public class CreateUserUseCase {
         String userKeycloakId = null;
         try {
             UserRepresentation userRepresentation = keycloakAdmin.createRealmUser(
-                    organization.getRealm(), dto.firstName, dto.lastName, dto.email, Roles.USER);
+                    organization.getRealm(), dto.firstName, dto.lastName, dto.email, dto.role.toRole().getValue());
 
             userKeycloakId = userRepresentation.getId();
 
@@ -55,6 +54,7 @@ public class CreateUserUseCase {
             user.setKeycloakId(userKeycloakId);
             user.setFirstName(dto.firstName);
             user.setLastName(dto.lastName);
+            user.setRole(dto.role.toRole());
 
             userRepository.persist(user);
 

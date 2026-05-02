@@ -29,4 +29,6 @@ public class User extends BaseEntity {
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
+    @Column(nullable = false)
+    private Role role;
 }

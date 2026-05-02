@@ -5,6 +5,7 @@ import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
+import dev.amanda.user.domain.Role;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -34,6 +35,7 @@ public class SaveOrganizationUseCase {
         user.setOrganization(organization);
         user.setFirstName(dto.adminFirstName);
         user.setLastName(dto.adminLastName);
+        user.setRole(Role.SUPER_ADMIN);
 
         organizationRepository.persist(organization);
         userRepository.persist(user);

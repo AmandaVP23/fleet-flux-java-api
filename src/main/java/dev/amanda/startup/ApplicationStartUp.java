@@ -2,6 +2,7 @@ package dev.amanda.startup;
 
 import dev.amanda.config.SuperAdminConfig;
 import dev.amanda.oidc.KeycloakAdmin;
+import dev.amanda.user.domain.Role;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
 import io.quarkus.runtime.LaunchMode;
@@ -70,6 +71,7 @@ public class ApplicationStartUp {
         superAdmin.setEmail(superAdminConfig.email());
         superAdmin.setFirstName(superAdminConfig.firstName());
         superAdmin.setLastName(superAdminConfig.lastName());
+        superAdmin.setRole(Role.SUPER_ADMIN);
         return superAdmin;
     }
 }

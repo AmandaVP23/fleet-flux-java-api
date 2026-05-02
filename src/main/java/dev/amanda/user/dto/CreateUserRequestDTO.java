@@ -1,8 +1,10 @@
 package dev.amanda.user.dto;
 
+import dev.amanda.user.domain.AssignableRole;
 import dev.amanda.user.rest.validation.ValidCreateUser;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 @ValidCreateUser
@@ -21,4 +23,7 @@ public class CreateUserRequestDTO {
     public String email;
 
     public Long organizationId;
+
+    @NotNull()
+    public AssignableRole role;
 }

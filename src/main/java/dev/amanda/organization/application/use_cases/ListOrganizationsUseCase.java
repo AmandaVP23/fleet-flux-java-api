@@ -6,10 +6,10 @@ import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.OrganizationFilter;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.shared.PageResult;
+import dev.amanda.shared.application.PageRequestHelper;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BadRequestException;
 
 import java.util.List;
 import java.util.Set;
@@ -18,7 +18,6 @@ import java.util.Set;
 public class ListOrganizationsUseCase {
 
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("id", "name", "createdAt");
-    private static final int MAX_PAGE_SIZE = 100;
 
     @Inject
     OrganizationRepository organizationRepository;
@@ -26,10 +25,13 @@ public class ListOrganizationsUseCase {
     @Inject
     OrganizationMapper organizationMapper;
 
-    public PageResult<OrganizationResponseDTO> execute(int page, int size, String sortBy, String direction, OrganizationFilter filter) {
-        validate(page, size, sortBy, direction);
+    @Inject
+    PageRequestHelper pageRequestHelper;
 
-        Sort sort = buildSort(sortBy, direction);
+    public PageResult<OrganizationResponseDTO> execute(int page, int size, String sortBy, String direction, OrganizationFilter filter) {
+        pageRequestHelper.validate(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
+
+        Sort sort = pageRequestHelper.buildSort(sortBy, direction);
 
         List<Organization> organizations = switch (filter) {
             case ACTIVE -> organizationRepository.findActivePaginated(page, size, sort);
@@ -48,31 +50,5 @@ public class ListOrganizationsUseCase {
                 .toList();
 
         return new PageResult<>(data, total, page, size);
-    }
-
-    private void validate(int page, int size, String sortBy, String direction) {
-        if (page < 0) {
-            throw new BadRequestException("'page' must be >= 0");
-        }
-
-        if (size < 1 || size > MAX_PAGE_SIZE) {
-            throw new BadRequestException("'size' must be between 1 and " + MAX_PAGE_SIZE);
-        }
-
-        if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
-            throw new BadRequestException(
-                    "'sortBy' must be one of: " + ALLOWED_SORT_FIELDS
-            );
-        }
-
-        if (!direction.equalsIgnoreCase("asc") && !direction.equalsIgnoreCase("desc")) {
-            throw new BadRequestException("'direction' must be 'asc' or 'desc'");
-        }
-    }
-
-    private Sort buildSort(String sortBy, String direction) {
-        return direction.equalsIgnoreCase("desc")
-                ? Sort.by(sortBy).descending()
-                : Sort.by(sortBy).ascending();
     }
 }
