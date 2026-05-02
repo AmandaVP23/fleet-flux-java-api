@@ -354,7 +354,7 @@ public class KeycloakAdmin {
     public void deleteUser(String realm, String userKeycloakId) {
         try (Response response = this.keycloak.realm(realm).users().delete(userKeycloakId)) {
             if (response.getStatus() != 204) {
-                throw new RuntimeException("Failed to delete user: " + response.getStatus());
+                throw new RuntimeException("KeycloakAdmin - Failed to delete user: " + response.getStatus());
             }
         }
     }
