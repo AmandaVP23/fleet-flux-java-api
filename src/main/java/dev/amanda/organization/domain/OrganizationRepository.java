@@ -60,7 +60,7 @@ public class OrganizationRepository implements PanacheRepository<Organization> {
         return organization.get();
     }
 
-    public Organization findByIdOrThrow(long id) {
+    public Organization findByIdOrThrow(Long id) {
         Optional<Organization> organization = findByIdOptional(id);
 
         if (organization.isEmpty()) {

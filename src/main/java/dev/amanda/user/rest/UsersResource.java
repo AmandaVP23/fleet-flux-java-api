@@ -2,30 +2,37 @@ package dev.amanda.user.rest;
 
 import dev.amanda.oidc.AuthContext;
 import dev.amanda.oidc.AuthContextProvider;
+import dev.amanda.user.application.CreateUserUseCase;
 import dev.amanda.user.domain.Roles;
+import dev.amanda.user.dto.CreateUserRequestDTO;
+import dev.amanda.user.dto.UserResponseDTO;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.MediaType;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @Path("/users")
 public class UsersResource {
     @Inject
     AuthContextProvider authProvider;
 
+    @Inject
+    CreateUserUseCase createUserUseCase;
+
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({Roles.SUPER_ADMIN, Roles.ORG_ADMIN})
-    public Response createUser() {
+    public UserResponseDTO createUser(@Valid CreateUserRequestDTO dto) {
         AuthContext auth = authProvider.get();
-        System.out.println("Creating user: " + auth.getOrganizationId());
 
-        Map<String, Object> obj = new HashMap<>();
-
-        obj.put("message", "NOT IMPLEMENTED YET");
-        return Response.status(400).entity(obj).build();
+//        Map<String, Object> obj = new HashMap<>();
+//
+//        obj.put("message", "NOT IMPLEMENTED YET");
+//        return Response.status(400).entity(obj).build();
+        return createUserUseCase.execute(dto, auth);
     }
 }

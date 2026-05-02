@@ -308,6 +308,7 @@ public class KeycloakAdmin {
         try (Response response = superAdminRealm.users().create(user)) {
             if (response.getStatus() != 201) {
                 String body = response.readEntity(String.class);
+                log.severe("Failed to create user: " + response.getStatus() + " " + body);
                 throw new RuntimeException("Failed to create user: " + response.getStatus() + " " + body);
             }
         }
@@ -332,6 +333,7 @@ public class KeycloakAdmin {
             if (createdUserId != null) {
                 deleteUser(superAdminConfig.realm(), createdUserId);
             }
+            log.severe("Failed to set superadmin user \n" + e);
             throw new RuntimeException("Failed to set up super admin user", e);
         }
     }

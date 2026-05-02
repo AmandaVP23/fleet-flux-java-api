@@ -32,6 +32,7 @@ public class AuthContextProvider {
 
     public Long getOrganizationId() {
         String value = jwt.getClaim("organization_id");
+        System.out.println("organizationId: " + value);
         return value != null ? Long.valueOf(value) : null;
     }
 
@@ -53,5 +54,9 @@ public class AuthContextProvider {
 
     public String getLastName() {
         return jwt.getClaim("family_name");
+    }
+
+    public boolean isSuperAdmin() {
+        return hasRole(Roles.SUPER_ADMIN);
     }
 }

@@ -1,5 +1,6 @@
 package dev.amanda.oidc;
 
+import dev.amanda.user.domain.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,5 +9,9 @@ import lombok.Setter;
 public class AuthContext {
     String userId;
     String role;
-    long organizationId;
+    Long organizationId;
+
+    public boolean isSuperAdmin() {
+        return role != null && role.equalsIgnoreCase(Role.SUPER_ADMIN.toString());
+    }
 }

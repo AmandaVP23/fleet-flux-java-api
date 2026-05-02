@@ -28,6 +28,8 @@ public class SaveOrganizationUseCase {
         user.setKeycloakId(userKeycloakId);
         user.setEmail(dto.adminEmail);
         user.setOrganization(organization);
+        user.setFirstName(dto.adminFirstName);
+        user.setLastName(dto.adminLastName);
 
         organizationRepository.persist(organization);
         userRepository.persist(user);

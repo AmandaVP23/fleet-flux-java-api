@@ -1,5 +1,6 @@
 package dev.amanda.organization.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.amanda.shared.domain.BaseEntity;
 import dev.amanda.user.domain.User;
 import jakarta.persistence.*;
@@ -24,5 +25,6 @@ public class Organization extends BaseEntity {
             cascade = CascadeType.REMOVE,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
+    @JsonIgnore
     public List<User> users = new ArrayList<>();
 }

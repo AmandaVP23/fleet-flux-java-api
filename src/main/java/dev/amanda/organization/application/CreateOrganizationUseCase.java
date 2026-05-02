@@ -64,7 +64,7 @@ public class CreateOrganizationUseCase {
 
             OrganizationResponseDTO organizationResponseDTO = saveOrganizationUseCase.execute(createOrganizationDTO, realmValue, userKeycloakId);
 
-            keycloakAdmin.setUserOrganizationId(realmValue, userKeycloakId, organizationResponseDTO.id);
+            keycloakAdmin.setUserOrganizationId(realmValue, userKeycloakId, organizationResponseDTO.getId());
 
             return organizationResponseDTO;
         } catch (Exception e) {
@@ -100,3 +100,4 @@ public class CreateOrganizationUseCase {
                 .toLowerCase();
     }
 }
+   
