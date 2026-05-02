@@ -1,4 +1,4 @@
-package dev.amanda.organization.application;
+package dev.amanda.organization.application.use_cases;
 
 import java.text.Normalizer;
 
@@ -16,8 +16,10 @@ import dev.amanda.user.domain.Roles;
 import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.extern.java.Log;
 import org.keycloak.representations.idm.RealmRepresentation;
 
+@Log
 @ApplicationScoped
 public class CreateOrganizationUseCase {
 
@@ -59,8 +61,15 @@ public class CreateOrganizationUseCase {
             userKeycloakId = keycloakAdmin.createRealmUser(realmValue, createOrganizationDTO.adminFirstName, createOrganizationDTO.adminLastName, createOrganizationDTO.adminEmail, Roles.ORG_ADMIN).getId();
 
             tenantConfigResolver.evictAndReload(realmValue);
-            return saveOrganizationUseCase.execute(createOrganizationDTO, realmValue, userKeycloakId);
+
+            OrganizationResponseDTO organizationResponseDTO = saveOrganizationUseCase.execute(createOrganizationDTO, realmValue, userKeycloakId);
+
+            keycloakAdmin.setUserOrganizationId(realmValue, userKeycloakId, organizationResponseDTO.getId());
+
+            return organizationResponseDTO;
         } catch (Exception e) {
+            // todo - if organization was saved remove it also
+
             tenantConfigResolver.evict(realmValue);
 
             if (userKeycloakId != null) {
@@ -74,6 +83,8 @@ public class CreateOrganizationUseCase {
             if (e instanceof BaseApiException) {
                 throw (BaseApiException) e;
             }
+
+            log.info(e.getMessage());
 
             throw new GenericApiException();
         }
@@ -89,3 +100,4 @@ public class CreateOrganizationUseCase {
                 .toLowerCase();
     }
 }
+   

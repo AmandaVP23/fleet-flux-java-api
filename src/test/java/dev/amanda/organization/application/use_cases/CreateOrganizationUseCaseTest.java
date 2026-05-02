@@ -1,4 +1,4 @@
-package dev.amanda.organization.application;
+package dev.amanda.organization.application.use_cases;
 
 import dev.amanda.oidc.KeycloakAdmin;
 import dev.amanda.oidc.OrgTenantConfigResolver;
@@ -30,6 +30,7 @@ import static org.mockito.Mockito.*;
 
 @QuarkusTest
 public class CreateOrganizationUseCaseTest {
+
     @Inject
     CreateOrganizationUseCase createOrganizationUseCase;
 
@@ -51,11 +52,12 @@ public class CreateOrganizationUseCaseTest {
     private CreateOrganizationDTO createDto;
     private RealmRepresentation realmRepresentation;
     private UserRepresentation userRepresentation;
+    private OrganizationResponseDTO organizationResponseDTO;
 
     private static final String ORGANIZATION_NAME = "Example Corp";
-    private static final String EXPECTED_REALM  = "example_corp";
-    private static final String USER_KC_ID      = "user-uuid-456";
-    private static final String ADMIN_EMAIL     = "admin@acme.com";
+    private static final String EXPECTED_REALM = "example_corp";
+    private static final String USER_KC_ID = "user-uuid-456";
+    private static final String ADMIN_EMAIL = "admin@acme.com";
 
     @BeforeEach
     public void setUp() {
@@ -70,9 +72,16 @@ public class CreateOrganizationUseCaseTest {
 
         userRepresentation = new UserRepresentation();
         userRepresentation.setId(USER_KC_ID);
+
+        organizationResponseDTO = new OrganizationResponseDTO();
+        organizationResponseDTO.setName(ORGANIZATION_NAME);
+        organizationResponseDTO.setId(123L);
+
         when(keycloakAdmin.createRealm(anyString(), anyString())).thenReturn(realmRepresentation);
         when(keycloakAdmin.createRealmUser(anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(userRepresentation);
+
+        when(saveOrganizationUseCase.execute(any(CreateOrganizationDTO.class), anyString(), anyString())).thenReturn(organizationResponseDTO);
     }
 
     @Nested
@@ -80,8 +89,8 @@ public class CreateOrganizationUseCaseTest {
         @Test
         void shouldReturnResponseFromSaveUseCase() {
             var expected = new OrganizationResponseDTO();
-            expected.id = 123L;
-            expected.name = ORGANIZATION_NAME;
+            expected.setId(123L);
+            expected.setName(ORGANIZATION_NAME);
 
             when(saveOrganizationUseCase.execute(createDto, EXPECTED_REALM, USER_KC_ID)).thenReturn(expected);
 
@@ -364,3 +373,4 @@ public class CreateOrganizationUseCaseTest {
         }
     }
 }
+    

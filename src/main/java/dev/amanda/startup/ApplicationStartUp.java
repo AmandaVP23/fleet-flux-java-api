@@ -2,21 +2,20 @@ package dev.amanda.startup;
 
 import dev.amanda.config.SuperAdminConfig;
 import dev.amanda.oidc.KeycloakAdmin;
+import dev.amanda.user.domain.Role;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
-import io.quarkus.arc.profile.IfBuildProfile;
+import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import com.github.lalyos.jfiglet.FigletFont;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import lombok.extern.jbosslog.JBossLog;
-import org.jboss.logging.Logger;
+import lombok.extern.java.Log;
 
 @ApplicationScoped
-@JBossLog
-@IfBuildProfile("!test")
+@Log
 public class ApplicationStartUp {
     public static final String GREEN = "\u001B[32m";
     public static final String RESET = "\u001B[0m";
@@ -32,8 +31,15 @@ public class ApplicationStartUp {
 
     void onStart(@Observes StartupEvent ev) throws Exception {
         log.info("The application is starting...");
+
+        System.out.println("Launch mode: " + LaunchMode.current());
+
         String ascii = FigletFont.convertOneLine("FleetFlux");
         System.out.println(GREEN + ascii + RESET);
+
+        if (LaunchMode.current() == LaunchMode.TEST) {
+            return;
+        }
 
         createDefaultSuperAdmin();
     }
@@ -48,8 +54,12 @@ public class ApplicationStartUp {
                 .ifPresentOrElse(
                         user -> log.info("SuperAdmin already exists in DB, skipping creation"),
                         () -> {
-                            userRepository.persist(buildSuperAdminUser(keycloakId));
-                            log.info("SuperAdmin User created!");
+                            try {
+                                userRepository.persist(buildSuperAdminUser(keycloakId));
+                                log.info("SuperAdmin User created!");
+                            } catch (Exception e) {
+                                log.severe("SuperAdmin User creation failed!" + e.getMessage());
+                            }
                         }
                 );
 
@@ -59,6 +69,9 @@ public class ApplicationStartUp {
         User superAdmin = new User();
         superAdmin.setKeycloakId(keycloakId);
         superAdmin.setEmail(superAdminConfig.email());
+        superAdmin.setFirstName(superAdminConfig.firstName());
+        superAdmin.setLastName(superAdminConfig.lastName());
+        superAdmin.setRole(Role.SUPER_ADMIN);
         return superAdmin;
     }
 }

@@ -16,6 +16,12 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
     @Column(name = "keycloak_id", nullable = false, unique = true)
     private String keycloakId;
 
@@ -23,4 +29,6 @@ public class User extends BaseEntity {
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
+    @Column(nullable = false)
+    private Role role;
 }
