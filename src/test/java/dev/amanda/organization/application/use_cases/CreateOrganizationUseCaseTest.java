@@ -1,9 +1,7 @@
-package dev.amanda.organization.application;
+package dev.amanda.organization.application.use_cases;
 
 import dev.amanda.oidc.KeycloakAdmin;
 import dev.amanda.oidc.OrgTenantConfigResolver;
-import dev.amanda.organization.application.use_cases.CreateOrganizationUseCase;
-import dev.amanda.organization.application.use_cases.SaveOrganizationUseCase;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
