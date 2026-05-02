@@ -1,5 +1,6 @@
 package dev.amanda.user.domain;
 
+import dev.amanda.user.exceptions.UserNotFoundException;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -35,6 +36,16 @@ public class UserRepository implements PanacheRepository<User> {
     }
 
     public long countByOrganization(Long orgId) {
-        return count("organizationId", orgId);
+        return count("organization.id", orgId);
+    }
+
+    public User findByIdOrThrow(long id) {
+        Optional<User> user = this.findByIdOptional(id);
+
+        if (user.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+
+        return user.get();
     }
 }

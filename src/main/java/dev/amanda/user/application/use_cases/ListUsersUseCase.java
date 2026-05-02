@@ -30,18 +30,20 @@ public class ListUsersUseCase {
 
         Sort sort = pageRequestHelper.buildSort(sortBy, direction);
 
-        long total = userRepository.countAll();
+        long total;
 
         List<UserResponseDTO> data;
         List<User> users;
 
         if (authContext.isSuperAdmin()) {
+            total = userRepository.countAll();
             users = userRepository.findAllPaginated(pageNumber, pageSize, sort);
         } else {
             Long organizationId = authContext.getOrganizationId();
             if (organizationId == null) {
                 throw new BadRequestException("Organization id is null");
             }
+            total = userRepository.countByOrganization(organizationId);
             users = userRepository.findPaginatedByOrganization(organizationId, pageNumber, pageSize, sort);
         }
 

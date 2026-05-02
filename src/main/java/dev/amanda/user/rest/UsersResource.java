@@ -4,6 +4,7 @@ import dev.amanda.oidc.AuthContext;
 import dev.amanda.oidc.AuthContextProvider;
 import dev.amanda.shared.PageResult;
 import dev.amanda.user.application.use_cases.CreateUserUseCase;
+import dev.amanda.user.application.use_cases.GetUserByIdUseCase;
 import dev.amanda.user.application.use_cases.ListUsersUseCase;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.user.dto.CreateUserRequestDTO;
@@ -25,6 +26,9 @@ public class UsersResource {
     @Inject
     ListUsersUseCase listAllUsersUseCase;
 
+    @Inject
+    GetUserByIdUseCase getUserByIdUseCase;
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({Roles.SUPER_ADMIN, Roles.ORG_ADMIN})
@@ -44,5 +48,14 @@ public class UsersResource {
     ) {
         AuthContext authContext = authProvider.get();
         return listAllUsersUseCase.execute(page, size, sortBy, direction, authContext);
+    }
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({Roles.SUPER_ADMIN, Roles.ORG_ADMIN})
+    public UserResponseDTO getUser(@PathParam("id") long id) {
+        AuthContext authContext = authProvider.get();
+        return getUserByIdUseCase.execute(id, authContext);
     }
 }
