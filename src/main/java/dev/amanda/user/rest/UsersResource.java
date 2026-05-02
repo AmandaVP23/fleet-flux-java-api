@@ -4,6 +4,7 @@ import dev.amanda.oidc.AuthContext;
 import dev.amanda.oidc.AuthContextProvider;
 import dev.amanda.shared.PageResult;
 import dev.amanda.user.application.use_cases.CreateUserUseCase;
+import dev.amanda.user.application.use_cases.DeleteUserUseCase;
 import dev.amanda.user.application.use_cases.GetUserByIdUseCase;
 import dev.amanda.user.application.use_cases.ListUsersUseCase;
 import dev.amanda.user.domain.Roles;
@@ -28,6 +29,9 @@ public class UsersResource {
 
     @Inject
     GetUserByIdUseCase getUserByIdUseCase;
+
+    @Inject
+    DeleteUserUseCase deleteUserUseCase;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -57,5 +61,13 @@ public class UsersResource {
     public UserResponseDTO getUser(@PathParam("id") long id) {
         AuthContext authContext = authProvider.get();
         return getUserByIdUseCase.execute(id, authContext);
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @RolesAllowed({Roles.SUPER_ADMIN, Roles.ORG_ADMIN})
+    public void deleteUser(@PathParam("id") long id) {
+        AuthContext authContext = authProvider.get();
+        deleteUserUseCase.execute(id, authContext);
     }
 }

@@ -11,7 +11,8 @@ public enum ApiError {
     ORGANIZATION_NOT_FOUND(104, "Organization not found", 404),
     ORGANIZATION_INACTIVE(105, "Organization is deleted", 400),
     ORGANIZATION_NOT_INACTIVE(106, "Organization is not deleted", 400),
-    USER_NOT_FOUND(107, "User not found", 404);
+    USER_NOT_FOUND(107, "User not found", 404),
+    NOT_ALLOWED(108, "Not allowed", 403);
 
     private final int errorCode;
     private final String message;
