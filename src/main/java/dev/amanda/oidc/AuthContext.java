@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthContext {
-    String userId;
+    String userKeycloakId;
     String role;
     Long organizationId;
 

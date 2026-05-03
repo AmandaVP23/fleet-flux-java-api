@@ -39,6 +39,20 @@ public class UserRepository implements PanacheRepository<User> {
         return count("organization.id", orgId);
     }
 
+    public Optional<User> findByKeycloakId(String keycloakId) {
+        return find("keycloakId", keycloakId).firstResultOptional();
+    }
+
+    public User findByKeycloakIdOrThrow(String keycloakId) {
+        Optional<User> user = this.findByKeycloakId(keycloakId);
+
+        if (user.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+
+        return user.get();
+    }
+
     public User findByIdOrThrow(long id) {
         Optional<User> user = this.findByIdOptional(id);
 
