@@ -2,6 +2,7 @@ package dev.amanda.vehicle_brand.rest;
 
 import dev.amanda.user.domain.Roles;
 import dev.amanda.vehicle_brand.application.use_cases.CreateVehicleBrandUseCase;
+import dev.amanda.vehicle_brand.application.use_cases.GetVehicleBrandByIdUseCase;
 import dev.amanda.vehicle_brand.application.use_cases.ListVehicleBrandsUseCase;
 import dev.amanda.vehicle_brand.dto.CreateVehicleBrandRequestDTO;
 import dev.amanda.vehicle_brand.dto.VehicleBrandResponseDTO;
@@ -9,10 +10,7 @@ import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
@@ -27,6 +25,9 @@ public class VehicleBrandsResource {
 
     @Inject
     ListVehicleBrandsUseCase listVehicleBrandsUseCase;
+
+    @Inject
+    GetVehicleBrandByIdUseCase getVehicleBrandByIdUseCase;
 
     @GET
     @Operation(
@@ -43,11 +44,8 @@ public class VehicleBrandsResource {
             summary = "Get assignable vehicles brand by id (not deleted)"
     )
     @Authenticated
-    public Response getVehicleBrandById(@PathParam("id") Long id) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("message", "NOT IMPLEMENTED YET");
-
-        return Response.ok(map).build();
+    public VehicleBrandResponseDTO getVehicleBrandById(@PathParam("id") Long id) {
+        return getVehicleBrandByIdUseCase.execute(id);
     }
 
     @POST
@@ -57,5 +55,18 @@ public class VehicleBrandsResource {
     @RolesAllowed(Roles.SUPER_ADMIN)
     public VehicleBrandResponseDTO createVehicleBrand(@Valid CreateVehicleBrandRequestDTO vehicleBrand) {
         return createVehicleBrandUseCase.execute(vehicleBrand);
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Operation(
+            summary = "Get assignable vehicles brand by id (not deleted)"
+    )
+    @Authenticated
+    public Response softDeleteVehicleBrand(@PathParam("id") Long id) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("message", "NOT IMPLEMENTED YET");
+
+        return Response.ok(map).build();
     }
 }
