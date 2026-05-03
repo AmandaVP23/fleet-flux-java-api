@@ -38,7 +38,7 @@ public class SoftDeleteOrganizationUseCase {
         organization.setDeletedAt(Instant.now());
         organizationRepository.persist(organization);
 
-        String realm =  organization.getRealm();
+        String realm = organization.getRealm();
 
         keycloakAdmin.revokeAllSessions(realm);
 

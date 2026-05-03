@@ -372,6 +372,16 @@ public class KeycloakAdmin {
         keycloak.realm(realm).logoutAll();
     }
 
+    public void changeUserEnableState(String realm, String userId, boolean enable) {
+        UserRepresentation user = keycloak.realm(realm).users().get(userId).toRepresentation();
+        user.setEnabled(enable);
+
+        keycloak.realm(realm)
+                .users()
+                .get(userId)
+                .update(user);
+    }
+
     public void changeRealmUsersEnableState(String realm, boolean isEnable) {
         List<UserRepresentation> users = keycloak.realm(realm).users().list();
 
