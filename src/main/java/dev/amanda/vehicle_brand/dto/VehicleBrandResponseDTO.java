@@ -1,4 +1,4 @@
-package dev.amanda.organization.dto;
+package dev.amanda.vehicle_brand.dto;
 
 import dev.amanda.shared.application.BaseResponseDTO;
 import lombok.Getter;
@@ -8,6 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrganizationResponseDTO extends BaseResponseDTO {
+public class VehicleBrandResponseDTO extends BaseResponseDTO {
     private String name;
 }
