@@ -30,7 +30,7 @@ public class DeleteUserUseCase {
 
         User user = userRepository.findByIdOrThrow(id);
 
-        if (Objects.equals(user.getKeycloakId(), authContext.getUserId())) {
+        if (Objects.equals(user.getKeycloakId(), authContext.getUserKeycloakId())) {
             throw new BaseApiException(ApiError.NOT_ALLOWED, "You are not allowed to delete yourself");
         }
 

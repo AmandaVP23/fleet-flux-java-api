@@ -24,7 +24,7 @@ public class AuthContextProvider {
             ctx.role =  Roles.ORG_ADMIN;
         }
 
-        ctx.userId = getUserId();
+        ctx.userKeycloakId = getUserKeycloakId();
         ctx.organizationId = this.getOrganizationId();
 
         return ctx;
@@ -39,7 +39,7 @@ public class AuthContextProvider {
         return identity.hasRole(role);
     }
 
-    public String getUserId() {
+    public String getUserKeycloakId() {
         return jwt.getSubject();
     }
 

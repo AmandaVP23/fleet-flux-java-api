@@ -3,13 +3,11 @@ package dev.amanda.user.rest;
 import dev.amanda.oidc.AuthContext;
 import dev.amanda.oidc.AuthContextProvider;
 import dev.amanda.shared.PageResult;
-import dev.amanda.user.application.use_cases.CreateUserUseCase;
-import dev.amanda.user.application.use_cases.DeleteUserUseCase;
-import dev.amanda.user.application.use_cases.GetUserByIdUseCase;
-import dev.amanda.user.application.use_cases.ListUsersUseCase;
+import dev.amanda.user.application.use_cases.*;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.user.dto.CreateUserRequestDTO;
 import dev.amanda.user.dto.UserResponseDTO;
+import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -33,6 +31,9 @@ public class UsersResource {
     @Inject
     DeleteUserUseCase deleteUserUseCase;
 
+    @Inject
+    GetCurrentUserUseCase getCurrentUserUseCase;
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({Roles.SUPER_ADMIN, Roles.ORG_ADMIN})
@@ -52,6 +53,15 @@ public class UsersResource {
     ) {
         AuthContext authContext = authProvider.get();
         return listAllUsersUseCase.execute(page, size, sortBy, direction, authContext);
+    }
+
+    @GET
+    @Path("/me")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Authenticated
+    public UserResponseDTO getCurrentUser() {
+        AuthContext authContext = authProvider.get();
+        return getCurrentUserUseCase.execute(authContext);
     }
 
     @GET
