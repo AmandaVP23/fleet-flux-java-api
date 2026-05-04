@@ -16,6 +16,7 @@ import jakarta.ws.rs.core.MediaType;
 
 @Path("/users")
 public class UsersResource {
+
     @Inject
     AuthContextProvider authProvider;
 

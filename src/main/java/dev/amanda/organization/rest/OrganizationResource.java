@@ -39,6 +39,7 @@ public class OrganizationResource {
 
     @Inject
     SoftDeleteOrganizationUseCase softDeleteOrganizationUseCase;
+
     @Inject
     HardDeleteOrganizationUseCase hardDeleteOrganizationUseCase;
 

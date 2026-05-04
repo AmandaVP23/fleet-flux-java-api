@@ -9,11 +9,12 @@ public enum ApiError {
     REALM_KEYCLOAK_CONFLICT(102, "Keycloak conflict creating realm: %s", 409),
     USER_WITH_EMAIL_ALREADY_EXISTS(103, "User with same email already exists", 409),
     ORGANIZATION_NOT_FOUND(104, "Organization not found", 404),
-    ORGANIZATION_INACTIVE(105, "Organization is deleted", 400),
-    ORGANIZATION_NOT_INACTIVE(106, "Organization is not deleted", 400),
+    ORGANIZATION_INACTIVE(105, "Organization is deleted", 422),
+    ORGANIZATION_NOT_INACTIVE(106, "Organization is not deleted", 422),
     USER_NOT_FOUND(107, "User not found", 404),
     NOT_ALLOWED(108, "Not allowed", 403),
-    VEHICLE_BRAND_NOT_FOUND(107, "User not found", 404),;
+    VEHICLE_BRAND_NOT_FOUND(107, "User not found", 404),
+    VEHICLE_BRAND_DELETED(106, "Vehicle brand is already deleted", 422),;
 
     private final int errorCode;
     private final String message;

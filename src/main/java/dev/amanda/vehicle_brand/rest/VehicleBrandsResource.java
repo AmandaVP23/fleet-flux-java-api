@@ -1,9 +1,11 @@
 package dev.amanda.vehicle_brand.rest;
 
+import dev.amanda.oidc.AuthContextProvider;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.vehicle_brand.application.use_cases.CreateVehicleBrandUseCase;
 import dev.amanda.vehicle_brand.application.use_cases.GetVehicleBrandByIdUseCase;
 import dev.amanda.vehicle_brand.application.use_cases.ListVehicleBrandsUseCase;
+import dev.amanda.vehicle_brand.application.use_cases.SoftDeleteVehicleBrandUseCase;
 import dev.amanda.vehicle_brand.dto.CreateVehicleBrandRequestDTO;
 import dev.amanda.vehicle_brand.dto.VehicleBrandResponseDTO;
 import io.quarkus.security.Authenticated;
@@ -14,7 +16,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Path("/vehicle-brands")
@@ -29,19 +30,27 @@ public class VehicleBrandsResource {
     @Inject
     GetVehicleBrandByIdUseCase getVehicleBrandByIdUseCase;
 
+    @Inject
+    SoftDeleteVehicleBrandUseCase softDeleteVehicleBrandUseCase;
+
+    @Inject
+    AuthContextProvider authProvider;
+
     @GET
     @Operation(
-            summary = "Get all assignable vehicles brands (not deleted)"
+            summary = "Get all assignable vehicles brands"
     )
     @Authenticated
-    public List<VehicleBrandResponseDTO> getAllActiveVehicleBrands() {
-        return listVehicleBrandsUseCase.execute();
+    public List<VehicleBrandResponseDTO> getAllActiveVehicleBrands(
+            @QueryParam("filter") @DefaultValue("ONLY_ACTIVE") VehicleBrandDeletionFilter filter
+    ) {
+        return listVehicleBrandsUseCase.execute(filter, authProvider.get());
     }
 
     @GET
     @Path("/{id}")
     @Operation(
-            summary = "Get assignable vehicles brand by id (not deleted)"
+            summary = "Get assignable vehicles brand by id"
     )
     @Authenticated
     public VehicleBrandResponseDTO getVehicleBrandById(@PathParam("id") Long id) {
@@ -64,9 +73,8 @@ public class VehicleBrandsResource {
     )
     @Authenticated
     public Response softDeleteVehicleBrand(@PathParam("id") Long id) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("message", "NOT IMPLEMENTED YET");
+        softDeleteVehicleBrandUseCase.execute(id);
 
-        return Response.ok(map).build();
+        return Response.ok().build();
     }
 }
