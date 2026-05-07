@@ -2,9 +2,11 @@ package dev.amanda.vehicle.rest;
 
 import dev.amanda.oidc.AuthContext;
 import dev.amanda.oidc.AuthContextProvider;
+import dev.amanda.user.domain.Roles;
 import dev.amanda.vehicle.applications.use_cases.CreateVehicleUseCase;
 import dev.amanda.vehicle.dto.CreateVehicleRequestDTO;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -25,6 +27,7 @@ public class VehicleResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ Roles.SUPER_ADMIN, Roles.ORG_ADMIN })
     public VehicleResponseDTO create(@Valid CreateVehicleRequestDTO createVehicleRequestDTO) {
         AuthContext authContext = authProvider.get();
 

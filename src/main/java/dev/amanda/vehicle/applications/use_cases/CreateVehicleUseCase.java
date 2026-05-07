@@ -30,13 +30,15 @@ public class CreateVehicleUseCase {
 
     @Transactional
     public VehicleResponseDTO execute(CreateVehicleRequestDTO dto, AuthContext authContext) {
-        Long effectiveOrgId;
+        long effectiveOrgId;
 
         if (authContext.isSuperAdmin()) {
             effectiveOrgId = dto.organizationId();
         } else {
             effectiveOrgId = authContext.getOrganizationId();
         }
+
+        System.out.println("effectiveOrgId: " + effectiveOrgId);
 
         Organization organization = organizationRepository.findActiveByIdOrThrow(effectiveOrgId);
         VehicleBrand vehicleBrand = vehicleBrandRepository.findActiveByIdOrThrow(dto.brandId());

@@ -22,7 +22,7 @@ public class VehicleBrandRepository implements PanacheRepository<VehicleBrand> {
     public VehicleBrand findActiveByIdOrThrow(Long id) {
         Optional<VehicleBrand> vehicleBrand = this.findByIdOptional(id);
 
-        if (vehicleBrand.isEmpty() || vehicleBrand.get().getDeletedAt() == null) {
+        if (vehicleBrand.isEmpty() || vehicleBrand.get().getDeletedAt() != null) {
             throw new VehicleBrandNotFoundException();
         }
 

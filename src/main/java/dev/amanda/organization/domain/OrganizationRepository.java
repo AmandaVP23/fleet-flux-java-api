@@ -53,7 +53,7 @@ public class OrganizationRepository implements PanacheRepository<Organization> {
     public Organization findActiveByIdOrThrow(long id) {
         Optional<Organization> organization = findByIdOptional(id);
 
-        if (organization.isEmpty() || organization.get().getDeletedAt() == null) {
+        if (organization.isEmpty() || organization.get().getDeletedAt() != null) {
             throw new OrganizationNotFoundException();
         }
 
