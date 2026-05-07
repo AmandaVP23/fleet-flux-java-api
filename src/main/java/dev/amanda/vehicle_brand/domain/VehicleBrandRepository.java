@@ -19,6 +19,16 @@ public class VehicleBrandRepository implements PanacheRepository<VehicleBrand> {
         return vehicleBrand.get();
     }
 
+    public VehicleBrand findActiveByIdOrThrow(Long id) {
+        Optional<VehicleBrand> vehicleBrand = this.findByIdOptional(id);
+
+        if (vehicleBrand.isEmpty() || vehicleBrand.get().getDeletedAt() == null) {
+            throw new VehicleBrandNotFoundException();
+        }
+
+        return vehicleBrand.get();
+    }
+
     public List<VehicleBrand> listAllDeleted() {
         return find("deletedAt IS NOT NULL")
                 .list();

@@ -54,10 +54,10 @@ public class Vehicle extends BaseEntity {
     VehicleFuelType fuelType;
 
     @Column()
-    int fuelCapacityInLiters;
+    double fuelCapacityInLiters;
 
     @Column()
-    int avgConsumptionPer100km;
+    double avgConsumptionPer100km;
 
     @Column()
     Instant lastServiceDate;

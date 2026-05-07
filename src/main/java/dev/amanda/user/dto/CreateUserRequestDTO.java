@@ -1,29 +1,30 @@
 package dev.amanda.user.dto;
 
+import dev.amanda.shared.rest.organization_id_with_auth.HasOrganizationId;
 import dev.amanda.user.domain.AssignableRole;
-import dev.amanda.user.rest.validation.ValidCreateUser;
+import dev.amanda.shared.rest.organization_id_with_auth.ValidOrganizationIdWithAuth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
-@ValidCreateUser
-public class CreateUserRequestDTO {
+@ValidOrganizationIdWithAuth
+public record CreateUserRequestDTO (
     @NotBlank()
     @Length(min = 3, max = 80)
-    public String firstName;
+    String firstName,
 
     @NotBlank()
     @Length(min = 3, max = 80)
-    public String lastName;
+    String lastName,
 
     @NotBlank()
     @Length(min = 3, max = 80)
     @Email
-    public String email;
+    String email,
 
-    public Long organizationId;
+    Long organizationId,
 
     @NotNull()
-    public AssignableRole role;
-}
+    AssignableRole role
+) implements HasOrganizationId {}

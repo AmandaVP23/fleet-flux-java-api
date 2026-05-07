@@ -1,4 +1,4 @@
-package dev.amanda.user.rest.validation;
+package dev.amanda.shared.rest.organization_id_with_auth;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = CreateUserValidator.class)
-public @interface ValidCreateUser {
+@Constraint(validatedBy = OrganizationIdWithAuthValidator.class)
+public @interface ValidOrganizationIdWithAuth {
     String message() default "Invalid create user request";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
