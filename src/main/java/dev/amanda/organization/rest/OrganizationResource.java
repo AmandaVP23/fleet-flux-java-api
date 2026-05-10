@@ -83,7 +83,7 @@ public class OrganizationResource {
             @QueryParam("size") @DefaultValue("20") int size,
             @QueryParam("sortBy") @DefaultValue("name") String sortBy,
             @QueryParam("direction") @DefaultValue("asc") String direction,
-            @QueryParam("filter") @DefaultValue("active") OrganizationFilter filter
+            @QueryParam("filter") @DefaultValue("ACTIVE") OrganizationFilter filter
     ) {
         return listOrganizationsUseCase.execute(page, size, sortBy, direction, filter);
     }

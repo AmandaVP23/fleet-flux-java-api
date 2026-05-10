@@ -1,6 +1,8 @@
 package dev.amanda.organization.domain;
 
+import dev.amanda.organization.dto.OrganizationFilter;
 import dev.amanda.organization.exceptions.OrganizationNotFoundException;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -11,6 +13,10 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class OrganizationRepository implements PanacheRepository<Organization> {
+
+    private static final String ACTIVE_FILTER = "deletedAt IS NULL";
+    private static final String DELETED_FILTER = "deletedAt IS NOT NULL";
+
     public Optional<Organization> findByName(String name) {
         return find("name", name).firstResultOptional();
     }
@@ -19,54 +25,41 @@ public class OrganizationRepository implements PanacheRepository<Organization> {
         return find("realm", realm).firstResultOptional();
     }
 
-    public List<Organization> findPaginated(int page, int size, Sort sort) {
-        return findAll(sort)
+    public List<Organization> findPaginated(
+            int page,
+            int size,
+            Sort sort,
+            OrganizationFilter filter
+    ) {
+        PanacheQuery<Organization> query = switch (filter) {
+            case ALL -> findAll(sort);
+            case ACTIVE -> find(ACTIVE_FILTER, sort);
+            case DELETED -> find(DELETED_FILTER, sort);
+        };
+
+        return query
                 .page(Page.of(page, size))
                 .list();
     }
 
-    public List<Organization> findActivePaginated(int page, int size, Sort sort) {
-        return find("deletedAt IS NULL", sort)
-                .page(Page.of(page, size))
-                .list();
+    public long count(OrganizationFilter filter) {
+        return switch (filter) {
+            case ALL -> count();
+            case ACTIVE -> count(ACTIVE_FILTER);
+            case DELETED -> count(DELETED_FILTER);
+        };
     }
-
-    public List<Organization> findDeletedPaginated(int page, int size, Sort sort) {
-        return find("deletedAt IS NOT NULL", sort)
-                .page(Page.of(page, size))
-                .list();
-    }
-
-    public long countAll() {
-        return count();
-    }
-
-    public long countActive() {
-        return count("deletedAt IS NULL");
-    }
-
-    public long countDeleted() {
-        return count("deletedAt IS NOT NULL");
-    }
-
 
     public Organization findActiveByIdOrThrow(long id) {
-        Optional<Organization> organization = findByIdOptional(id);
-
-        if (organization.isEmpty() || organization.get().getDeletedAt() != null) {
-            throw new OrganizationNotFoundException();
-        }
-
-        return organization.get();
+        return findByIdOptional(id)
+                .orElseThrow(OrganizationNotFoundException::new);
     }
 
     public Organization findByIdOrThrow(Long id) {
-        Optional<Organization> organization = findByIdOptional(id);
-
-        if (organization.isEmpty()) {
-            throw new OrganizationNotFoundException();
-        }
-
-        return organization.get();
+        return find(
+                "id = ?1 and deletedAt IS NULL",
+                id
+        ).firstResultOptional()
+                .orElseThrow(OrganizationNotFoundException::new);
     }
 }

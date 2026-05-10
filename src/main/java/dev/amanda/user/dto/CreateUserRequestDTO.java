@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
-@ValidOrganizationIdWithAuth
+@ValidOrganizationIdWithAuth()
 public record CreateUserRequestDTO (
     @NotBlank()
     @Length(min = 3, max = 80)

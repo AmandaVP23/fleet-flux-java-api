@@ -2,18 +2,18 @@ package dev.amanda.vehicle.rest;
 
 import dev.amanda.oidc.AuthContext;
 import dev.amanda.oidc.AuthContextProvider;
+import dev.amanda.shared.PageResult;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.vehicle.applications.use_cases.CreateVehicleUseCase;
+import dev.amanda.vehicle.applications.use_cases.ListVehiclesUseCase;
 import dev.amanda.vehicle.dto.CreateVehicleRequestDTO;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 
 @Path("/vehicle")
 public class VehicleResource {
@@ -24,6 +24,9 @@ public class VehicleResource {
     @Inject
     CreateVehicleUseCase createVehicleUseCase;
 
+    @Inject
+    ListVehiclesUseCase listVehiclesUseCase;
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -33,4 +36,24 @@ public class VehicleResource {
 
         return createVehicleUseCase.execute(createVehicleRequestDTO, authContext);
     }
+
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ Roles.SUPER_ADMIN, Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
+    public PageResult<VehicleResponseDTO> listVehicles(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("size") @DefaultValue("20") int size,
+            @QueryParam("sortBy") @DefaultValue("createdAt") String sortBy,
+            @QueryParam("direction") @DefaultValue("asc") String direction,
+            @Parameter(
+                    name = "organizationId",
+                    description = "Only usable by SUPER_ADMIN."
+            )
+            @QueryParam("organizationId") Long organizationId
+    ) {
+        AuthContext authContext = authProvider.get();
+        return listVehiclesUseCase.execute(page, size, sortBy, direction, organizationId, authContext);
+    }
+
 }

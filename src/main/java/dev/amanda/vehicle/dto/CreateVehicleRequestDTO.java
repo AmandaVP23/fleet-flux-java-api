@@ -32,15 +32,3 @@ public record CreateVehicleRequestDTO(
         VehicleOwnershipType ownershipType,
         @NotNull() VehicleStatus status
 ) implements HasOrganizationId {}
-
-
-
-//@Column(length = 180)
-//String insuranceCompany;
-//
-//@Column()
-//Instant inspectionDueDate;
-//
-//@Column()
-//@Enumerated(EnumType.STRING)
-//VehicleOwnershipType ownershipType;

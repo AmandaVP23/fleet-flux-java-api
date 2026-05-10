@@ -44,12 +44,14 @@ public class UsersResource {
         return createUserUseCase.execute(dto, auth);
     }
 
+    // todo - filter by organization
+    // todo sortBy fullName -> firstName + lastName
     @GET
     @RolesAllowed({Roles.SUPER_ADMIN, Roles.ORG_ADMIN})
-    public PageResult<UserResponseDTO> listAllUsersAsSuperAdmin(
+    public PageResult<UserResponseDTO> listUsers(
             @QueryParam("page") @DefaultValue("0") int page,
             @QueryParam("size") @DefaultValue("20") int size,
-            @QueryParam("sortBy") @DefaultValue("name") String sortBy,
+            @QueryParam("sortBy") @DefaultValue("firstName") String sortBy,
             @QueryParam("direction") @DefaultValue("asc") String direction
     ) {
         AuthContext authContext = authProvider.get();
