@@ -1,5 +1,6 @@
 package dev.amanda.vehicle.domain;
 
+import dev.amanda.vehicle.exceptions.VehicleNotFoundException;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -11,6 +12,11 @@ import java.util.Map;
 
 @ApplicationScoped
 public class VehicleRepository implements PanacheRepository<Vehicle> {
+    public Vehicle findByIdOrThrow(long id) {
+        return findByIdOptional(id)
+                .orElseThrow(VehicleNotFoundException::new);
+    }
+
     public List<Vehicle> listPaginated(Long organizationId, int page, int size, Sort sort) {
         Map<String, Object> params = new HashMap<>();
 
@@ -36,7 +42,7 @@ public class VehicleRepository implements PanacheRepository<Vehicle> {
         String query = "1=1";
 
         if (organizationId != null) {
-            query += " and organizationId = :orgId";
+            query += " and organization.id = :orgId";
             params.put("orgId", organizationId);
         }
 

@@ -14,7 +14,8 @@ public enum ApiError {
     ORGANIZATION_NOT_INACTIVE(106, "Organization is not deleted", 422),
     USER_NOT_FOUND(107, "User not found", 404),
     VEHICLE_BRAND_NOT_FOUND(107, "User not found", 404),
-    VEHICLE_BRAND_DELETED(106, "Vehicle brand is already deleted", 422),;
+    VEHICLE_BRAND_DELETED(106, "Vehicle brand is already deleted", 422),
+    VEHICLE_NOT_FOUND(108, "Vehicle not found", 404),;
 
     private final int errorCode;
     private final String message;

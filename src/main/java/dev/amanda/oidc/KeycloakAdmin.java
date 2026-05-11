@@ -75,6 +75,8 @@ public class KeycloakAdmin {
         webClient.setRedirectUris(List.of("*"));
         webClient.setEnabled(true);
         webClient.setPublicClient(true);
+        // useful for typescript tester
+        webClient.setDirectAccessGrantsEnabled(true);
 
         clients.add(webClient);
 

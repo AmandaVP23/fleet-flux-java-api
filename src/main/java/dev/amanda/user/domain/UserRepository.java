@@ -15,8 +15,9 @@ public class UserRepository implements PanacheRepository<User> {
         return find("email", email).firstResultOptional();
     }
 
+    // todo - return users by organization
     public List<User> findUsersInOrganization(long organizationId){
-        return find("organizationId", organizationId).list();
+        return find("organization.id", organizationId).list();
     }
 
     public List<User> findAllPaginated(int page, int size, Sort sort) {
@@ -54,12 +55,7 @@ public class UserRepository implements PanacheRepository<User> {
     }
 
     public User findByIdOrThrow(long id) {
-        Optional<User> user = this.findByIdOptional(id);
-
-        if (user.isEmpty()) {
-            throw new UserNotFoundException();
-        }
-
-        return user.get();
+        return findByIdOptional(id)
+                .orElseThrow(UserNotFoundException::new);
     }
 }

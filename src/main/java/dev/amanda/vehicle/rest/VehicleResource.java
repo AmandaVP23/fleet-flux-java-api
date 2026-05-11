@@ -5,6 +5,7 @@ import dev.amanda.oidc.AuthContextProvider;
 import dev.amanda.shared.PageResult;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.vehicle.applications.use_cases.CreateVehicleUseCase;
+import dev.amanda.vehicle.applications.use_cases.GetVehicleByIdUseCase;
 import dev.amanda.vehicle.applications.use_cases.ListVehiclesUseCase;
 import dev.amanda.vehicle.dto.CreateVehicleRequestDTO;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
@@ -15,7 +16,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 
-@Path("/vehicle")
+@Path("/vehicles")
 public class VehicleResource {
 
     @Inject
@@ -26,6 +27,9 @@ public class VehicleResource {
 
     @Inject
     ListVehiclesUseCase listVehiclesUseCase;
+
+    @Inject
+    GetVehicleByIdUseCase getVehicleByIdUseCase;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -38,7 +42,6 @@ public class VehicleResource {
     }
 
     @GET
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Roles.SUPER_ADMIN, Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
     public PageResult<VehicleResponseDTO> listVehicles(
@@ -56,4 +59,12 @@ public class VehicleResource {
         return listVehiclesUseCase.execute(page, size, sortBy, direction, organizationId, authContext);
     }
 
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ Roles.SUPER_ADMIN, Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
+    public VehicleResponseDTO findById(@PathParam("id") Long id) {
+        AuthContext authContext = authProvider.get();
+        return getVehicleByIdUseCase.execute(id, authContext);
+    }
 }
