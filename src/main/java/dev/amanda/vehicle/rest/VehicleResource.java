@@ -53,10 +53,14 @@ public class VehicleResource {
                     name = "organizationId",
                     description = "Only usable by SUPER_ADMIN."
             )
-            @QueryParam("organizationId") Long organizationId
+            @QueryParam("organizationId") Long organizationId,
+            @QueryParam("brandId") Long brandId
     ) {
         AuthContext authContext = authProvider.get();
-        return listVehiclesUseCase.execute(page, size, sortBy, direction, organizationId, authContext);
+        VehicleFilter vehicleFilter = new VehicleFilter();
+        vehicleFilter.setOrganizationId(organizationId);
+        vehicleFilter.setBrandId(brandId);
+        return listVehiclesUseCase.execute(page, size, sortBy, direction, vehicleFilter, authContext);
     }
 
     @GET

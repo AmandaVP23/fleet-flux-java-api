@@ -8,6 +8,7 @@ import dev.amanda.shared.exception.BaseApiException;
 import dev.amanda.vehicle.applications.mappers.VehicleMapper;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
+import dev.amanda.vehicle.rest.VehicleFilter;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -28,8 +29,8 @@ public class ListVehiclesUseCase {
     @Inject
     VehicleMapper vehicleMapper;
 
-    public PageResult<VehicleResponseDTO> execute(int page, int size, String sortBy, String direction, Long organizationId, AuthContext authContext) {
-        if (!authContext.isSuperAdmin() && organizationId != null) {
+    public PageResult<VehicleResponseDTO> execute(int page, int size, String sortBy, String direction, VehicleFilter filter, AuthContext authContext) {
+        if (!authContext.isSuperAdmin() && filter.getOrganizationId() != null) {
             throw new BaseApiException(ApiError.NOT_ALLOWED, "organizationId can only be specified by SUPER ADMIN");
         }
 
@@ -37,11 +38,16 @@ public class ListVehiclesUseCase {
 
         Sort sort = pageRequestHelper.buildSort(sortBy, direction);
 
-        Long effectiveOrgId = authContext.isSuperAdmin() ? organizationId : authContext.getOrganizationId();
-        long total = vehicleRepository.countWithQuery(effectiveOrgId);
+        if (authContext.isSuperAdmin()) {
+            filter.setOrganizationId(filter.getOrganizationId());
+        } else {
+            filter.setOrganizationId(authContext.getOrganizationId());
+        }
+
+        long total = vehicleRepository.countWithQuery(filter);
 
         List<VehicleResponseDTO> data = vehicleRepository
-                .listPaginated(effectiveOrgId, page, size, sort)
+                .listPaginated(filter, page, size, sort)
                 .stream()
                 .map(vehicleMapper::toDto)
                 .toList();

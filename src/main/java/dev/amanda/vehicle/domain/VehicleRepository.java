@@ -1,6 +1,8 @@
 package dev.amanda.vehicle.domain;
 
+import dev.amanda.shared.application.QueryData;
 import dev.amanda.vehicle.exceptions.VehicleNotFoundException;
+import dev.amanda.vehicle.rest.VehicleFilter;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -17,35 +19,34 @@ public class VehicleRepository implements PanacheRepository<Vehicle> {
                 .orElseThrow(VehicleNotFoundException::new);
     }
 
-    public List<Vehicle> listPaginated(Long organizationId, int page, int size, Sort sort) {
-        Map<String, Object> params = new HashMap<>();
+    public List<Vehicle> listPaginated(VehicleFilter filter, int page, int size, Sort sort) {
+        QueryData queryData = buildQuery(filter);
 
-        String query = buildQuery(organizationId, params);
-
-        return find(query, sort, params)
+        return find(queryData.query(), sort, queryData.params())
                 .page(Page.of(page, size))
                 .list();
-
     }
 
-    public long countWithQuery(Long organizationId) {
+    public long countWithQuery(VehicleFilter filter) {
+        QueryData queryData = buildQuery(filter);
 
+        return count(queryData.query(), queryData.params());
+    }
+
+    private QueryData buildQuery(VehicleFilter filter) {
+        StringBuilder query = new StringBuilder("1=1");
         Map<String, Object> params = new HashMap<>();
 
-        String query = buildQuery(organizationId, params);
-
-        return count(query, params);
-    }
-
-    private String buildQuery(Long organizationId, Map<String, Object> params) {
-
-        String query = "1=1";
-
-        if (organizationId != null) {
-            query += " and organization.id = :orgId";
-            params.put("orgId", organizationId);
+        if (filter.organizationId != null) {
+            query.append(" and organization.id = :orgId");
+            params.put("orgId", filter.organizationId);
         }
 
-        return query;
+        if (filter.brandId != null) {
+            query.append(" and brand.id = :brandId");
+            params.put("brandId", filter.brandId);
+        }
+
+        return new QueryData(query.toString(), params);
     }
 }
