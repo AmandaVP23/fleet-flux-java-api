@@ -14,9 +14,9 @@ import java.time.Instant;
 @Setter
 public class Vehicle extends BaseEntity {
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "vehicle_brand_id")
-    VehicleBrand vehicleBrand;
+    VehicleBrand brand;
 
     @ManyToOne
     @JoinColumn(name = "organization_id")
@@ -49,7 +49,7 @@ public class Vehicle extends BaseEntity {
     @Enumerated(EnumType.STRING)
     VehicleType type;
 
-    @Column()
+    @Column(name = "fuel_type")
     @Enumerated(EnumType.STRING)
     VehicleFuelType fuelType;
 

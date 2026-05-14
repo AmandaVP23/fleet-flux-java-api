@@ -1,5 +1,8 @@
 package dev.amanda.shared.exception;
 
+import lombok.Getter;
+
+@Getter
 public enum ApiError {
     INTERNAL_SERVER_ERROR(0, "Internal server error", 500),
     VALIDATION_ERROR(1, "Validation error: %s", 400),
@@ -27,10 +30,6 @@ public enum ApiError {
         this.message = message;
         this.status = status;
     }
-
-    public int getErrorCode() { return errorCode; }
-    public String getMessage() { return message; }
-    public int getStatus() { return status; }
 
     public String format(Object... args) {
         return String.format(message, args);

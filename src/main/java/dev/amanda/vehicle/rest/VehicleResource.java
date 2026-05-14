@@ -5,6 +5,7 @@ import dev.amanda.oidc.AuthContextProvider;
 import dev.amanda.shared.PageResult;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.vehicle.applications.use_cases.CreateVehicleUseCase;
+import dev.amanda.vehicle.applications.use_cases.EditVehicleUseCase;
 import dev.amanda.vehicle.applications.use_cases.GetVehicleByIdUseCase;
 import dev.amanda.vehicle.applications.use_cases.ListVehiclesUseCase;
 import dev.amanda.vehicle.dto.CreateVehicleRequestDTO;
@@ -30,6 +31,9 @@ public class VehicleResource {
 
     @Inject
     GetVehicleByIdUseCase getVehicleByIdUseCase;
+
+    @Inject
+    EditVehicleUseCase editVehicleUseCase;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -70,5 +74,15 @@ public class VehicleResource {
     public VehicleResponseDTO findById(@PathParam("id") Long id) {
         AuthContext authContext = authProvider.get();
         return getVehicleByIdUseCase.execute(id, authContext);
+    }
+
+    @PATCH
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ Roles.SUPER_ADMIN, Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
+    public VehicleResponseDTO edit(@PathParam("id") Long id, @Valid CreateVehicleRequestDTO createVehicleRequestDTO) {
+        AuthContext authContext = authProvider.get();
+        return editVehicleUseCase.execute(id, createVehicleRequestDTO, authContext);
     }
 }

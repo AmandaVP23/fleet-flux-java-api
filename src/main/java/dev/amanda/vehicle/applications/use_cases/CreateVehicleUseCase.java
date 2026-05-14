@@ -38,30 +38,13 @@ public class CreateVehicleUseCase {
             effectiveOrgId = authContext.getOrganizationId();
         }
 
-        System.out.println("effectiveOrgId: " + effectiveOrgId);
-
         Organization organization = organizationRepository.findActiveByIdOrThrow(effectiveOrgId);
         VehicleBrand vehicleBrand = vehicleBrandRepository.findActiveByIdOrThrow(dto.brandId());
 
         Vehicle vehicle = new Vehicle();
-        vehicle.setVehicleBrand(vehicleBrand);
+        vehicleMapper.updateVehicleFromDto(dto, vehicle);
         vehicle.setOrganization(organization);
-        vehicle.setModel(dto.model());
-        vehicle.setVin(dto.vin());
-        vehicle.setCategory(dto.category());
-        vehicle.setVariant(dto.variant());
-        vehicle.setPlateNumber(dto.plateNumber());
-        vehicle.setYearOfManufacture(dto.yearOfManufacture());
-        vehicle.setType(dto.type());
-        vehicle.setFuelType(dto.fuelType());
-        vehicle.setFuelCapacityInLiters(dto.fuelCapacityInLiters());
-        vehicle.setStatus(dto.status());
-        vehicle.setAvgConsumptionPer100km(dto.avgConsumptionPer100Km());
-        vehicle.setLastServiceDate(dto.lastServiceDate());
-        vehicle.setInsurancePolicyNumber(dto.insurancePolicyNumber());
-        vehicle.setInsuranceExpiryDate(dto.insuranceExpiryDate());
-        vehicle.setInspectionDueDate(dto.inspectionDueDate());
-        vehicle.setOwnershipType(dto.ownershipType());
+        vehicle.setBrand(vehicleBrand);
 
         vehicleRepository.persist(vehicle);
 
