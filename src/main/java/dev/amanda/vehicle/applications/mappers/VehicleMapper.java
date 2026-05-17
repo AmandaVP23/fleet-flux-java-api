@@ -15,7 +15,7 @@ public interface VehicleMapper {
 
     @Mapping(target = "organization", source = "organization")
     @Mapping(target = "brand", source = "brand")
-    VehicleResponseDTO toDto(Vehicle user);
+    VehicleResponseDTO toDto(Vehicle vehicle);
 
     OrganizationResponseDTO toDto(Organization organization);
 
