@@ -43,14 +43,14 @@ public class GetKeycloakConfigUseCase {
         }
 
         Organization organization = user.get().getOrganization();
-        if (organization.getDeletedAt() != null) {
-            throw new OrganizationNotFoundException();
-        }
-
         if (organization == null) {
             return keycloakConfigResponseDTOBuilder
                     .realm(superAdminConfig.realm())
                     .build();
+        }
+
+        if (organization.getDeletedAt() != null) {
+            throw new OrganizationNotFoundException();
         }
 
         return keycloakConfigResponseDTOBuilder
