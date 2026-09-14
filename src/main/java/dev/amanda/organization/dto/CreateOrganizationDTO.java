@@ -21,4 +21,8 @@ public class CreateOrganizationDTO {
     @Length(min = 3, max = 80)
     @Email
     public String adminEmail;
+
+    @NotBlank()
+    @Length(min = 3, max = 15)
+    public String slug;
 }

@@ -10,4 +10,5 @@ public interface SuperAdminConfig {
     String lastName();
     String email();
     String realm();
+    String slug();
 }
