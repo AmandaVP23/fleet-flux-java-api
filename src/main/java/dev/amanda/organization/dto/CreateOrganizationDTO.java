@@ -24,5 +24,5 @@ public class CreateOrganizationDTO {
 
     @NotBlank()
     @Length(min = 3, max = 15)
-    public String slug;
+    public String hostname;
 }

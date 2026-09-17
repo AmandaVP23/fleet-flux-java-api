@@ -49,7 +49,7 @@ public class CreateOrganizationUseCase {
         });
 
         // todo - FE requests to see if organization with slug already exists before the create request
-        organizationRepository.findBySlug(createOrganizationDTO.slug).ifPresent(org -> {
+        organizationRepository.findBySlug(createOrganizationDTO.hostname).ifPresent(org -> {
             throw new OrganizationWithSameSlugAlreadyExistsException();
         });
 

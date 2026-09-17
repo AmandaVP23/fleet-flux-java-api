@@ -22,7 +22,7 @@ public class Organization extends BaseEntity {
     String realm;
 
     @Column(nullable = false, unique = true)
-    String slug;
+    String hostname;
 
     @OneToMany(mappedBy = "organization",
             cascade = CascadeType.REMOVE,

@@ -5,7 +5,7 @@ CREATE TABLE organization (
     updated_at timestamp(6) with time zone NULL,
     name character varying(255) NOT NULL,
     realm character varying(255) NOT NULL,
-    slug character varying(255) NOT NULL
+    hostname character varying(255) NOT NULL
 );
 
 CREATE TABLE app_user (
