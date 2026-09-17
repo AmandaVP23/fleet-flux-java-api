@@ -7,10 +7,12 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.java.Log;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
+import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -39,13 +41,20 @@ public class KeycloakAdmin {
 
     @PostConstruct
     void init() {
+//        this.keycloak = KeycloakBuilder.builder()
+//                .serverUrl(this.keycloakConfig.serverUrl())
+//                .realm(this.keycloakConfig.realm())
+//                .grantType(this.keycloakConfig.grantType())
+//                .clientId(this.keycloakConfig.clientId())
+//                .username(this.keycloakConfig.username())
+//                .password(this.keycloakConfig.password())
+//                .build();
         this.keycloak = KeycloakBuilder.builder()
                 .serverUrl(this.keycloakConfig.serverUrl())
                 .realm(this.keycloakConfig.realm())
-                .grantType(this.keycloakConfig.grantType())
+                .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                 .clientId(this.keycloakConfig.clientId())
-                .username(this.keycloakConfig.username())
-                .password(this.keycloakConfig.password())
+                .clientSecret("T3OW47ivZ4Ym7yIuf7B2orEvAmMvSvLB")
                 .build();
     }
 
@@ -122,6 +131,22 @@ public class KeycloakAdmin {
         }
 
         return this.keycloak.realm(realmName).toRepresentation();
+    }
+
+    public Optional<RealmRepresentation> getRealm(String realmName) {
+        log.info("Getting keycloak realm: " + realmName);
+        try {
+            RealmRepresentation realmRepresentation = this.keycloak
+                    .realm(realmName)
+                    .toRepresentation();
+
+            return Optional.of(realmRepresentation);
+        } catch (ClientWebApplicationException e) {
+            return Optional.empty();
+        } catch (Exception e) {
+            log.severe(e.getMessage());
+            throw e;
+        }
     }
 
     private void addOrganizationIdMapper(String realmName) {
@@ -340,6 +365,7 @@ public class KeycloakAdmin {
     }
 
     public Optional<UserRepresentation> getUser(String realm, String userEmail) {
+        log.info("Getting keycloak user: " + userEmail);
         try {
             List<UserRepresentation> userRepresentationList = this.keycloak
                     .realm(realm)
