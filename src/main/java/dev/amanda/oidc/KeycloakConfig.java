@@ -16,4 +16,6 @@ public interface KeycloakConfig {
     String username();
 
     String password();
+
+    String clientSecret();
 }

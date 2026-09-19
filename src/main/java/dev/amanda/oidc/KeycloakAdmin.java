@@ -54,7 +54,7 @@ public class KeycloakAdmin {
                 .realm(this.keycloakConfig.realm())
                 .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                 .clientId(this.keycloakConfig.clientId())
-                .clientSecret("T3OW47ivZ4Ym7yIuf7B2orEvAmMvSvLB")
+                .clientSecret(this.keycloakConfig.clientSecret())
                 .build();
     }
 
@@ -106,7 +106,8 @@ public class KeycloakAdmin {
             throw new RuntimeException("Failed to create realm", e);
         }
 
-        grantAdminAccessToNewRealm(realmName);
+        // todo - remove
+//        grantAdminAccessToNewRealm(realmName);
 
         try {
             UPConfig upConfig = this.keycloak.realm(realmName)

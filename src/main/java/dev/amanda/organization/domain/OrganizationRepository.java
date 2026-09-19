@@ -21,8 +21,8 @@ public class OrganizationRepository implements PanacheRepository<Organization> {
         return find("name", name).firstResultOptional();
     }
 
-    public Optional<Organization> findBySlug(String slug) {
-        return find("slug", slug).firstResultOptional();
+    public Optional<Organization> findByHostname(String hostname) {
+        return find("hostname", hostname).firstResultOptional();
     }
 
     public Optional<Organization> findByRealm(String realm) {

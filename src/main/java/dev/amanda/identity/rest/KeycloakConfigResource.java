@@ -1,10 +1,8 @@
 package dev.amanda.identity.rest;
 
 import dev.amanda.identity.application.GetKeycloakConfigUseCase;
-import dev.amanda.identity.dto.KeycloakConfigRequestDTO;
 import dev.amanda.identity.dto.KeycloakConfigResponseDTO;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -19,12 +17,12 @@ public class KeycloakConfigResource {
     GetKeycloakConfigUseCase getKeycloakConfigUseCase;
 
     @GET
-    @Path("/{slug}")
+    @Path("/{hostname}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(
             summary = "Retrieve Keycloak configuration",
-            description = "Returns Keycloak configuration based on the provided slug."
+            description = "Returns Keycloak configuration based on the provided hostname."
     )
     @APIResponse(
             responseCode = "200",

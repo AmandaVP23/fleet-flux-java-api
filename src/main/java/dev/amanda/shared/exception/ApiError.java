@@ -10,7 +10,7 @@ public enum ApiError {
     NOT_ALLOWED(3, "Not allowed", 403),
     ORGANIZATION_WITH_SAME_NAME_ALREADY_EXISTS(100, "Organization with same name already exists", 409),
     ORGANIZATION_WITH_SAME_GENERATED_REALM_ALREADY_EXISTS(101, "Organization with same generated realm already exists", 409),
-    ORGANIZATION_WITH_SAME_SLUG_ALREADY_EXISTS(102, "Organization with same slug already exists", 409),
+    ORGANIZATION_WITH_SAME_HOSTNAME_ALREADY_EXISTS(102, "Organization with same slug already exists", 409),
     REALM_KEYCLOAK_CONFLICT(103, "Keycloak conflict creating realm: %s", 409),
     USER_WITH_EMAIL_ALREADY_EXISTS(104, "User with same email already exists", 409),
     ORGANIZATION_NOT_FOUND(105, "Organization not found", 404),

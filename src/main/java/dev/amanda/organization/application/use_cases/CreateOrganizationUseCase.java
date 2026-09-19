@@ -9,7 +9,7 @@ import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.organization.exceptions.OrganizationAlreadyExistsException;
 import dev.amanda.organization.exceptions.OrganizationWithSameRealmAlreadyExistsException;
-import dev.amanda.organization.exceptions.OrganizationWithSameSlugAlreadyExistsException;
+import dev.amanda.organization.exceptions.OrganizationWithSameHostnameAlreadyExistsException;
 import dev.amanda.organization.exceptions.UserSameEmailAlreadyExistsException;
 import dev.amanda.shared.exception.BaseApiException;
 import dev.amanda.shared.exception.GenericApiException;
@@ -49,8 +49,8 @@ public class CreateOrganizationUseCase {
         });
 
         // todo - FE requests to see if organization with slug already exists before the create request
-        organizationRepository.findBySlug(createOrganizationDTO.hostname).ifPresent(org -> {
-            throw new OrganizationWithSameSlugAlreadyExistsException();
+        organizationRepository.findByHostname(createOrganizationDTO.hostname).ifPresent(org -> {
+            throw new OrganizationWithSameHostnameAlreadyExistsException();
         });
 
         organizationRepository.findByRealm(realmValue).ifPresent(org -> {
