@@ -41,14 +41,6 @@ public class KeycloakAdmin {
 
     @PostConstruct
     void init() {
-//        this.keycloak = KeycloakBuilder.builder()
-//                .serverUrl(this.keycloakConfig.serverUrl())
-//                .realm(this.keycloakConfig.realm())
-//                .grantType(this.keycloakConfig.grantType())
-//                .clientId(this.keycloakConfig.clientId())
-//                .username(this.keycloakConfig.username())
-//                .password(this.keycloakConfig.password())
-//                .build();
         this.keycloak = KeycloakBuilder.builder()
                 .serverUrl(this.keycloakConfig.serverUrl())
                 .realm(this.keycloakConfig.realm())
@@ -105,9 +97,6 @@ public class KeycloakAdmin {
             log.severe(e.getMessage());
             throw new RuntimeException("Failed to create realm", e);
         }
-
-        // todo - remove
-//        grantAdminAccessToNewRealm(realmName);
 
         try {
             UPConfig upConfig = this.keycloak.realm(realmName)
@@ -189,68 +178,6 @@ public class KeycloakAdmin {
 
         mapper.setConfig(config);
         return mapper;
-    }
-
-    private void grantAdminAccessToNewRealm(String realmName) {
-        try {
-            List<ClientRepresentation> clients = this.keycloak.realm("master")
-                    .clients().findByClientId(realmName + "-realm");
-
-            if (clients.isEmpty()) {
-                throw new RuntimeException("Could not find master client for realm: " + realmName);
-            }
-
-            String realmClientUUID = clients.getFirst().getId();
-
-            Set<String> desiredRoles = Set.of(
-                    "manage-users",
-                    "manage-clients",
-                    "manage-realm",
-                    "create-client",
-                    "impersonation",
-                    "query-clients",
-                    "view-users",
-                    "view-clients"
-            );
-
-            List<RoleRepresentation> rolesToAssign = this.keycloak.realm(this.keycloakConfig.realm())
-                    .clients()
-                    .get(realmClientUUID)
-                    .roles()
-                    .list()
-                    .stream()
-                    .filter(role -> desiredRoles.contains(role.getName()))
-                    .collect(Collectors.toList());
-
-            if (rolesToAssign.isEmpty()) {
-                throw new RuntimeException("No matching roles found for realm client: " + realmName);
-            }
-
-            List<UserRepresentation> users = this.keycloak
-                    .realm(this.keycloakConfig.realm())
-                    .users()
-                    .searchByUsername(this.keycloakConfig.username(), true);
-
-            if (users.isEmpty()) {
-                throw new RuntimeException("Could not find user: " + this.keycloakConfig.username());
-            }
-
-            String masterAdminUserId = users.getFirst().getId();
-
-            this.keycloak.realm(this.keycloakConfig.realm())
-                    .users()
-                    .get(masterAdminUserId)
-                    .roles()
-                    .clientLevel(realmClientUUID)
-                    .add(rolesToAssign);
-
-            refreshKeycloakToken();
-
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to grant admin access to realm " + realmName + ": " + e.getMessage());
-        }
     }
 
     public UserRepresentation createRealmUser(String realm, String firstName, String lastName, String email, String roleName) {
