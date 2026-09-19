@@ -40,7 +40,7 @@ public class KeycloakConfigResource {
             responseCode = "500",
             description = "Internal server error"
     )
-    public KeycloakConfigResponseDTO getKeycloakConfig(@PathParam("slug") String slug) {
-        return getKeycloakConfigUseCase.execute(slug);
+    public KeycloakConfigResponseDTO getKeycloakConfig(@PathParam("hostname") String hostname) {
+        return getKeycloakConfigUseCase.execute(hostname);
     }
 }

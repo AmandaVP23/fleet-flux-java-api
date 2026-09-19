@@ -29,19 +29,19 @@ public class GetKeycloakConfigUseCase {
     @ConfigProperty(name = "quarkus.keycloak.default-web-client-name")
     String defaultWebClientName;
 
-    public KeycloakConfigResponseDTO execute(String slug) {
+    public KeycloakConfigResponseDTO execute(String hostname) {
         KeycloakConfigResponseDTO.KeycloakConfigResponseDTOBuilder keycloakConfigResponseDTOBuilder = KeycloakConfigResponseDTO
                 .builder()
                 .clientId(defaultWebClientName)
                 .serverUrl(keycloakConfig.serverUrl());
 
-        if (slug.equalsIgnoreCase(superAdminConfig.hostname())) {
+        if (hostname.equalsIgnoreCase(superAdminConfig.hostname())) {
             return keycloakConfigResponseDTOBuilder
                     .realm(superAdminConfig.realm())
                     .build();
         }
 
-        Organization organization = organizationRepository.findByHostname(slug)
+        Organization organization = organizationRepository.findByHostname(hostname)
                 .filter(org -> org.getDeletedAt() == null)
                 .orElseThrow(OrganizationNotFoundException::new);
 
