@@ -1,14 +1,9 @@
 package dev.amanda.identity.rest;
 
 import dev.amanda.identity.application.GetKeycloakConfigUseCase;
-import dev.amanda.identity.dto.KeycloakConfigRequestDTO;
 import dev.amanda.identity.dto.KeycloakConfigResponseDTO;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -21,12 +16,13 @@ public class KeycloakConfigResource {
     @Inject
     GetKeycloakConfigUseCase getKeycloakConfigUseCase;
 
-    @POST
+    @GET
+    @Path("/{hostname}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(
             summary = "Retrieve Keycloak configuration",
-            description = "Returns Keycloak configuration based on the provided email."
+            description = "Returns Keycloak configuration based on the provided hostname."
     )
     @APIResponse(
             responseCode = "200",
@@ -44,7 +40,7 @@ public class KeycloakConfigResource {
             responseCode = "500",
             description = "Internal server error"
     )
-    public KeycloakConfigResponseDTO getKeycloakConfig(@Valid KeycloakConfigRequestDTO keycloakConfigRequestDTO) {
-        return getKeycloakConfigUseCase.execute(keycloakConfigRequestDTO);
+    public KeycloakConfigResponseDTO getKeycloakConfig(@PathParam("hostname") String hostname) {
+        return getKeycloakConfigUseCase.execute(hostname);
     }
 }

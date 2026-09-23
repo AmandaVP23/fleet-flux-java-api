@@ -1,7 +1,6 @@
 package dev.amanda.organization.application.use_cases;
 
 import dev.amanda.organization.application.mappers.OrganizationMapper;
-import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.OrganizationFilter;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
@@ -33,19 +32,11 @@ public class ListOrganizationsUseCase {
 
         Sort sort = pageRequestHelper.buildSort(sortBy, direction);
 
-        List<Organization> organizations = switch (filter) {
-            case ACTIVE -> organizationRepository.findActivePaginated(page, size, sort);
-            case DELETED -> organizationRepository.findDeletedPaginated(page, size, sort);
-            case ALL -> organizationRepository.findPaginated(page, size, sort);
-        };
+        long total = organizationRepository.count(filter);
 
-        long total = switch (filter) {
-            case ACTIVE -> organizationRepository.countActive();
-            case DELETED -> organizationRepository.countDeleted();
-            case ALL -> organizationRepository.count();
-        };
-
-        List<OrganizationResponseDTO> data = organizations.stream()
+        List<OrganizationResponseDTO> data = organizationRepository
+                .findPaginated(page, size, sort, filter)
+                .stream()
                 .map(organizationMapper::toDto)
                 .toList();
 

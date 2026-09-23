@@ -12,7 +12,10 @@ public interface KeycloakConfig {
 
     String grantType();
 
+    // todo - remove
     String username();
 
     String password();
+
+    String clientSecret();
 }

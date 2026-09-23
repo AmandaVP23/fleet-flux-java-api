@@ -28,6 +28,7 @@ public class SaveOrganizationUseCase {
         Organization organization = new Organization();
         organization.setName(dto.name);
         organization.setRealm(realm);
+        organization.setHostname(dto.hostname);
 
         User user = new User();
         user.setKeycloakId(userKeycloakId);

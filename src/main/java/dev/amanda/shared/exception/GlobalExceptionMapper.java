@@ -14,6 +14,7 @@ import lombok.extern.java.Log;
 public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
     @Override
     public Response toResponse(Exception exception) {
+        System.out.println(exception.getCause());
         if (exception instanceof BaseApiException e) {
             return Response
                     .status(e.getApiError().getStatus())

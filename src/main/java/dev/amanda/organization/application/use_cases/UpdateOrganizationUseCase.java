@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class UpdateOrganizationUseCase {
+
     @Inject
     OrganizationRepository organizationRepository;
 

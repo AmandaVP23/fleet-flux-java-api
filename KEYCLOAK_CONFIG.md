@@ -30,6 +30,8 @@ Save changes.
 - Go to **Credentials tab**
 - Copy **Client Secret** (if required)
 
+Use this as the Service Account (secret)
+
 ---
 
 # 2. Create Admin User in Master Realm

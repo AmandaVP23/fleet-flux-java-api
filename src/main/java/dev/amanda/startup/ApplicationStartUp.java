@@ -13,6 +13,9 @@ import com.github.lalyos.jfiglet.FigletFont;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
+import org.keycloak.representations.idm.RealmRepresentation;
+
+import java.util.Optional;
 
 @ApplicationScoped
 @Log
@@ -41,7 +44,19 @@ public class ApplicationStartUp {
             return;
         }
 
+        createAdminRealmIfNotExist();
         createDefaultSuperAdmin();
+    }
+
+    public void createAdminRealmIfNotExist() {
+        Optional<RealmRepresentation> realmRepresentation = keycloakAdmin.getRealm(superAdminConfig.realm());
+        if (realmRepresentation.isEmpty()) {
+            log.info("Creating admin realm");
+            keycloakAdmin.createRealm(superAdminConfig.realm(), "Fleet Flux Admin");
+            log.info("Created realm: " + superAdminConfig.realm());
+        } else {
+            log.info(superAdminConfig.realm() + "realm already exists");
+        }
     }
 
     @Transactional

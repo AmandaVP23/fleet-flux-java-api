@@ -34,7 +34,7 @@ public class CreateUserUseCase {
         Long effectiveOrgId;
 
         if (authContext.isSuperAdmin()) {
-            effectiveOrgId = dto.organizationId;
+            effectiveOrgId = dto.organizationId();
         } else {
             effectiveOrgId = authContext.getOrganizationId();
         }
@@ -44,17 +44,17 @@ public class CreateUserUseCase {
         String userKeycloakId = null;
         try {
             UserRepresentation userRepresentation = keycloakAdmin.createRealmUser(
-                    organization.getRealm(), dto.firstName, dto.lastName, dto.email, dto.role.toRole().getValue());
+                    organization.getRealm(), dto.firstName(), dto.lastName(), dto.email(), dto.role().toRole().getValue());
 
             userKeycloakId = userRepresentation.getId();
 
             User user = new User();
-            user.setEmail(dto.email);
+            user.setEmail(dto.email());
             user.setOrganization(organization);
             user.setKeycloakId(userKeycloakId);
-            user.setFirstName(dto.firstName);
-            user.setLastName(dto.lastName);
-            user.setRole(dto.role.toRole());
+            user.setFirstName(dto.firstName());
+            user.setLastName(dto.lastName());
+            user.setRole(dto.role().toRole());
 
             userRepository.persist(user);
 

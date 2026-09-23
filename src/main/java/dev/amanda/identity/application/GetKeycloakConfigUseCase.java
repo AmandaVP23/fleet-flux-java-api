@@ -1,24 +1,24 @@
 package dev.amanda.identity.application;
 
 import dev.amanda.config.SuperAdminConfig;
-import dev.amanda.identity.dto.KeycloakConfigRequestDTO;
 import dev.amanda.identity.dto.KeycloakConfigResponseDTO;
 import dev.amanda.oidc.KeycloakConfig;
 import dev.amanda.organization.domain.Organization;
+import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.exceptions.OrganizationNotFoundException;
-import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-
-import java.util.Optional;
 
 @ApplicationScoped
 public class GetKeycloakConfigUseCase {
 
     @Inject
     UserRepository userRepository;
+
+    @Inject
+    OrganizationRepository organizationRepository;
 
     @Inject
     KeycloakConfig keycloakConfig;
@@ -29,29 +29,21 @@ public class GetKeycloakConfigUseCase {
     @ConfigProperty(name = "quarkus.keycloak.default-web-client-name")
     String defaultWebClientName;
 
-    public KeycloakConfigResponseDTO execute(KeycloakConfigRequestDTO requestDTO) {
+    public KeycloakConfigResponseDTO execute(String hostname) {
         KeycloakConfigResponseDTO.KeycloakConfigResponseDTOBuilder keycloakConfigResponseDTOBuilder = KeycloakConfigResponseDTO
                 .builder()
                 .clientId(defaultWebClientName)
                 .serverUrl(keycloakConfig.serverUrl());
 
-        Optional<User> user = userRepository.findByEmail(requestDTO.email);
-        if (user.isEmpty()) {
-            return keycloakConfigResponseDTOBuilder
-                    .realm("realm")
-                    .build();
-        }
-
-        Organization organization = user.get().getOrganization();
-        if (organization.getDeletedAt() != null) {
-            throw new OrganizationNotFoundException();
-        }
-
-        if (organization == null) {
+        if (hostname.equalsIgnoreCase(superAdminConfig.hostname())) {
             return keycloakConfigResponseDTOBuilder
                     .realm(superAdminConfig.realm())
                     .build();
         }
+
+        Organization organization = organizationRepository.findByHostname(hostname)
+                .filter(org -> org.getDeletedAt() == null)
+                .orElseThrow(OrganizationNotFoundException::new);
 
         return keycloakConfigResponseDTOBuilder
                 .realm(organization.getRealm())

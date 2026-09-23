@@ -21,6 +21,9 @@ public class Organization extends BaseEntity {
     @Column(nullable = false, unique = true)
     String realm;
 
+    @Column(nullable = false, unique = true)
+    String hostname;
+
     @OneToMany(mappedBy = "organization",
             cascade = CascadeType.REMOVE,
             orphanRemoval = true,
