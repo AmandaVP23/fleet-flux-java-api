@@ -59,7 +59,7 @@ public class VehicleBrandsResource {
 
     @POST
     @Operation(
-            summary = "Create a new vehicle brand entry"
+            summary = "Create a new vehicle brand entry - Only SUPER ADMIN allowed"
     )
     @RolesAllowed(Roles.SUPER_ADMIN)
     public VehicleBrandResponseDTO createVehicleBrand(@Valid CreateVehicleBrandRequestDTO vehicleBrand) {
