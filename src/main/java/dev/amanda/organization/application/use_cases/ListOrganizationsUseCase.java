@@ -2,7 +2,7 @@ package dev.amanda.organization.application.use_cases;
 
 import dev.amanda.organization.application.mappers.OrganizationMapper;
 import dev.amanda.organization.domain.OrganizationRepository;
-import dev.amanda.organization.dto.OrganizationFilter;
+import dev.amanda.organization.dto.OrganizationStatusFilter;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.shared.PageResult;
 import dev.amanda.shared.application.PageRequestHelper;
@@ -27,7 +27,7 @@ public class ListOrganizationsUseCase {
     @Inject
     PageRequestHelper pageRequestHelper;
 
-    public PageResult<OrganizationResponseDTO> execute(int page, int size, String sortBy, String direction, OrganizationFilter filter) {
+    public PageResult<OrganizationResponseDTO> execute(int page, int size, String sortBy, String direction, OrganizationStatusFilter filter) {
         pageRequestHelper.validate(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
 
         Sort sort = pageRequestHelper.buildSort(sortBy, direction);

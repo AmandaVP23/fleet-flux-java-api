@@ -20,7 +20,8 @@ public enum ApiError {
     VEHICLE_BRAND_NOT_FOUND(109, "User not found", 404),
     VEHICLE_BRAND_DELETED(110, "Vehicle brand is already deleted", 422),
     VEHICLE_BRAND_IS_USED(111, "Vehicle brand is being used", 400),
-    VEHICLE_NOT_FOUND(112, "Vehicle not found", 404),;
+    VEHICLE_NOT_FOUND(112, "Vehicle not found", 404),
+    USER_IS_NOT_DRIVER(113, "User is not driver", 400),;
 
     private final int errorCode;
     private final String message;

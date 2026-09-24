@@ -1,6 +1,6 @@
 package dev.amanda.organization.dto;
 
-public enum OrganizationFilter {
+public enum OrganizationStatusFilter {
     ACTIVE,
     DELETED,
     ALL

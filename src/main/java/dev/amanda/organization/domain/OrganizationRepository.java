@@ -1,6 +1,6 @@
 package dev.amanda.organization.domain;
 
-import dev.amanda.organization.dto.OrganizationFilter;
+import dev.amanda.organization.dto.OrganizationStatusFilter;
 import dev.amanda.organization.exceptions.OrganizationNotFoundException;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -33,7 +33,7 @@ public class OrganizationRepository implements PanacheRepository<Organization> {
             int page,
             int size,
             Sort sort,
-            OrganizationFilter filter
+            OrganizationStatusFilter filter
     ) {
         PanacheQuery<Organization> query = switch (filter) {
             case ALL -> findAll(sort);
@@ -46,7 +46,7 @@ public class OrganizationRepository implements PanacheRepository<Organization> {
                 .list();
     }
 
-    public long count(OrganizationFilter filter) {
+    public long count(OrganizationStatusFilter filter) {
         return switch (filter) {
             case ALL -> count();
             case ACTIVE -> count(ACTIVE_FILTER);

@@ -3,6 +3,7 @@ package dev.amanda.user.application.use_cases;
 import dev.amanda.oidc.AuthContext;
 import dev.amanda.shared.PageResult;
 import dev.amanda.shared.application.PageRequestHelper;
+import dev.amanda.shared.exception.NotAllowedException;
 import dev.amanda.user.application.mappers.UserMapper;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
@@ -25,7 +26,7 @@ public class ListUsersUseCase {
     @Inject
     UserMapper userMapper;
 
-    public PageResult<UserResponseDTO> execute(int pageNumber, int pageSize, String sortBy, String direction, AuthContext authContext) {
+    public PageResult<UserResponseDTO> execute(int pageNumber, int pageSize, String sortBy, String direction, Long requestOrganizationId, AuthContext authContext) {
         pageRequestHelper.validate(pageNumber, pageSize, sortBy, direction, null);
 
         Sort sort = pageRequestHelper.buildSort(sortBy, direction);
@@ -36,13 +37,24 @@ public class ListUsersUseCase {
         List<User> users;
 
         if (authContext.isSuperAdmin()) {
-            total = userRepository.countAll();
-            users = userRepository.findAllPaginated(pageNumber, pageSize, sort);
+            if (requestOrganizationId != null) {
+                total = userRepository.countByOrganization(requestOrganizationId);
+                users = userRepository.findPaginatedByOrganization(requestOrganizationId, pageNumber, pageSize, sort);
+            } else {
+                total = userRepository.countAll();
+                users = userRepository.findAllPaginated(pageNumber, pageSize, sort);
+            }
         } else {
             Long organizationId = authContext.getOrganizationId();
+
+            if (requestOrganizationId != null && !requestOrganizationId.equals(organizationId)) {
+                throw new NotAllowedException();
+            }
+
             if (organizationId == null) {
                 throw new BadRequestException("Organization id is null");
             }
+
             total = userRepository.countByOrganization(organizationId);
             users = userRepository.findPaginatedByOrganization(organizationId, pageNumber, pageSize, sort);
         }

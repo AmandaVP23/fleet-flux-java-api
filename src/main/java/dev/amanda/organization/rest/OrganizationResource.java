@@ -2,7 +2,7 @@ package dev.amanda.organization.rest;
 
 import dev.amanda.organization.application.use_cases.*;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
-import dev.amanda.organization.dto.OrganizationFilter;
+import dev.amanda.organization.dto.OrganizationStatusFilter;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.organization.dto.UpdateOrganizationDTO;
 import dev.amanda.shared.PageResult;
@@ -83,9 +83,9 @@ public class OrganizationResource {
             @QueryParam("size") @DefaultValue("20") int size,
             @QueryParam("sortBy") @DefaultValue("name") String sortBy,
             @QueryParam("direction") @DefaultValue("asc") String direction,
-            @QueryParam("filter") @DefaultValue("ACTIVE") OrganizationFilter filter
+            @QueryParam("status") @DefaultValue("ACTIVE") OrganizationStatusFilter status
     ) {
-        return listOrganizationsUseCase.execute(page, size, sortBy, direction, filter);
+        return listOrganizationsUseCase.execute(page, size, sortBy, direction, status);
     }
 
     @GET

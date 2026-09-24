@@ -13,6 +13,8 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 
 @Path("/users")
 public class UsersResource {
@@ -38,24 +40,30 @@ public class UsersResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @RolesAllowed({Roles.SUPER_ADMIN, Roles.ORG_ADMIN})
+    @Operation(
+            summary = "Creates a new user",
+            description = "SuperAdmin should send the organization id, if user is OrgAdmin user will be created inside that user organization and organizationId should not be set"
+    )
     public UserResponseDTO createUser(@Valid CreateUserRequestDTO dto) {
         AuthContext auth = authProvider.get();
 
         return createUserUseCase.execute(dto, auth);
     }
 
-    // todo - filter by organization
     // todo sortBy fullName -> firstName + lastName
     @GET
-    @RolesAllowed({Roles.SUPER_ADMIN, Roles.ORG_ADMIN})
+    @RolesAllowed({Roles.SUPER_ADMIN, Roles.ORG_ADMIN, Roles.FLEET_MANAGER})
     public PageResult<UserResponseDTO> listUsers(
             @QueryParam("page") @DefaultValue("0") int page,
             @QueryParam("size") @DefaultValue("20") int size,
             @QueryParam("sortBy") @DefaultValue("firstName") String sortBy,
-            @QueryParam("direction") @DefaultValue("asc") String direction
+            @QueryParam("direction") @DefaultValue("asc") String direction,
+            @QueryParam("organizationId") @Parameter(
+                    description = "Can only be used by SUPER ADMIN"
+            ) Long organizationId
     ) {
         AuthContext authContext = authProvider.get();
-        return listAllUsersUseCase.execute(page, size, sortBy, direction, authContext);
+        return listAllUsersUseCase.execute(page, size, sortBy, direction, organizationId, authContext);
     }
 
     @GET

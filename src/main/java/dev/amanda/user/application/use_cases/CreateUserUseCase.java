@@ -4,6 +4,7 @@ import dev.amanda.oidc.AuthContext;
 import dev.amanda.oidc.KeycloakAdmin;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
+import dev.amanda.organization.exceptions.UserSameEmailAlreadyExistsException;
 import dev.amanda.user.application.mappers.UserMapper;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
@@ -13,6 +14,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.keycloak.representations.idm.UserRepresentation;
+
+import java.util.Optional;
 
 @ApplicationScoped
 public class CreateUserUseCase {
@@ -37,6 +40,11 @@ public class CreateUserUseCase {
             effectiveOrgId = dto.organizationId();
         } else {
             effectiveOrgId = authContext.getOrganizationId();
+        }
+
+        Optional<User> existingUser = userRepository.findByEmail(dto.email());
+        if (existingUser.isPresent()) {
+            throw new UserSameEmailAlreadyExistsException();
         }
 
         Organization organization = organizationRepository.findByIdOrThrow(effectiveOrgId);

@@ -74,6 +74,7 @@ public class KeycloakAdmin {
         ClientRepresentation webClient = new ClientRepresentation();
         webClient.setClientId("web"); // todo - put this in application properties
         webClient.setRedirectUris(List.of("*"));
+        webClient.setWebOrigins(List.of("*"));
         webClient.setEnabled(true);
         webClient.setPublicClient(true);
         // useful for typescript tester

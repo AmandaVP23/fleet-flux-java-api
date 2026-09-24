@@ -27,6 +27,7 @@ public class UserRepository implements PanacheRepository<User> {
     }
 
     public List<User> findPaginatedByOrganization(Long orgId, int page, int size, Sort sort) {
+        // todo - sort
         return find("organization.id", orgId)
                 .page(Page.of(page, size))
                 .list();
