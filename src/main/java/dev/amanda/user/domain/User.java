@@ -1,6 +1,5 @@
 package dev.amanda.user.domain;
 
-
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.shared.domain.BaseEntity;
 import jakarta.persistence.*;

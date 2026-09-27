@@ -9,6 +9,8 @@ import lombok.Setter;
 
 import java.time.Instant;
 
+// todo - add notes
+
 @Entity
 @Table(name = "vehicle_driver_assignment")
 @Getter
@@ -22,11 +24,11 @@ public class VehicleDriverAssignment extends BaseEntity {
     @JoinColumn(name = "driver_id")
     User driver;
 
-    @Column(name = "start_date", nullable = false)
-    private Instant startDate;
+    @Column(name = "start_date_time", nullable = false)
+    private Instant startDateTime;
 
-    @Column(name = "end_date", updatable = false)
-    private Instant endDate;
+    @Column(name = "end_date_time", updatable = false)
+    private Instant endDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "assigned_by")

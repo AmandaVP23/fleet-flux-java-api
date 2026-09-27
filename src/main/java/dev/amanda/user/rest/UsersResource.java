@@ -4,6 +4,7 @@ import dev.amanda.oidc.AuthContext;
 import dev.amanda.oidc.AuthContextProvider;
 import dev.amanda.shared.PageResult;
 import dev.amanda.user.application.use_cases.*;
+import dev.amanda.user.domain.Role;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.user.dto.CreateUserRequestDTO;
 import dev.amanda.user.dto.UserResponseDTO;
@@ -58,12 +59,16 @@ public class UsersResource {
             @QueryParam("size") @DefaultValue("20") int size,
             @QueryParam("sortBy") @DefaultValue("firstName") String sortBy,
             @QueryParam("direction") @DefaultValue("asc") String direction,
+            @QueryParam("role") Role role,
             @QueryParam("organizationId") @Parameter(
                     description = "Can only be used by SUPER ADMIN"
             ) Long organizationId
     ) {
         AuthContext authContext = authProvider.get();
-        return listAllUsersUseCase.execute(page, size, sortBy, direction, organizationId, authContext);
+
+        UserFilter userFilter = new UserFilter(organizationId, role);
+
+        return listAllUsersUseCase.execute(page, size, sortBy, direction, userFilter, authContext);
     }
 
     @GET

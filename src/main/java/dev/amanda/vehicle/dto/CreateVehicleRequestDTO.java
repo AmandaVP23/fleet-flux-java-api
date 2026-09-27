@@ -16,6 +16,7 @@ public record CreateVehicleRequestDTO(
         Long organizationId,
         String model,
         @NotNull() String plateNumber,
+        // todo validate vin
         String vin,
         @Min(1950)
         @CurrentYearMax()

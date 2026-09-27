@@ -1,18 +1,18 @@
 package dev.amanda.vehicle_driver_assignment.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
 
 public class VehicleDriverAssignmentRequestDTO {
-    @NotBlank()
+    @NotNull()
     public long vehicleId;
 
-    @NotBlank()
+    @NotNull()
     public long driverId;
 
-    @NotBlank()
-    public Instant startDate;
+    @NotNull()
+    public Instant startDateTime;
 
-    public Instant endDate;
+    public Instant endDateTime;
 }

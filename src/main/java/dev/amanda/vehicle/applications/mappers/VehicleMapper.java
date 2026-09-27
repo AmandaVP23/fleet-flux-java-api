@@ -10,7 +10,7 @@ import dev.amanda.vehicle_brand.domain.VehicleBrand;
 import dev.amanda.vehicle_brand.dto.VehicleBrandResponseDTO;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "cdi", uses = BaseMapper.class)
+@Mapper(componentModel = "jakarta", uses = BaseMapper.class)
 public interface VehicleMapper {
 
     @Mapping(target = "organization", source = "organization")

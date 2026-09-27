@@ -5,7 +5,7 @@ import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.shared.application.BaseMapper;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "cdi", uses = BaseMapper.class)
+@Mapper(componentModel = "jakarta", uses = BaseMapper.class)
 public interface OrganizationMapper {
     OrganizationResponseDTO toDto(Organization organization);
 }

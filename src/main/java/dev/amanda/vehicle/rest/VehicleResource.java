@@ -38,7 +38,7 @@ public class VehicleResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ Roles.SUPER_ADMIN, Roles.ORG_ADMIN })
+    @RolesAllowed({ Roles.SUPER_ADMIN, Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
     public VehicleResponseDTO create(@Valid CreateVehicleRequestDTO createVehicleRequestDTO) {
         AuthContext authContext = authProvider.get();
 
