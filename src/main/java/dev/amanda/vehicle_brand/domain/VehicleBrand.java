@@ -1,6 +1,6 @@
 package dev.amanda.vehicle_brand.domain;
 
-import dev.amanda.shared.domain.BaseEntity;
+import dev.amanda.infrastructure.shared.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

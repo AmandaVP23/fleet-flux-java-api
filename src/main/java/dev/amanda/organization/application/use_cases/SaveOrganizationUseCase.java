@@ -2,12 +2,12 @@ package dev.amanda.organization.application.use_cases;
 
 import dev.amanda.organization.application.mappers.OrganizationMapper;
 import dev.amanda.organization.domain.Organization;
-import dev.amanda.organization.domain.OrganizationRepository;
+import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.user.domain.Role;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.domain.UserRepository;
+import dev.amanda.user.persistence.UserRepositoryPersistence;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -15,10 +15,10 @@ import jakarta.transaction.Transactional;
 @ApplicationScoped
 public class SaveOrganizationUseCase {
     @Inject
-    OrganizationRepository organizationRepository;
+    OrganizationRepositoryPanache organizationRepositoryPanache;
 
     @Inject
-    UserRepository userRepository;
+    UserRepositoryPersistence userRepositoryPersistence;
 
     @Inject
     OrganizationMapper organizationMapper;
@@ -38,8 +38,8 @@ public class SaveOrganizationUseCase {
         user.setLastName(dto.adminLastName);
         user.setRole(Role.SUPER_ADMIN);
 
-        organizationRepository.persist(organization);
-        userRepository.persist(user);
+        organizationRepositoryPanache.persist(organization);
+        userRepositoryPersistence.persist(user);
 
         return organizationMapper.toDto(organization);
     }

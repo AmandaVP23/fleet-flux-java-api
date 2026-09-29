@@ -2,7 +2,7 @@ package dev.amanda.vehicle.applications.mappers;
 
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
-import dev.amanda.shared.application.BaseMapper;
+import dev.amanda.infrastructure.shared.application.BaseMapper;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.dto.CreateVehicleRequestDTO;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;

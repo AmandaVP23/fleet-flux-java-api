@@ -1,7 +1,7 @@
 package dev.amanda.vehicle.dto;
 
 import dev.amanda.organization.dto.OrganizationResponseDTO;
-import dev.amanda.shared.application.BaseResponseDTO;
+import dev.amanda.infrastructure.shared.application.BaseResponseDTO;
 import dev.amanda.vehicle.domain.*;
 import dev.amanda.vehicle_brand.dto.VehicleBrandResponseDTO;
 import lombok.Getter;

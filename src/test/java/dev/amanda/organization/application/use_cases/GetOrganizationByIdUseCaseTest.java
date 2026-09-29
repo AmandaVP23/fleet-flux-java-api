@@ -2,7 +2,7 @@ package dev.amanda.organization.application.use_cases;
 
 import dev.amanda.organization.application.mappers.OrganizationMapper;
 import dev.amanda.organization.domain.Organization;
-import dev.amanda.organization.domain.OrganizationRepository;
+import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -19,7 +19,7 @@ public class GetOrganizationByIdUseCaseTest {
     GetOrganizationByIdUseCase getOrganizationByIdUseCase;
 
     @InjectMock
-    OrganizationRepository organizationRepository;
+    OrganizationRepositoryPanache organizationRepositoryPanache;
 
     @InjectMock
     OrganizationMapper organizationMapper;
@@ -31,13 +31,13 @@ public class GetOrganizationByIdUseCaseTest {
         Organization organization = new Organization();
         OrganizationResponseDTO organizationResponseDTO = new OrganizationResponseDTO();
 
-        when(organizationRepository.findByIdOrThrow(id)).thenReturn(organization);
+        when(organizationRepositoryPanache.findByIdOrThrow(id)).thenReturn(organization);
         when(organizationMapper.toDto(organization)).thenReturn(organizationResponseDTO);
 
         OrganizationResponseDTO result = getOrganizationByIdUseCase.execute(id);
 
         assertEquals(organizationResponseDTO, result);
-        verify(organizationRepository).findByIdOrThrow(id);
+        verify(organizationRepositoryPanache).findByIdOrThrow(id);
         verify(organizationMapper).toDto(organization);
     }
 }

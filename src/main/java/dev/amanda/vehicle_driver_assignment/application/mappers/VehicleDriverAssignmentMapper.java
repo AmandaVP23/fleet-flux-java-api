@@ -1,6 +1,6 @@
 package dev.amanda.vehicle_driver_assignment.application.mappers;
 
-import dev.amanda.shared.application.BaseMapper;
+import dev.amanda.infrastructure.shared.application.BaseMapper;
 import dev.amanda.user.domain.User;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignment;

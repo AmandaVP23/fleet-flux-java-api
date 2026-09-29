@@ -1,7 +1,7 @@
 package dev.amanda.user.dto;
 
 import dev.amanda.organization.dto.OrganizationResponseDTO;
-import dev.amanda.shared.application.BaseResponseDTO;
+import dev.amanda.infrastructure.shared.application.BaseResponseDTO;
 import dev.amanda.user.domain.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

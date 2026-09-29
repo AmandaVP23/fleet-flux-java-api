@@ -1,52 +1,14 @@
 package dev.amanda.vehicle.domain;
 
-import dev.amanda.shared.application.QueryData;
-import dev.amanda.vehicle.exceptions.VehicleNotFoundException;
-import dev.amanda.vehicle.rest.VehicleFilter;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import io.quarkus.panache.common.Page;
+import dev.amanda.vehicle.applications.filters.VehicleFilter;
 import io.quarkus.panache.common.Sort;
-import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@ApplicationScoped
-public class VehicleRepository implements PanacheRepository<Vehicle> {
-    public Vehicle findByIdOrThrow(long id) {
-        return findByIdOptional(id)
-                .orElseThrow(VehicleNotFoundException::new);
-    }
+public interface VehicleRepository {
+    Vehicle findByIdOrThrow(long id);
 
-    public List<Vehicle> listPaginated(VehicleFilter filter, int page, int size, Sort sort) {
-        QueryData queryData = buildQuery(filter);
+    List<Vehicle> listPaginated(VehicleFilter filter, int page, int size, Sort sort);
 
-        return find(queryData.query(), sort, queryData.params())
-                .page(Page.of(page, size))
-                .list();
-    }
-
-    public long countWithQuery(VehicleFilter filter) {
-        QueryData queryData = buildQuery(filter);
-
-        return count(queryData.query(), queryData.params());
-    }
-
-    private QueryData buildQuery(VehicleFilter filter) {
-        StringBuilder query = new StringBuilder("1=1");
-        Map<String, Object> params = new HashMap<>();
-
-        if (filter.organizationId != null) {
-            query.append(" and organization.id = :orgId");
-            params.put("orgId", filter.organizationId);
-        }
-
-        if (filter.brandId != null) {
-            query.append(" and brand.id = :brandId");
-            params.put("brandId", filter.brandId);
-        }
-
-        return new QueryData(query.toString(), params);
-    }
+    long countWithQuery(VehicleFilter filter);
 }

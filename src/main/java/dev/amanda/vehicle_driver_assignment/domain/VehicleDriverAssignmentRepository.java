@@ -1,6 +1,6 @@
 package dev.amanda.vehicle_driver_assignment.domain;
 
-import dev.amanda.shared.application.QueryData;
+import dev.amanda.infrastructure.shared.application.QueryData;
 import dev.amanda.vehicle_driver_assignment.rest.VehicleDriverAssignmentFilter;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;

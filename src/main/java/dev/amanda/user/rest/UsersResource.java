@@ -1,8 +1,8 @@
 package dev.amanda.user.rest;
 
-import dev.amanda.oidc.AuthContext;
-import dev.amanda.oidc.AuthContextProvider;
-import dev.amanda.shared.PageResult;
+import dev.amanda.infrastructure.oidc.AuthContext;
+import dev.amanda.infrastructure.oidc.AuthContextProvider;
+import dev.amanda.infrastructure.shared.PageResult;
 import dev.amanda.user.application.use_cases.*;
 import dev.amanda.user.domain.Role;
 import dev.amanda.user.domain.Roles;

@@ -1,11 +1,11 @@
 package dev.amanda.organization.application.use_cases;
 
-import dev.amanda.oidc.KeycloakAdmin;
-import dev.amanda.oidc.OrgTenantConfigResolver;
+import dev.amanda.infrastructure.oidc.KeycloakAdmin;
+import dev.amanda.infrastructure.oidc.OrgTenantConfigResolver;
 import dev.amanda.organization.domain.Organization;
-import dev.amanda.organization.domain.OrganizationRepository;
-import dev.amanda.shared.exception.ApiError;
-import dev.amanda.shared.exception.BaseApiException;
+import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
+import dev.amanda.infrastructure.shared.exception.ApiError;
+import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -15,7 +15,7 @@ import lombok.extern.java.Log;
 @ApplicationScoped
 public class RestoreSoftDeletedOrganizationUseCase {
     @Inject
-    OrganizationRepository organizationRepository;
+    OrganizationRepositoryPanache organizationRepositoryPanache;
 
     @Inject
     KeycloakAdmin keycloakAdmin;
@@ -25,7 +25,7 @@ public class RestoreSoftDeletedOrganizationUseCase {
 
     @Transactional
     public void execute(long id) {
-        Organization organization = organizationRepository.findByIdOrThrow(id);
+        Organization organization = organizationRepositoryPanache.findByIdOrThrow(id);
 
         if (organization.getDeletedAt() == null) {
             throw new BaseApiException(ApiError.ORGANIZATION_NOT_INACTIVE, "Organization is not deleted");

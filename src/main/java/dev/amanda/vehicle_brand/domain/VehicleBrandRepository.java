@@ -1,41 +1,13 @@
 package dev.amanda.vehicle_brand.domain;
 
-import dev.amanda.vehicle_brand.exceptions.VehicleBrandNotFoundException;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import jakarta.enterprise.context.ApplicationScoped;
-
 import java.util.List;
-import java.util.Optional;
 
-@ApplicationScoped
-public class VehicleBrandRepository implements PanacheRepository<VehicleBrand> {
-    public VehicleBrand findByIdOrThrow(Long id) {
-        Optional<VehicleBrand> vehicleBrand = this.findByIdOptional(id);
+public interface VehicleBrandRepository {
+    VehicleBrand findByIdOrThrow(Long id);
 
-        if (vehicleBrand.isEmpty()) {
-            throw new VehicleBrandNotFoundException();
-        }
+    VehicleBrand findActiveByIdOrThrow(Long id);
 
-        return vehicleBrand.get();
-    }
+    List<VehicleBrand> listAllDeleted();
 
-    public VehicleBrand findActiveByIdOrThrow(Long id) {
-        Optional<VehicleBrand> vehicleBrand = this.findByIdOptional(id);
-
-        if (vehicleBrand.isEmpty() || vehicleBrand.get().getDeletedAt() != null) {
-            throw new VehicleBrandNotFoundException();
-        }
-
-        return vehicleBrand.get();
-    }
-
-    public List<VehicleBrand> listAllDeleted() {
-        return find("deletedAt IS NOT NULL")
-                .list();
-    }
-
-    public List<VehicleBrand> listAllActive() {
-        return find("deletedAt IS NULL")
-                .list();
-    }
+    List<VehicleBrand> listAllActive();
 }

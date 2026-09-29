@@ -1,7 +1,7 @@
 package dev.amanda.organization.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import dev.amanda.shared.domain.BaseEntity;
+import dev.amanda.infrastructure.shared.domain.BaseEntity;
 import dev.amanda.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;

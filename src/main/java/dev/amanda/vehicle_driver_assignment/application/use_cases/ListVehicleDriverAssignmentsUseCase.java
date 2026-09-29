@@ -1,9 +1,9 @@
 package dev.amanda.vehicle_driver_assignment.application.use_cases;
 
-import dev.amanda.oidc.AuthContext;
-import dev.amanda.shared.PageResult;
-import dev.amanda.shared.application.OrganizationAccessService;
-import dev.amanda.shared.application.PageRequestHelper;
+import dev.amanda.infrastructure.oidc.AuthContext;
+import dev.amanda.infrastructure.shared.PageResult;
+import dev.amanda.infrastructure.shared.application.OrganizationAccessService;
+import dev.amanda.infrastructure.shared.application.PageRequestHelper;
 import dev.amanda.vehicle_driver_assignment.application.mappers.VehicleDriverAssignmentMapper;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignment;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignmentRepository;

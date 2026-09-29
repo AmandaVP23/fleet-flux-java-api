@@ -1,13 +1,13 @@
 package dev.amanda.user.application.use_cases;
 
-import dev.amanda.oidc.AuthContext;
-import dev.amanda.oidc.KeycloakAdmin;
+import dev.amanda.infrastructure.oidc.AuthContext;
+import dev.amanda.infrastructure.oidc.KeycloakAdmin;
 import dev.amanda.organization.domain.Organization;
-import dev.amanda.organization.domain.OrganizationRepository;
+import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
 import dev.amanda.organization.exceptions.UserSameEmailAlreadyExistsException;
 import dev.amanda.user.application.mappers.UserMapper;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.domain.UserRepository;
+import dev.amanda.user.persistence.UserRepositoryPersistence;
 import dev.amanda.user.dto.CreateUserRequestDTO;
 import dev.amanda.user.dto.UserResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,10 +24,10 @@ public class CreateUserUseCase {
     KeycloakAdmin keycloakAdmin;
 
     @Inject
-    OrganizationRepository organizationRepository;
+    OrganizationRepositoryPanache organizationRepositoryPanache;
 
     @Inject
-    UserRepository userRepository;
+    UserRepositoryPersistence userRepositoryPersistence;
 
     @Inject
     UserMapper userMapper;
@@ -42,12 +42,12 @@ public class CreateUserUseCase {
             effectiveOrgId = authContext.getOrganizationId();
         }
 
-        Optional<User> existingUser = userRepository.findByEmail(dto.email());
+        Optional<User> existingUser = userRepositoryPersistence.findByEmail(dto.email());
         if (existingUser.isPresent()) {
             throw new UserSameEmailAlreadyExistsException();
         }
 
-        Organization organization = organizationRepository.findByIdOrThrow(effectiveOrgId);
+        Organization organization = organizationRepositoryPanache.findByIdOrThrow(effectiveOrgId);
 
         String userKeycloakId = null;
         try {
@@ -64,7 +64,7 @@ public class CreateUserUseCase {
             user.setLastName(dto.lastName());
             user.setRole(dto.role().toRole());
 
-            userRepository.persist(user);
+            userRepositoryPersistence.persist(user);
 
             return userMapper.toDto(user);
         } catch (Exception e) {

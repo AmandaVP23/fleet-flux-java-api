@@ -1,9 +1,9 @@
 package dev.amanda.vehicle_driver_assignment.application.use_cases;
 
-import dev.amanda.oidc.AuthContext;
+import dev.amanda.infrastructure.oidc.AuthContext;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.domain.UserRepository;
+import dev.amanda.user.persistence.UserRepositoryPersistence;
 import dev.amanda.user.exceptions.UserNotFoundException;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
@@ -23,7 +23,7 @@ import lombok.extern.java.Log;
 public class CreateVehicleDriverAssignmentUseCase {
 
     @Inject
-    UserRepository userRepository;
+    UserRepositoryPersistence userRepositoryPersistence;
 
     @Inject
     VehicleRepository vehicleRepository;
@@ -36,8 +36,8 @@ public class CreateVehicleDriverAssignmentUseCase {
 
     @Transactional
     public VehicleDriverAssignmentListResponseDTO execute(VehicleDriverAssignmentRequestDTO requestDTO, AuthContext auth) {
-        User authenticatedUser = userRepository.findByKeycloakIdOrThrow(auth.getUserKeycloakId());
-        User driver = userRepository.findByIdOrThrow(requestDTO.driverId);
+        User authenticatedUser = userRepositoryPersistence.findByKeycloakIdOrThrow(auth.getUserKeycloakId());
+        User driver = userRepositoryPersistence.findByIdOrThrow(requestDTO.driverId);
 
         // todo validate end date / start date
 

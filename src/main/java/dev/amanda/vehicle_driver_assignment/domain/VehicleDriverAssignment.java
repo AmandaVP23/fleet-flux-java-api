@@ -1,6 +1,6 @@
 package dev.amanda.vehicle_driver_assignment.domain;
 
-import dev.amanda.shared.domain.BaseEntity;
+import dev.amanda.infrastructure.shared.domain.BaseEntity;
 import dev.amanda.user.domain.User;
 import dev.amanda.vehicle.domain.Vehicle;
 import jakarta.persistence.*;

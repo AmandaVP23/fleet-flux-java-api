@@ -1,8 +1,8 @@
 package dev.amanda.vehicle.dto;
 
-import dev.amanda.shared.rest.current_year_max.CurrentYearMax;
-import dev.amanda.shared.rest.organization_id_with_auth.HasOrganizationId;
-import dev.amanda.shared.rest.organization_id_with_auth.ValidOrganizationIdWithAuth;
+import dev.amanda.infrastructure.shared.rest.current_year_max.CurrentYearMax;
+import dev.amanda.infrastructure.shared.rest.organization_id_with_auth.HasOrganizationId;
+import dev.amanda.infrastructure.shared.rest.organization_id_with_auth.ValidOrganizationIdWithAuth;
 import dev.amanda.vehicle.domain.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

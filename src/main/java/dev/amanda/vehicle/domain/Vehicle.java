@@ -1,7 +1,7 @@
 package dev.amanda.vehicle.domain;
 
 import dev.amanda.organization.domain.Organization;
-import dev.amanda.shared.domain.BaseEntity;
+import dev.amanda.infrastructure.shared.domain.BaseEntity;
 import dev.amanda.vehicle_brand.domain.VehicleBrand;
 import jakarta.persistence.*;
 import lombok.Getter;

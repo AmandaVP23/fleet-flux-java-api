@@ -2,7 +2,7 @@ package dev.amanda.organization.application.use_cases;
 
 import dev.amanda.organization.application.mappers.OrganizationMapper;
 import dev.amanda.organization.domain.Organization;
-import dev.amanda.organization.domain.OrganizationRepository;
+import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -11,13 +11,13 @@ import jakarta.inject.Inject;
 public class GetOrganizationByIdUseCase {
 
     @Inject
-    OrganizationRepository organizationRepository;
+    OrganizationRepositoryPanache organizationRepositoryPanache;
 
     @Inject
     OrganizationMapper organizationMapper;
 
     public OrganizationResponseDTO execute(long id) {
-        Organization organization = organizationRepository.findByIdOrThrow(id);
+        Organization organization = organizationRepositoryPanache.findByIdOrThrow(id);
 
         return organizationMapper.toDto(organization);
     }

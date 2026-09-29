@@ -1,6 +1,6 @@
 package dev.amanda.vehicle_brand.dto;
 
-import dev.amanda.shared.application.BaseResponseDTO;
+import dev.amanda.infrastructure.shared.application.BaseResponseDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

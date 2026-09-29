@@ -2,7 +2,7 @@ package dev.amanda.organization.application.mappers;
 
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
-import dev.amanda.shared.application.BaseMapper;
+import dev.amanda.infrastructure.shared.application.BaseMapper;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "jakarta", uses = BaseMapper.class)

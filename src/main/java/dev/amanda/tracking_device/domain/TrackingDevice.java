@@ -1,7 +1,7 @@
 package dev.amanda.tracking_device.domain;
 
 import dev.amanda.organization.domain.Organization;
-import dev.amanda.shared.domain.BaseEntity;
+import dev.amanda.infrastructure.shared.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
