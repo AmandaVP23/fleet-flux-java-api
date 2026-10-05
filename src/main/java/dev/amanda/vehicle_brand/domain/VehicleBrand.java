@@ -13,5 +13,5 @@ import lombok.Setter;
 @Setter
 public class VehicleBrand extends BaseEntity {
     @Column(nullable = false, unique = true)
-    String name;
+    private String name;
 }

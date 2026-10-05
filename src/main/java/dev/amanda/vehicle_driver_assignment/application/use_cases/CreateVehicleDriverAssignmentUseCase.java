@@ -9,7 +9,7 @@ import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle_driver_assignment.application.mappers.VehicleDriverAssignmentMapper;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignment;
-import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignmentRepository;
+import dev.amanda.vehicle_driver_assignment.persistence.VehicleDriverAssignmentRepositoryPanache;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentListResponseDTO;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentRequestDTO;
 import dev.amanda.vehicle_driver_assignment.exceptions.UserIsNotDriverException;
@@ -29,7 +29,7 @@ public class CreateVehicleDriverAssignmentUseCase {
     VehicleRepository vehicleRepository;
 
     @Inject
-    VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
+    VehicleDriverAssignmentRepositoryPanache vehicleDriverAssignmentRepositoryPanache;
 
     @Inject
     VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
@@ -39,8 +39,6 @@ public class CreateVehicleDriverAssignmentUseCase {
         User authenticatedUser = userRepositoryPersistence.findByKeycloakIdOrThrow(auth.getUserKeycloakId());
         User driver = userRepositoryPersistence.findByIdOrThrow(requestDTO.driverId);
 
-        // todo validate end date / start date
-
         if (!driver.getOrganization().getId().equals(authenticatedUser.getOrganization().getId())) {
             throw new UserNotFoundException();
         }
@@ -48,6 +46,8 @@ public class CreateVehicleDriverAssignmentUseCase {
         if (!driver.getRole().getValue().equals(Roles.DRIVER)) {
             throw new UserIsNotDriverException();
         }
+
+        // todo - validate exists assignment conflicting with this one (driver/vehicle occupied)
 
         Vehicle vehicle = vehicleRepository.findByIdOrThrow(requestDTO.vehicleId);
 
@@ -58,7 +58,7 @@ public class CreateVehicleDriverAssignmentUseCase {
         vehicleDriverAssignment.setEndDateTime(requestDTO.endDateTime);
         vehicleDriverAssignment.setAssignedBy(authenticatedUser);
 
-        vehicleDriverAssignmentRepository.persist(vehicleDriverAssignment);
+        vehicleDriverAssignmentRepositoryPanache.persist(vehicleDriverAssignment);
         return vehicleDriverAssignmentMapper.toDto(vehicleDriverAssignment);
     }
 }

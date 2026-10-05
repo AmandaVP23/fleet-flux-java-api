@@ -16,67 +16,67 @@ public class Vehicle extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "vehicle_brand_id")
-    VehicleBrand brand;
+    private VehicleBrand brand;
 
     @ManyToOne
     @JoinColumn(name = "organization_id")
-    Organization organization;
+    private Organization organization;
 
     @Column(length = 180)
-    String variant;
+    private String variant;
 
     @Column(length = 180)
-    String model;
+    private String model;
 
     @Column(length = 20)
-    String plateNumber;
+    private String plateNumber;
 
     @Column(length = 30)
-    String vin;
+    private String vin;
 
     @Column(length = 4)
-    int yearOfManufacture;
+    private int yearOfManufacture;
 
     @Column()
     @Enumerated(EnumType.STRING)
-    VehicleCategory category;
+    private VehicleCategory category;
 
     @Column()
     @Enumerated(EnumType.STRING)
-    VehicleStatus status;
+    private VehicleStatus status;
 
     @Column()
     @Enumerated(EnumType.STRING)
-    VehicleType type;
+    private VehicleType type;
 
     @Column(name = "fuel_type")
     @Enumerated(EnumType.STRING)
-    VehicleFuelType fuelType;
+    private VehicleFuelType fuelType;
 
     @Column()
-    double fuelCapacityInLiters;
+    private double fuelCapacityInLiters;
 
     @Column()
-    double avgConsumptionPer100km;
+    private double avgConsumptionPer100km;
 
     @Column()
-    Instant lastServiceDate;
+    private Instant lastServiceDate;
 
     @Column(length = 40)
-    String insurancePolicyNumber;
+    private String insurancePolicyNumber;
 
     @Column()
-    Instant insuranceExpiryDate;
+    private Instant insuranceExpiryDate;
 
     @Column(length = 180)
-    String insuranceCompany;
+    private String insuranceCompany;
 
     @Column()
-    Instant inspectionDueDate;
+    private Instant inspectionDueDate;
 
     @Column()
     @Enumerated(EnumType.STRING)
-    VehicleOwnershipType ownershipType;
+    private VehicleOwnershipType ownershipType;
 }
 
 

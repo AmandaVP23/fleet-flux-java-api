@@ -7,18 +7,25 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.java.Log;
 
-// implements ExceptionMapper<BaseApiException>
+import java.util.logging.Level;
 
 @Provider
 @Log
 public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
     @Override
     public Response toResponse(Exception exception) {
-        System.out.println(exception.getCause());
         if (exception instanceof BaseApiException e) {
             return Response
                     .status(e.getApiError().getStatus())
                     .entity(new ErrorResponse(e.getApiError(), e.getMessage()))
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
+
+        if (exception instanceof DomainException e) {
+            return Response
+                    .status(400)
+                    .entity(new ErrorResponse(ApiError.VALIDATION_ERROR, e.getMessage()))
                     .type(MediaType.APPLICATION_JSON)
                     .build();
         }
@@ -30,7 +37,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
                     .build();
         }
 
-        log.severe(exception.getMessage());
+        log.log(Level.SEVERE, exception.getMessage(), exception);
 
         return Response
                 .status(Response.Status.INTERNAL_SERVER_ERROR)
