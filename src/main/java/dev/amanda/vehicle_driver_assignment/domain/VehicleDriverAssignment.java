@@ -45,7 +45,7 @@ public class VehicleDriverAssignment extends BaseEntity {
     }
 
     public void setEndDateTime(Instant endDateTime) {
-        if (endDateTime != null && this.startDateTime != null && this.endDateTime.isBefore(endDateTime)) {
+        if (endDateTime != null && this.startDateTime != null && endDateTime.isBefore(this.startDateTime)) {
             throw new DomainException(DomainError.VEHICLE_DRIVER_ASSIGNMENT_START_DATETIME_BEFORE_END_DATETIME);
         }
 

@@ -9,6 +9,7 @@ import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,34 @@ public class VehicleDriverAssignmentRepositoryPanache implements VehicleDriverAs
         QueryData queryData = buildQuery(filter);
 
         return count(queryData.query(), queryData.params());
+    }
+
+    public boolean checkVehicleAssignmentConflict(long vehicleId, Instant startDateTime, Instant endDateTime) {
+        StringBuilder query = new StringBuilder("1=1");
+        Map<String, Object> params = new HashMap<>();
+
+        query.append(" and vehicle.id = :vehicleId");
+        params.put("vehicleId", vehicleId);
+
+        query.append(" and startDateTime <= :startDateTime");
+        params.put("startDateTime", startDateTime);
+
+        query.append(" and (endDateTime is NULL or endDateTime >= :endDateTime)");
+        params.put("endDateTime", endDateTime);
+
+        // todo - handle end date = null
+
+        QueryData queryData = new QueryData(query.toString(), params);
+
+// todo - find first
+        List<VehicleDriverAssignment> results = find(queryData.query(), queryData.params()).page(0, 1).list();
+
+        System.out.println("Results: " + results.size());
+        for (VehicleDriverAssignment vehicleDriverAssignment : results) {
+            System.out.println(vehicleDriverAssignment.getId());
+        }
+
+        return false;
     }
 
     private QueryData buildQuery(VehicleDriverAssignmentFilter filter) {
