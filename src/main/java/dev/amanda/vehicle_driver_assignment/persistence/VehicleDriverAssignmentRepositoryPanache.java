@@ -33,32 +33,55 @@ public class VehicleDriverAssignmentRepositoryPanache implements VehicleDriverAs
         return count(queryData.query(), queryData.params());
     }
 
-    public boolean checkVehicleAssignmentConflict(long vehicleId, Instant startDateTime, Instant endDateTime) {
+    public boolean verifyVehicleAssignmentHasConflict(
+            long vehicleId,
+            Instant startDateTime,
+            Instant endDateTime
+    ) {
+        // todo - when editing exclude own id
+        return verifyAssignmentHasConflict(
+                "vehicle.id",
+                vehicleId,
+                startDateTime,
+                endDateTime
+        );
+    }
+
+    public boolean verifyDriverAssignmentHasConflict(
+            long driverId,
+            Instant startDateTime,
+            Instant endDateTime
+    ) {
+        // todo - when editing exclude own id
+        return verifyAssignmentHasConflict(
+                "driver.id",
+                driverId,
+                startDateTime,
+                endDateTime
+        );
+    }
+
+    private boolean verifyAssignmentHasConflict(
+            String resourceField,
+            long resourceId,
+            Instant startDateTime,
+            Instant endDateTime
+    ) {
         StringBuilder query = new StringBuilder("1=1");
         Map<String, Object> params = new HashMap<>();
 
-        query.append(" and vehicle.id = :vehicleId");
-        params.put("vehicleId", vehicleId);
+        query.append(" and ").append(resourceField).append(" = :resourceId");
+        params.put("resourceId", resourceId);
 
-        query.append(" and startDateTime <= :startDateTime");
+        query.append(" and (endDateTime IS NULL OR endDateTime > :startDateTime)");
         params.put("startDateTime", startDateTime);
 
-        query.append(" and (endDateTime is NULL or endDateTime >= :endDateTime)");
-        params.put("endDateTime", endDateTime);
-
-        // todo - handle end date = null
-
-        QueryData queryData = new QueryData(query.toString(), params);
-
-// todo - find first
-        List<VehicleDriverAssignment> results = find(queryData.query(), queryData.params()).page(0, 1).list();
-
-        System.out.println("Results: " + results.size());
-        for (VehicleDriverAssignment vehicleDriverAssignment : results) {
-            System.out.println(vehicleDriverAssignment.getId());
+        if (endDateTime != null) {
+            query.append(" and :endDateTime > startDateTime");
+            params.put("endDateTime", endDateTime);
         }
 
-        return false;
+        return count(query.toString(), params) > 0;
     }
 
     private QueryData buildQuery(VehicleDriverAssignmentFilter filter) {

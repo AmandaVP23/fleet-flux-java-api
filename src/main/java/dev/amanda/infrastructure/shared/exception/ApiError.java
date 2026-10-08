@@ -21,7 +21,9 @@ public enum ApiError {
     VEHICLE_BRAND_DELETED(110, "Vehicle brand is already deleted", 422),
     VEHICLE_BRAND_IS_USED(111, "Vehicle brand is being used", 400),
     VEHICLE_NOT_FOUND(112, "Vehicle not found", 404),
-    USER_IS_NOT_DRIVER(113, "User is not driver", 400),;
+    USER_IS_NOT_DRIVER(113, "User is not driver", 400),
+    VEHICLE_DRIVER_ASSIGNMENT_VEHICLE_CONFLICT(114, "Vehicle has assignment time conflict", 409),
+    VEHICLE_DRIVER_ASSIGNMENT_DRIVER_CONFLICT(115, "Driver has assignment time conflict", 409),;
 
     private final int errorCode;
     private final String message;

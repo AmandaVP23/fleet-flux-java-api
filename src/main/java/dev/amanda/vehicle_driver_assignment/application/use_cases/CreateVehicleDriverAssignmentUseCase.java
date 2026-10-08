@@ -52,11 +52,6 @@ public class CreateVehicleDriverAssignmentUseCase {
             throw new BaseApiException(ApiError.USER_IS_NOT_DRIVER);
         }
 
-        assignmentConflictChecker.checkVehicleDriverAssignmentConflict(requestDTO);
-
-        // todo - validate exists assignment conflicting with this one (driver/vehicle occupied)
-        // todo create a separate service AssignmentConflictChecker for this
-
         Vehicle vehicle = vehicleRepository.findByIdOrThrow(requestDTO.vehicleId);
 
         VehicleDriverAssignment vehicleDriverAssignment = new VehicleDriverAssignment();
@@ -65,6 +60,8 @@ public class CreateVehicleDriverAssignmentUseCase {
         vehicleDriverAssignment.setStartDateTime(requestDTO.startDateTime);
         vehicleDriverAssignment.setEndDateTime(requestDTO.endDateTime);
         vehicleDriverAssignment.setAssignedBy(authenticatedUser);
+
+        assignmentConflictChecker.checkVehicleDriverAssignmentConflict(vehicleDriverAssignment);
 
         vehicleDriverAssignmentRepositoryPanache.persist(vehicleDriverAssignment);
         return vehicleDriverAssignmentMapper.toDto(vehicleDriverAssignment);
