@@ -17,7 +17,7 @@ public interface OrganizationRepository {
 
     long count(OrganizationStatusFilter statusFilter);
 
-    Organization findActiveByIdOrThrow(long id);
+    Organization findByIdOrThrow(long id);
 
-    Organization findByIdOrThrow(Long id);
+    Organization findActiveByIdOrThrow(Long id);
 }

@@ -31,13 +31,13 @@ public class GetOrganizationByIdUseCaseTest {
         Organization organization = new Organization();
         OrganizationResponseDTO organizationResponseDTO = new OrganizationResponseDTO();
 
-        when(organizationRepositoryPanache.findByIdOrThrow(id)).thenReturn(organization);
+        when(organizationRepositoryPanache.findActiveByIdOrThrow(id)).thenReturn(organization);
         when(organizationMapper.toDto(organization)).thenReturn(organizationResponseDTO);
 
         OrganizationResponseDTO result = getOrganizationByIdUseCase.execute(id);
 
         assertEquals(organizationResponseDTO, result);
-        verify(organizationRepositoryPanache).findByIdOrThrow(id);
+        verify(organizationRepositoryPanache).findActiveByIdOrThrow(id);
         verify(organizationMapper).toDto(organization);
     }
 }

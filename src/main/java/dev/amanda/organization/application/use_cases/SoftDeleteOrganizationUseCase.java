@@ -29,7 +29,7 @@ public class SoftDeleteOrganizationUseCase {
     // TODO wrap Keycloak calls with retry (e.g., 3 attempts)
     @Transactional
     public void execute(long id) {
-        Organization organization = organizationRepositoryPanache.findByIdOrThrow(id);
+        Organization organization = organizationRepositoryPanache.findActiveByIdOrThrow(id);
 
         if (organization.getDeletedAt() != null) {
             throw new BaseApiException(ApiError.ORGANIZATION_INACTIVE, "Organization was already deleted");

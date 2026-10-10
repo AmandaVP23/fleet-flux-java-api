@@ -47,7 +47,7 @@ public class CreateUserUseCase {
             throw new UserSameEmailAlreadyExistsException();
         }
 
-        Organization organization = organizationRepositoryPanache.findByIdOrThrow(effectiveOrgId);
+        Organization organization = organizationRepositoryPanache.findActiveByIdOrThrow(effectiveOrgId);
 
         String userKeycloakId = null;
         try {

@@ -39,7 +39,7 @@ public class CreateVehicleUseCase {
             effectiveOrgId = authContext.getOrganizationId();
         }
 
-        Organization organization = organizationRepositoryPanache.findActiveByIdOrThrow(effectiveOrgId);
+        Organization organization = organizationRepositoryPanache.findByIdOrThrow(effectiveOrgId);
         VehicleBrand vehicleBrand = vehicleBrandRepositoryPanache.findActiveByIdOrThrow(dto.brandId());
 
         Vehicle vehicle = new Vehicle();

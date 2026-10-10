@@ -25,7 +25,7 @@ public class HardDeleteOrganizationUseCase {
 
     @Transactional
     public void execute(long id) {
-        Organization organization = organizationRepositoryPanache.findByIdOrThrow(id);
+        Organization organization = organizationRepositoryPanache.findActiveByIdOrThrow(id);
 
         if (organization.getDeletedAt() == null) {
             throw new BaseApiException(ApiError.ORGANIZATION_NOT_INACTIVE, "Organization is not soft deleted");

@@ -17,7 +17,7 @@ public class GetOrganizationByIdUseCase {
     OrganizationMapper organizationMapper;
 
     public OrganizationResponseDTO execute(long id) {
-        Organization organization = organizationRepositoryPanache.findByIdOrThrow(id);
+        Organization organization = organizationRepositoryPanache.findActiveByIdOrThrow(id);
 
         return organizationMapper.toDto(organization);
     }

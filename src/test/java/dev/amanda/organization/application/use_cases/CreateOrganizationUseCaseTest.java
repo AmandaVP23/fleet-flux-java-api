@@ -23,7 +23,10 @@ import org.keycloak.representations.idm.UserRepresentation;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -187,7 +190,7 @@ public class CreateOrganizationUseCaseTest {
             when(userRepositoryPersistence.findByEmail(ADMIN_EMAIL))
                     .thenReturn(Optional.of(new User()));
 
-            catchThrowable(() -> createOrganizationUseCase.execute(createDto));
+            assertThatThrownBy(() -> createOrganizationUseCase.execute(createDto));
 
             verifyNoInteractions(keycloakAdmin);
         }

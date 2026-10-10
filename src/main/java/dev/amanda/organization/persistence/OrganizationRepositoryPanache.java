@@ -62,13 +62,13 @@ public class OrganizationRepositoryPanache implements OrganizationRepository, Pa
     }
 
     @Override
-    public Organization findActiveByIdOrThrow(long id) {
+    public Organization findByIdOrThrow(long id) {
         return findByIdOptional(id)
                 .orElseThrow(OrganizationNotFoundException::new);
     }
 
     @Override
-    public Organization findByIdOrThrow(Long id) {
+    public Organization findActiveByIdOrThrow(Long id) {
         return find(
                 "id = ?1 and deletedAt IS NULL",
                 id

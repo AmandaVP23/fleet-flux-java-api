@@ -15,7 +15,7 @@ public class UpdateOrganizationUseCase {
 
     @Transactional
     public void execute(long id, UpdateOrganizationDTO updateOrganizationDTO) {
-        Organization organization = organizationRepositoryPanache.findActiveByIdOrThrow(id);
+        Organization organization = organizationRepositoryPanache.findByIdOrThrow(id);
 
         if (updateOrganizationDTO.name != null) {
             organization.setName(updateOrganizationDTO.name);
