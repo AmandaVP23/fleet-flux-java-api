@@ -2,7 +2,7 @@ package dev.amanda.vehicle_brand.application.use_cases;
 
 import dev.amanda.vehicle_brand.application.mappers.VehicleBrandMapper;
 import dev.amanda.vehicle_brand.domain.VehicleBrand;
-import dev.amanda.vehicle_brand.domain.VehicleBrandRepository;
+import dev.amanda.vehicle_brand.persistence.VehicleBrandRepositoryPanache;
 import dev.amanda.vehicle_brand.dto.CreateVehicleBrandRequestDTO;
 import dev.amanda.vehicle_brand.dto.VehicleBrandResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -13,7 +13,7 @@ import jakarta.transaction.Transactional;
 public class CreateVehicleBrandUseCase {
 
     @Inject
-    VehicleBrandRepository vehicleBrandRepository;
+    VehicleBrandRepositoryPanache vehicleBrandRepositoryPanache;
 
     @Inject
     VehicleBrandMapper vehicleBrandMapper;
@@ -23,7 +23,7 @@ public class CreateVehicleBrandUseCase {
         VehicleBrand vehicleBrand = new VehicleBrand();
         vehicleBrand.setName(createVehicleBrandRequestDTO.name);
 
-        vehicleBrandRepository.persist(vehicleBrand);
+        vehicleBrandRepositoryPanache.persist(vehicleBrand);
 
         return vehicleBrandMapper.toDto(vehicleBrand);
     }

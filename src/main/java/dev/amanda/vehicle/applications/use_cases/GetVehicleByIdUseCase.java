@@ -1,6 +1,6 @@
 package dev.amanda.vehicle.applications.use_cases;
 
-import dev.amanda.oidc.AuthContext;
+import dev.amanda.infrastructure.oidc.AuthContext;
 import dev.amanda.vehicle.applications.mappers.VehicleMapper;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;

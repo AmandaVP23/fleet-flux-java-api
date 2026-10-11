@@ -1,9 +1,10 @@
 package dev.amanda.vehicle.rest;
 
-import dev.amanda.oidc.AuthContext;
-import dev.amanda.oidc.AuthContextProvider;
-import dev.amanda.shared.PageResult;
+import dev.amanda.infrastructure.oidc.AuthContext;
+import dev.amanda.infrastructure.oidc.AuthContextProvider;
+import dev.amanda.infrastructure.shared.PageResult;
 import dev.amanda.user.domain.Roles;
+import dev.amanda.vehicle.applications.filters.VehicleFilter;
 import dev.amanda.vehicle.applications.use_cases.CreateVehicleUseCase;
 import dev.amanda.vehicle.applications.use_cases.EditVehicleUseCase;
 import dev.amanda.vehicle.applications.use_cases.GetVehicleByIdUseCase;
@@ -38,7 +39,7 @@ public class VehicleResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ Roles.SUPER_ADMIN, Roles.ORG_ADMIN })
+    @RolesAllowed({ Roles.SUPER_ADMIN, Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
     public VehicleResponseDTO create(@Valid CreateVehicleRequestDTO createVehicleRequestDTO) {
         AuthContext authContext = authProvider.get();
 

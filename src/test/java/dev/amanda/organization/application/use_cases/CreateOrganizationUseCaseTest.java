@@ -1,17 +1,17 @@
 package dev.amanda.organization.application.use_cases;
 
-import dev.amanda.oidc.KeycloakAdmin;
-import dev.amanda.oidc.OrgTenantConfigResolver;
+import dev.amanda.infrastructure.oidc.KeycloakAdmin;
+import dev.amanda.infrastructure.oidc.OrgTenantConfigResolver;
 import dev.amanda.organization.domain.Organization;
-import dev.amanda.organization.domain.OrganizationRepository;
+import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.organization.exceptions.OrganizationAlreadyExistsException;
 import dev.amanda.organization.exceptions.OrganizationWithSameRealmAlreadyExistsException;
 import dev.amanda.organization.exceptions.UserSameEmailAlreadyExistsException;
-import dev.amanda.shared.exception.GenericApiException;
+import dev.amanda.infrastructure.shared.exception.GenericApiException;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.domain.UserRepository;
+import dev.amanda.user.persistence.UserRepositoryPersistence;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -23,7 +23,10 @@ import org.keycloak.representations.idm.UserRepresentation;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -35,10 +38,10 @@ public class CreateOrganizationUseCaseTest {
     CreateOrganizationUseCase createOrganizationUseCase;
 
     @InjectMock
-    OrganizationRepository organizationRepository;
+    OrganizationRepositoryPanache organizationRepositoryPanache;
 
     @InjectMock
-    UserRepository userRepository;
+    UserRepositoryPersistence userRepositoryPersistence;
 
     @InjectMock
     SaveOrganizationUseCase saveOrganizationUseCase;
@@ -130,7 +133,7 @@ public class CreateOrganizationUseCaseTest {
 
         @Test
         void shouldThrowOrganizationAlreadyExistsException() {
-            when(organizationRepository.findByName(ORGANIZATION_NAME))
+            when(organizationRepositoryPanache.findByName(ORGANIZATION_NAME))
                     .thenReturn(Optional.of(new Organization()));
 
             assertThatThrownBy(() -> createOrganizationUseCase.execute(createDto))
@@ -139,7 +142,7 @@ public class CreateOrganizationUseCaseTest {
 
         @Test
         void shouldNotTouchKeycloakWhenNameConflicts() {
-            when(organizationRepository.findByName(ORGANIZATION_NAME))
+            when(organizationRepositoryPanache.findByName(ORGANIZATION_NAME))
                     .thenReturn(Optional.of(new Organization()));
 
             catchThrowable(() -> createOrganizationUseCase.execute(createDto));
@@ -153,7 +156,7 @@ public class CreateOrganizationUseCaseTest {
 
         @Test
         void shouldThrowOrganizationWithSameRealmAlreadyExistsException() {
-            when(organizationRepository.findByRealm(EXPECTED_REALM))
+            when(organizationRepositoryPanache.findByRealm(EXPECTED_REALM))
                     .thenReturn(Optional.of(new Organization()));
 
             assertThatThrownBy(() -> createOrganizationUseCase.execute(createDto))
@@ -162,7 +165,7 @@ public class CreateOrganizationUseCaseTest {
 
         @Test
         void shouldNotTouchKeycloakWhenRealmConflicts() {
-            when(organizationRepository.findByRealm(EXPECTED_REALM))
+            when(organizationRepositoryPanache.findByRealm(EXPECTED_REALM))
                     .thenReturn(Optional.of(new Organization()));
 
             catchThrowable(() -> createOrganizationUseCase.execute(createDto));
@@ -175,7 +178,7 @@ public class CreateOrganizationUseCaseTest {
     class WhenAdminEmailAlreadyExists {
         @Test
         void shouldThrowUserSameEmailAlreadyExistsException() {
-            when(userRepository.findByEmail(ADMIN_EMAIL))
+            when(userRepositoryPersistence.findByEmail(ADMIN_EMAIL))
                     .thenReturn(Optional.of(new User()));
 
             assertThatThrownBy(() -> createOrganizationUseCase.execute(createDto))
@@ -184,10 +187,10 @@ public class CreateOrganizationUseCaseTest {
 
         @Test
         void shouldNotTouchKeycloakWhenEmailConflicts() {
-            when(userRepository.findByEmail(ADMIN_EMAIL))
+            when(userRepositoryPersistence.findByEmail(ADMIN_EMAIL))
                     .thenReturn(Optional.of(new User()));
 
-            catchThrowable(() -> createOrganizationUseCase.execute(createDto));
+            assertThatThrownBy(() -> createOrganizationUseCase.execute(createDto));
 
             verifyNoInteractions(keycloakAdmin);
         }

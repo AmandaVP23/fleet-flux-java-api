@@ -1,7 +1,7 @@
 package dev.amanda.organization.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import dev.amanda.shared.domain.BaseEntity;
+import dev.amanda.infrastructure.shared.domain.BaseEntity;
 import dev.amanda.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,18 +16,18 @@ import java.util.List;
 public class Organization extends BaseEntity {
 
     @Column(nullable = false, unique = true)
-    String name;
+    private String name;
 
     @Column(nullable = false, unique = true)
-    String realm;
+    private String realm;
 
     @Column(nullable = false, unique = true)
-    String hostname;
+    private String hostname;
 
     @OneToMany(mappedBy = "organization",
             cascade = CascadeType.REMOVE,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     @JsonIgnore
-    public List<User> users = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
 }

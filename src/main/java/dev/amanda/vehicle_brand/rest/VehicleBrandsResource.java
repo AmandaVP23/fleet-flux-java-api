@@ -1,6 +1,6 @@
 package dev.amanda.vehicle_brand.rest;
 
-import dev.amanda.oidc.AuthContextProvider;
+import dev.amanda.infrastructure.oidc.AuthContextProvider;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.vehicle_brand.application.use_cases.CreateVehicleBrandUseCase;
 import dev.amanda.vehicle_brand.application.use_cases.GetVehicleBrandByIdUseCase;
@@ -59,7 +59,7 @@ public class VehicleBrandsResource {
 
     @POST
     @Operation(
-            summary = "Create a new vehicle brand entry"
+            summary = "Create a new vehicle brand entry - Only SUPER ADMIN allowed"
     )
     @RolesAllowed(Roles.SUPER_ADMIN)
     public VehicleBrandResponseDTO createVehicleBrand(@Valid CreateVehicleBrandRequestDTO vehicleBrand) {

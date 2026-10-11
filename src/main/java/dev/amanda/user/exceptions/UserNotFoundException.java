@@ -1,7 +1,7 @@
 package dev.amanda.user.exceptions;
 
-import dev.amanda.shared.exception.ApiError;
-import dev.amanda.shared.exception.BaseApiException;
+import dev.amanda.infrastructure.shared.exception.ApiError;
+import dev.amanda.infrastructure.shared.exception.BaseApiException;
 
 public class UserNotFoundException extends BaseApiException {
     public UserNotFoundException() {

@@ -1,12 +1,12 @@
 package dev.amanda.vehicle_brand.application.use_cases;
 
-import dev.amanda.shared.exception.ApiError;
-import dev.amanda.shared.exception.BaseApiException;
+import dev.amanda.infrastructure.shared.exception.ApiError;
+import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
-import dev.amanda.vehicle.rest.VehicleFilter;
+import dev.amanda.vehicle.applications.filters.VehicleFilter;
 import dev.amanda.vehicle_brand.domain.VehicleBrand;
-import dev.amanda.vehicle_brand.domain.VehicleBrandRepository;
+import dev.amanda.vehicle_brand.persistence.VehicleBrandRepositoryPanache;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -21,14 +21,14 @@ import java.util.List;
 public class SoftDeleteVehicleBrandUseCase {
 
     @Inject
-    VehicleBrandRepository vehicleBrandRepository;
+    VehicleBrandRepositoryPanache vehicleBrandRepositoryPanache;
 
     @Inject
     VehicleRepository vehicleRepository;
 
     @Transactional
     public void execute(long id) {
-        VehicleBrand vehicleBrand = vehicleBrandRepository.findByIdOrThrow(id);
+        VehicleBrand vehicleBrand = vehicleBrandRepositoryPanache.findByIdOrThrow(id);
 
         VehicleFilter vehicleFilter = new VehicleFilter();
         vehicleFilter.setBrandId(vehicleBrand.getId());
@@ -43,7 +43,7 @@ public class SoftDeleteVehicleBrandUseCase {
         }
 
         vehicleBrand.setDeletedAt(Instant.now());
-        vehicleBrandRepository.persist(vehicleBrand);
+        vehicleBrandRepositoryPanache.persist(vehicleBrand);
 
         log.info("Deleted vehicle brand with id " + id);
     }

@@ -1,14 +1,14 @@
 package dev.amanda.vehicle.applications.use_cases;
 
-import dev.amanda.oidc.AuthContext;
-import dev.amanda.shared.PageResult;
-import dev.amanda.shared.application.PageRequestHelper;
-import dev.amanda.shared.exception.ApiError;
-import dev.amanda.shared.exception.BaseApiException;
+import dev.amanda.infrastructure.oidc.AuthContext;
+import dev.amanda.infrastructure.shared.PageResult;
+import dev.amanda.infrastructure.shared.application.PageRequestHelper;
+import dev.amanda.infrastructure.shared.exception.ApiError;
+import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.vehicle.applications.mappers.VehicleMapper;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
-import dev.amanda.vehicle.rest.VehicleFilter;
+import dev.amanda.vehicle.applications.filters.VehicleFilter;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
