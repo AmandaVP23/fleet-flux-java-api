@@ -1,12 +1,18 @@
 package dev.amanda.organization.persistence;
 
+import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.configuration.Orthography;
+import com.github.database.rider.core.api.connection.ConnectionHolder;
+import com.github.database.rider.core.api.dataset.DataSet;
 import dev.amanda.organization.application.filters.OrganizationStatusFilter;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.exceptions.OrganizationNotFoundException;
+import io.agroal.api.AgroalDataSource;
 import io.quarkus.panache.common.Sort;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -14,260 +20,153 @@ import java.time.Instant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.github.database.rider.junit5.api.DBRider;
+
 @QuarkusTest
+@DBRider
+@DataSet(value = "datasets/organizations.yml", cleanBefore = true)
+@DBUnit(caseSensitiveTableNames = false, caseInsensitiveStrategy = Orthography.LOWERCASE, schema = "public")
 public class OrganizationRepositoryPanacheTest {
     @Inject
     OrganizationRepositoryPanache repository;
 
-    private static final String ORGANIZATION_NAME = "Friends Organization";
-    private static final String ORGANIZATION_REALM = "test-realm";
-    private static final String ORGANIZATION_HOSTNAME = "test-hostname";
+    @Inject
+    AgroalDataSource dataSource;
 
-    private Organization createOrganization(String name, String realm, String hostname, Instant deletedAt) {
-        Organization organization = new Organization();
-        organization.setName(name);
-        organization.setRealm(realm);
-        organization.setHostname(hostname);
-        organization.setDeletedAt(deletedAt);
-        repository.persist(organization);
-        return organization;
-    }
-
-    private Organization createDefaultOrganization() {
-        return createOrganization(ORGANIZATION_NAME, ORGANIZATION_REALM, ORGANIZATION_HOSTNAME, null);
-    }
+    ConnectionHolder connectionHolder = () -> dataSource.getConnection();
 
     @Test
-    @TestTransaction
     void shouldReturnOrganizationWhenNameExists() {
-        createDefaultOrganization();
-
-        var result = repository.findByName(ORGANIZATION_NAME);
+        var result = repository.findByName("Friends");
 
         assertThat(result).isPresent();
-        assertThat(result.orElseThrow().getName()).isEqualTo(ORGANIZATION_NAME);
+        assertThat(result.orElseThrow().getName()).isEqualTo("Friends");
     }
 
     @Test
-    @TestTransaction
     void shouldReturnEmptyWhenNameDoesNotExist() {
-        createDefaultOrganization();
-
         var result = repository.findByName("non existing name");
 
         assertThat(result).isEmpty();
     }
 
     @Test
-    @TestTransaction
     void shouldReturnOrganizationWhenHostnameExists() {
-        createDefaultOrganization();
-
-        var result = repository.findByHostname(ORGANIZATION_HOSTNAME);
+        var result = repository.findByHostname("friends-hostname");
 
         assertThat(result).isPresent();
-        assertThat(result.orElseThrow().getHostname()).isEqualTo(ORGANIZATION_HOSTNAME);
+        assertThat(result.orElseThrow().getHostname()).isEqualTo("friends-hostname");
     }
 
     @Test
-    @TestTransaction
     void shouldReturnEmptyWhenHostnameDoesNotExist() {
-        createDefaultOrganization();
-
         var result = repository.findByHostname("non existing hostname");
 
         assertThat(result.isEmpty()).isTrue();
     }
 
     @Test
-    @TestTransaction
     void shouldReturnOrganizationWhenRealmExists() {
-        createDefaultOrganization();
-
-        var result = repository.findByRealm(ORGANIZATION_REALM);
+        var result = repository.findByRealm("friends-realm");
 
         assertThat(result.isPresent()).isTrue();
-        assertThat(result.get().getRealm()).isEqualTo(ORGANIZATION_REALM);
+        assertThat(result.get().getRealm()).isEqualTo("friends-realm");
     }
 
     @Test
-    @TestTransaction
     void shouldReturnEmptyWhenRealmDoesNotExist() {
-        createDefaultOrganization();
-
         var result = repository.findByRealm("non existing realm");
 
         assertThat(result.isEmpty()).isTrue();
     }
 
-    @Test
-    @TestTransaction
-    void shouldReturnAllOrganizationsWhenFilterIsAll() {
-        createOrganization(
-                "test one",
-                "one-realm",
-                "one-hostname",
-                null
-        );
-        createOrganization(
-                "test two",
-                "two-realm",
-                "two-hostname",
-                Instant.parse("2026-01-01T22:00:00Z")
-        );
+    @Nested
+    class FindPaginated {
+        @Test
+        void shouldReturnAllOrganizationsWhenFilterIsAll() {
+            var results = repository.findPaginated(0, 10, Sort.by("name").ascending(), OrganizationStatusFilter.ALL);
 
-        var results = repository.findPaginated(0, 10, Sort.by("name").ascending(), OrganizationStatusFilter.ALL);
+            assertThat(results).extracting(Organization::getName).containsExactlyInAnyOrder("Friends", "The Big Bang Theory");
+        }
 
-        assertThat(results).extracting(Organization::getName).containsExactlyInAnyOrder("test one", "test two");
+        @Test
+        void shouldReturnOnlyActivesOrganizationsWhenFilterIsActive() {
+            var results = repository.findPaginated(0, 10, Sort.by("name").ascending(), OrganizationStatusFilter.ACTIVE);
+
+            assertThat(results).extracting(Organization::getName).containsExactlyInAnyOrder("Friends");
+        }
+
+        @Test
+        void shouldReturnOnlyDeletedOrganizationsWhenFilterIsDeleted() {
+            var results = repository.findPaginated(0, 10, Sort.by("name").ascending(), OrganizationStatusFilter.DELETED);
+
+            assertThat(results).extracting(Organization::getName).containsExactlyInAnyOrder("The Big Bang Theory");
+        }
     }
 
-    @Test
-    @TestTransaction
-    void shouldReturnOnlyActivesOrganizationsWhenFilterIsActive() {
-        createOrganization(
-                "test one",
-                "one-realm",
-                "one-hostname",
-                null
-        );
-        createOrganization(
-                "test two",
-                "two-realm",
-                "two-hostname",
-                Instant.parse("2026-01-01T22:00:00Z")
-        );
+    @Nested
+    class Count {
+        @Test
+        void shouldReturnCorrectCountWhenFilterIsAll() {
+            var countResult = repository.count(OrganizationStatusFilter.ALL);
 
-        var results = repository.findPaginated(0, 10, Sort.by("name").ascending(), OrganizationStatusFilter.ACTIVE);
+            assertThat(countResult).isEqualTo(2);
+        }
 
-        assertThat(results).extracting(Organization::getName).containsExactlyInAnyOrder("test one");
+        @Test
+        void shouldReturnCorrectCountWhenFilterIsActive() {
+            var countResult = repository.count(OrganizationStatusFilter.ACTIVE);
+
+            assertThat(countResult).isEqualTo(1);
+        }
+
+        @Test
+        void shouldReturnCorrectCountWhenFilterIsDeleted() {
+            var countResult = repository.count(OrganizationStatusFilter.DELETED);
+
+            assertThat(countResult).isEqualTo(1);
+        }
     }
 
-    @Test
-    @TestTransaction
-    void shouldReturnOnlyDeletedOrganizationsWhenFilterIsDeleted() {
-        createOrganization(
-                "test one",
-                "one-realm",
-                "one-hostname",
-                null
-        );
-        createOrganization(
-                "test two",
-                "two-realm",
-                "two-hostname",
-                Instant.parse("2026-01-01T22:00:00Z")
-        );
+    @Nested
+    class FindByIdOrThrow {
+        @Test
+        void shouldReturnOrganizationWhenOrganizationExists() {
+            var result = repository.findByIdOrThrow(1L);
 
-        var results = repository.findPaginated(0, 10, Sort.by("name").ascending(), OrganizationStatusFilter.DELETED);
+            assertThat(result).isNotNull();
+            assertThat(result.getId()).isEqualTo(1L);
+            assertThat(result.getName()).isEqualTo("Friends");
+        }
 
-        assertThat(results).extracting(Organization::getName).containsExactlyInAnyOrder("test two");
+        @Test
+        void shouldThrowWhenOrganizationByIdDoesNotExist() {
+            assertThatThrownBy(() -> repository.findByIdOrThrow(123456L))
+                    .isInstanceOf(OrganizationNotFoundException.class);
+        }
     }
 
-    @Test
-    @TestTransaction
-    void shouldReturnCorrectCountWhenFilterIsAll() {
-        createOrganization(
-                "test one",
-                "one-realm",
-                "one-hostname",
-                null
-        );
-        createOrganization(
-                "test two",
-                "two-realm",
-                "two-hostname",
-                Instant.parse("2026-01-01T22:00:00Z")
-        );
+    @Nested
+    class FindActiveByIdOrThrow {
+        @Test
+        void shouldReturnOrganizationWhenOrganizationByIdAndIsActiveExists() {
+            var result = repository.findActiveByIdOrThrow(1L);
 
-        var countResult = repository.count(OrganizationStatusFilter.ALL);
+            assertThat(result).isNotNull();
+            assertThat(result.getId()).isEqualTo(1L);
+            assertThat(result.getName()).isEqualTo("Friends");
+        }
 
-        assertThat(countResult).isEqualTo(2);
-    }
+        @Test
+        void shouldThrowWhenOrganizationExistButIsNotActive() {
+            assertThatThrownBy(() -> repository.findActiveByIdOrThrow(2L))
+                    .isInstanceOf(OrganizationNotFoundException.class);
+        }
 
-    @Test
-    @TestTransaction
-    void shouldReturnCorrectCountWhenFilterIsActive() {
-        createOrganization(
-                "test one",
-                "one-realm",
-                "one-hostname",
-                null
-        );
-        createOrganization(
-                "test two",
-                "two-realm",
-                "two-hostname",
-                Instant.now()
-        );
-
-        var countResult = repository.count(OrganizationStatusFilter.ACTIVE);
-
-        assertThat(countResult).isEqualTo(1);
-    }
-
-    @Test
-    @TestTransaction
-    void shouldReturnCorrectCountWhenFilterIsDeleted() {
-        createOrganization(
-                "test one",
-                "one-realm",
-                "one-hostname",
-                null
-        );
-        createOrganization(
-                "test two",
-                "two-realm",
-                "two-hostname",
-                Instant.now()
-        );
-
-        var countResult = repository.count(OrganizationStatusFilter.DELETED);
-
-        assertThat(countResult).isEqualTo(1);
-    }
-
-    @Test
-    @TestTransaction
-    void shouldReturnOrganizationWhenOrganizationByIdExists() {
-        Organization organization = createDefaultOrganization();
-
-        var result = repository.findByIdOrThrow(organization.getId());
-
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(organization.getId());
-        assertThat(result.getName()).isEqualTo(organization.getName());
-    }
-
-    @Test
-    void shouldThrowWhenOrganizationByIdDoesNotExist() {
-        assertThatThrownBy(() -> repository.findByIdOrThrow(123456L))
-            .isInstanceOf(OrganizationNotFoundException.class);
-    }
-
-    @Test
-    @TestTransaction
-    void shouldReturnOrganizationWhenOrganizationByIdAndIsActiveExists() {
-        Organization organization = createDefaultOrganization();
-
-        var result = repository.findActiveByIdOrThrow(organization.getId());
-
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(organization.getId());
-        assertThat(result.getName()).isEqualTo(organization.getName());
-    }
-
-    @Test
-    @TestTransaction
-    void shouldThrowWhenOrganizationExistButIsNotActive() {
-        Organization organization = createOrganization("test one", "realm", "hostname", Instant.parse("2026-01-01T22:00:00Z"));
-
-        assertThatThrownBy(() -> repository.findActiveByIdOrThrow(organization.getId()))
-                .isInstanceOf(OrganizationNotFoundException.class);
-    }
-
-    @Test
-    void shouldThrowWhenOrganizationDoesNotExistAndIsNotActive() {
-        assertThatThrownBy(() -> repository.findActiveByIdOrThrow(123456L))
-                .isInstanceOf(OrganizationNotFoundException.class);
+        @Test
+        void shouldThrowWhenOrganizationDoesNotExistAndIsNotActive() {
+            assertThatThrownBy(() -> repository.findActiveByIdOrThrow(123456L))
+                    .isInstanceOf(OrganizationNotFoundException.class);
+        }
     }
 }
