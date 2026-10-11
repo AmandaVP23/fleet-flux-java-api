@@ -14,7 +14,7 @@ import dev.amanda.organization.exceptions.UserSameEmailAlreadyExistsException;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.infrastructure.shared.exception.GenericApiException;
 import dev.amanda.user.domain.Roles;
-import dev.amanda.user.persistence.UserRepositoryPersistence;
+import dev.amanda.user.persistence.UserRepositoryPanache;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.java.Log;
@@ -28,7 +28,7 @@ public class CreateOrganizationUseCase {
     OrganizationRepositoryPanache organizationRepositoryPanache;
 
     @Inject
-    UserRepositoryPersistence userRepositoryPersistence;
+    UserRepositoryPanache userRepositoryPanache;
 
     @Inject
     KeycloakAdmin keycloakAdmin;
@@ -57,7 +57,7 @@ public class CreateOrganizationUseCase {
             throw new OrganizationWithSameRealmAlreadyExistsException();
         });
 
-        userRepositoryPersistence.findByEmail(createOrganizationDTO.adminEmail).ifPresent(admin -> {
+        userRepositoryPanache.findByEmail(createOrganizationDTO.adminEmail).ifPresent(admin -> {
             throw new UserSameEmailAlreadyExistsException();
         });
 

@@ -6,7 +6,7 @@ import dev.amanda.infrastructure.oidc.KeycloakConfig;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
 import dev.amanda.organization.exceptions.OrganizationNotFoundException;
-import dev.amanda.user.persistence.UserRepositoryPersistence;
+import dev.amanda.user.persistence.UserRepositoryPanache;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -15,7 +15,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 public class GetKeycloakConfigUseCase {
 
     @Inject
-    UserRepositoryPersistence userRepositoryPersistence;
+    UserRepositoryPanache userRepositoryPanache;
 
     @Inject
     OrganizationRepositoryPanache organizationRepositoryPanache;

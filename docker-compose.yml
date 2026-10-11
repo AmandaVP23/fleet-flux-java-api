@@ -15,10 +15,11 @@ services:
             POSTGRES_PASSWORD: fleet-flux-password
         volumes:
             - postgres_data:/var/lib/postgresql/data
+            - ./docker/init:/docker-entrypoint-initdb.d
         ports:
             - "5432:5432"
         healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U keycloak"]
+            test: ["CMD-SHELL", "pg_isready -U fleet-flux -d fleet-flux-java"]
             interval: 10s
             timeout: 5s
             retries: 5
@@ -41,6 +42,37 @@ services:
             - mailpit
         command:
             - start-dev
+
+    keycloak-test:
+        image: quay.io/keycloak/keycloak:26.7
+        command: start-dev
+        container_name: keycloak-test
+        networks:
+            - app-network
+        environment:
+            KC_BOOTSTRAP_ADMIN_USERNAME: admin
+            KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+            KC_HEALTH_ENABLED: "true"
+        ports:
+            - "8180:8080"
+        healthcheck:
+            test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000; echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3; grep -q '\"status\": \"UP\"' <&3"]
+            interval: 5s
+            timeout: 5s
+            retries: 30
+
+    keycloak-test-init:
+        image: quay.io/keycloak/keycloak:26.7
+        container_name: keycloak-test-init
+        networks:
+          - app-network
+        depends_on:
+            keycloak-test:
+                condition: service_healthy
+        volumes:
+            - ./keycloak-init.sh:/init.sh:ro
+        entrypoint: ["/bin/bash", "/init.sh"]
+        restart: "no"
 
     mailpit:
         image: axllent/mailpit:latest

@@ -1,6 +1,5 @@
 package dev.amanda.organization.application.use_cases;
 
-import dev.amanda.organization.application.mappers.OrganizationMapper;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
@@ -21,23 +20,17 @@ public class GetOrganizationByIdUseCaseTest {
     @InjectMock
     OrganizationRepositoryPanache organizationRepositoryPanache;
 
-    @InjectMock
-    OrganizationMapper organizationMapper;
-
     @Test
     void shouldReturnDtoWhenOrganizationExists() {
         Long id = 123L;
 
         Organization organization = new Organization();
-        OrganizationResponseDTO organizationResponseDTO = new OrganizationResponseDTO();
 
         when(organizationRepositoryPanache.findActiveByIdOrThrow(id)).thenReturn(organization);
-        when(organizationMapper.toDto(organization)).thenReturn(organizationResponseDTO);
 
         OrganizationResponseDTO result = getOrganizationByIdUseCase.execute(id);
 
-        assertEquals(organizationResponseDTO, result);
+        assertEquals(organization.getName(), result.getName());
         verify(organizationRepositoryPanache).findActiveByIdOrThrow(id);
-        verify(organizationMapper).toDto(organization);
     }
 }

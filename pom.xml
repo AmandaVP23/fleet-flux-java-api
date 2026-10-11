@@ -209,6 +209,13 @@
 
     <profiles>
         <profile>
+            <id>it</id>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
+        </profile>
+
+        <profile>
             <id>native</id>
             <activation>
                 <property>

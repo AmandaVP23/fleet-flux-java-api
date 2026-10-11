@@ -7,7 +7,7 @@ import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
 import dev.amanda.organization.exceptions.UserSameEmailAlreadyExistsException;
 import dev.amanda.user.application.mappers.UserMapper;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.persistence.UserRepositoryPersistence;
+import dev.amanda.user.persistence.UserRepositoryPanache;
 import dev.amanda.user.dto.CreateUserRequestDTO;
 import dev.amanda.user.dto.UserResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -27,7 +27,7 @@ public class CreateUserUseCase {
     OrganizationRepositoryPanache organizationRepositoryPanache;
 
     @Inject
-    UserRepositoryPersistence userRepositoryPersistence;
+    UserRepositoryPanache userRepositoryPanache;
 
     @Inject
     UserMapper userMapper;
@@ -42,7 +42,7 @@ public class CreateUserUseCase {
             effectiveOrgId = authContext.getOrganizationId();
         }
 
-        Optional<User> existingUser = userRepositoryPersistence.findByEmail(dto.email());
+        Optional<User> existingUser = userRepositoryPanache.findByEmail(dto.email());
         if (existingUser.isPresent()) {
             throw new UserSameEmailAlreadyExistsException();
         }
@@ -64,7 +64,7 @@ public class CreateUserUseCase {
             user.setLastName(dto.lastName());
             user.setRole(dto.role().toRole());
 
-            userRepositoryPersistence.persist(user);
+            userRepositoryPanache.persist(user);
 
             return userMapper.toDto(user);
         } catch (Exception e) {

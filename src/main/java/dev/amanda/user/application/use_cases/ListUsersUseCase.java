@@ -6,7 +6,7 @@ import dev.amanda.infrastructure.shared.application.OrganizationAccessService;
 import dev.amanda.infrastructure.shared.application.PageRequestHelper;
 import dev.amanda.user.application.mappers.UserMapper;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.persistence.UserRepositoryPersistence;
+import dev.amanda.user.persistence.UserRepositoryPanache;
 import dev.amanda.user.dto.UserResponseDTO;
 import dev.amanda.user.rest.UserFilter;
 import io.quarkus.panache.common.Sort;
@@ -18,7 +18,7 @@ import java.util.List;
 @ApplicationScoped
 public class ListUsersUseCase {
     @Inject
-    UserRepositoryPersistence userRepositoryPersistence;
+    UserRepositoryPanache userRepositoryPanache;
 
     @Inject
     PageRequestHelper pageRequestHelper;
@@ -37,9 +37,9 @@ public class ListUsersUseCase {
         Long organizationId = organizationAccessService.getOrganizationId(authContext, userFilter.organizationId());
         userFilter = userFilter.withOrganizationId(organizationId);
 
-        long total = userRepositoryPersistence.count(userFilter);
+        long total = userRepositoryPanache.count(userFilter);
 
-        List<User> users = userRepositoryPersistence.findPaginated(pageNumber, pageSize, sort, userFilter);
+        List<User> users = userRepositoryPanache.findPaginated(pageNumber, pageSize, sort, userFilter);
         List<UserResponseDTO> data = users.stream()
                 .map(userMapper::toDto)
                 .toList();

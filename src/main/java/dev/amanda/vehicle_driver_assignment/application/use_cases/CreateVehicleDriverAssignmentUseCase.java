@@ -5,7 +5,7 @@ import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.persistence.UserRepositoryPersistence;
+import dev.amanda.user.persistence.UserRepositoryPanache;
 import dev.amanda.user.exceptions.UserNotFoundException;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
@@ -25,7 +25,7 @@ import lombok.extern.java.Log;
 public class CreateVehicleDriverAssignmentUseCase {
 
     @Inject
-    UserRepositoryPersistence userRepositoryPersistence;
+    UserRepositoryPanache userRepositoryPanache;
 
     @Inject
     VehicleRepository vehicleRepository;
@@ -41,8 +41,8 @@ public class CreateVehicleDriverAssignmentUseCase {
 
     @Transactional
     public VehicleDriverAssignmentListResponseDTO execute(VehicleDriverAssignmentRequestDTO requestDTO, AuthContext auth) {
-        User authenticatedUser = userRepositoryPersistence.findByKeycloakIdOrThrow(auth.getUserKeycloakId());
-        User driver = userRepositoryPersistence.findByIdOrThrow(requestDTO.driverId);
+        User authenticatedUser = userRepositoryPanache.findByKeycloakIdOrThrow(auth.getUserKeycloakId());
+        User driver = userRepositoryPanache.findByIdOrThrow(requestDTO.driverId);
 
         if (!driver.getOrganization().getId().equals(authenticatedUser.getOrganization().getId())) {
             throw new UserNotFoundException();
