@@ -9,13 +9,10 @@ import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.exceptions.OrganizationNotFoundException;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.panache.common.Sort;
-import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -25,7 +22,7 @@ import com.github.database.rider.junit5.api.DBRider;
 @QuarkusTest
 @DBRider
 @DataSet(value = "datasets/organizations.yml", cleanBefore = true)
-@DBUnit(caseSensitiveTableNames = false, caseInsensitiveStrategy = Orthography.LOWERCASE, schema = "public")
+@DBUnit(caseInsensitiveStrategy = Orthography.LOWERCASE, schema = "public")
 public class OrganizationRepositoryPanacheTest {
     @Inject
     OrganizationRepositoryPanache repository;
