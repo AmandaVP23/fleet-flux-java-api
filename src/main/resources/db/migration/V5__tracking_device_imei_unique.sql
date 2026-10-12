@@ -1,0 +1,1 @@
+ALTER TABLE tracking_device ADD CONSTRAINT tracking_device_unique_imei UNIQUE (imei);

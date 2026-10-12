@@ -12,6 +12,8 @@ public class TrackingDeviceResource {
         return "Hello! You're authenticated and you're a super admin";
     }
 
+    // todo - create, edit, change status, remove
+
 //    @POST
 //    @Consumes(MediaType.APPLICATION_JSON)
 //    @Produces(MediaType.APPLICATION_JSON)
