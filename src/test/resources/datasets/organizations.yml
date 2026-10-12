@@ -1,0 +1,13 @@
+organization:
+  - id: 1
+    name: "Friends"
+    hostname: "friends-hostname"
+    realm: "friends-realm"
+    created_at: "2026-10-10 10:50:16"
+    deleted_at: null
+  - id: 2
+    name: "The Big Bang Theory"
+    hostname: "big-bang-theory"
+    realm: "big_bang_theory"
+    created_at: "2026-10-10 10:50:16"
+    deleted_at: "2026-10-11 10:50:16"

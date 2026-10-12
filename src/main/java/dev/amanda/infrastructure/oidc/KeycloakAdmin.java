@@ -39,6 +39,12 @@ public class KeycloakAdmin {
 
     @PostConstruct
     void init() {
+        System.out.println("\n\n\n##########################");
+        System.out.println("serverUrl " + keycloakConfig.serverUrl());
+        System.out.println("realm " + keycloakConfig.realm());
+        System.out.println("clientId " + keycloakConfig.clientId());
+        System.out.println("clientSecret " + keycloakConfig.clientSecret());
+        System.out.println("##########################\n\n\n");
         this.keycloak = KeycloakBuilder.builder()
                 .serverUrl(this.keycloakConfig.serverUrl())
                 .realm(this.keycloakConfig.realm())

@@ -7,7 +7,7 @@ import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.user.domain.Role;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.persistence.UserRepositoryPersistence;
+import dev.amanda.user.persistence.UserRepositoryPanache;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -18,7 +18,7 @@ public class SaveOrganizationUseCase {
     OrganizationRepositoryPanache organizationRepositoryPanache;
 
     @Inject
-    UserRepositoryPersistence userRepositoryPersistence;
+    UserRepositoryPanache userRepositoryPanache;
 
     @Inject
     OrganizationMapper organizationMapper;
@@ -39,7 +39,7 @@ public class SaveOrganizationUseCase {
         user.setRole(Role.SUPER_ADMIN);
 
         organizationRepositoryPanache.persist(organization);
-        userRepositoryPersistence.persist(user);
+        userRepositoryPanache.persist(user);
 
         return organizationMapper.toDto(organization);
     }

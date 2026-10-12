@@ -11,7 +11,7 @@ import dev.amanda.organization.exceptions.OrganizationWithSameRealmAlreadyExists
 import dev.amanda.organization.exceptions.UserSameEmailAlreadyExistsException;
 import dev.amanda.infrastructure.shared.exception.GenericApiException;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.persistence.UserRepositoryPersistence;
+import dev.amanda.user.persistence.UserRepositoryPanache;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -23,7 +23,6 @@ import org.keycloak.representations.idm.UserRepresentation;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,7 +40,7 @@ public class CreateOrganizationUseCaseTest {
     OrganizationRepositoryPanache organizationRepositoryPanache;
 
     @InjectMock
-    UserRepositoryPersistence userRepositoryPersistence;
+    UserRepositoryPanache userRepositoryPanache;
 
     @InjectMock
     SaveOrganizationUseCase saveOrganizationUseCase;
@@ -178,7 +177,7 @@ public class CreateOrganizationUseCaseTest {
     class WhenAdminEmailAlreadyExists {
         @Test
         void shouldThrowUserSameEmailAlreadyExistsException() {
-            when(userRepositoryPersistence.findByEmail(ADMIN_EMAIL))
+            when(userRepositoryPanache.findByEmail(ADMIN_EMAIL))
                     .thenReturn(Optional.of(new User()));
 
             assertThatThrownBy(() -> createOrganizationUseCase.execute(createDto))
@@ -187,7 +186,7 @@ public class CreateOrganizationUseCaseTest {
 
         @Test
         void shouldNotTouchKeycloakWhenEmailConflicts() {
-            when(userRepositoryPersistence.findByEmail(ADMIN_EMAIL))
+            when(userRepositoryPanache.findByEmail(ADMIN_EMAIL))
                     .thenReturn(Optional.of(new User()));
 
             assertThatThrownBy(() -> createOrganizationUseCase.execute(createDto));
