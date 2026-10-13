@@ -26,5 +26,4 @@ public class TrackingDevice extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "organization_id")
     Organization organization;
-
 }

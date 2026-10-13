@@ -1,25 +1,37 @@
 package dev.amanda.tracking_device.rest;
 
-import dev.amanda.tracking_device.domain.TrackingDevice;
+import dev.amanda.infrastructure.oidc.AuthContext;
+import dev.amanda.infrastructure.oidc.AuthContextProvider;
+import dev.amanda.tracking_device.application.use_cases.CreateTrackingDeviceUseCase;
+import dev.amanda.tracking_device.dto.CreateTrackingDeviceRequestDTO;
+import dev.amanda.tracking_device.dto.TrackingDeviceResponseDTO;
+import dev.amanda.user.domain.Roles;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/tracking-devices")
 public class TrackingDeviceResource {
-    @GET
-    public String testing() {
-        return "Hello! You're authenticated and you're a super admin";
-    }
+
+    @Inject
+    AuthContextProvider authContextProvider;
+
+    @Inject
+    CreateTrackingDeviceUseCase createTrackingDeviceUseCase;
+
 
     // todo - create, edit, change status, remove
 
-//    @POST
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response create(TrackingDevice trackingDevice) {
-//
-//    }
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
+    public TrackingDeviceResponseDTO create(@Valid CreateTrackingDeviceRequestDTO dto) {
+        AuthContext authContext = authContextProvider.get();
 
-    // todo - endpoint to assign device -> vehicle
+        return createTrackingDeviceUseCase.execute(dto, authContext);
+    }
 }

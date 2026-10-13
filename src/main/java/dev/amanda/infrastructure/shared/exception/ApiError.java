@@ -23,7 +23,8 @@ public enum ApiError {
     VEHICLE_NOT_FOUND(112, "Vehicle not found", 404),
     USER_IS_NOT_DRIVER(113, "User is not driver", 400),
     VEHICLE_DRIVER_ASSIGNMENT_VEHICLE_CONFLICT(114, "Vehicle has assignment time conflict", 409),
-    VEHICLE_DRIVER_ASSIGNMENT_DRIVER_CONFLICT(115, "Driver has assignment time conflict", 409),;
+    VEHICLE_DRIVER_ASSIGNMENT_DRIVER_CONFLICT(115, "Driver has assignment time conflict", 409),
+    TRACKING_DEVICE_IMEI_CONFLICT(116, "Already exists a tracking device with given imei", 409),;
 
     private final int errorCode;
     private final String message;
