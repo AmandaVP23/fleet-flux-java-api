@@ -26,6 +26,10 @@ Set the following:
 
 Save changes.
 
+### Add service account roles
+1. Go to **Service account roles**
+2. Assign realm role **admin**
+
 ### Retrieve credentials
 - Go to **Credentials tab**
 - Copy **Client Secret** (if required)
@@ -34,59 +38,7 @@ Use this as the Service Account (secret)
 
 ---
 
-# 2. Create Admin User in Master Realm
-
-## User: `admin-master`
-
-### Steps
-1. Go to **Users → Create new user**
-2. Set:
-    - **Username**: `admin-master`
-3. Click **Save**
-
----
-
-## Set Password
-1. Open user `admin-master`
-2. Go to **Credentials tab**
-3. Set:
-    - **Password**: (your secure password)
-    - **Temporary**: `OFF`
-4. Save
-
----
-
-# 3. Assign Roles to User
-
-The user must have permissions to administer Keycloak and create realms.
-
-### Steps
-1. Open user `admin-master`
-2. Go to **Role mapping**
-3. Click **Assign role**
-4. Select **Client roles**
-5. Choose client: `realm-management`
-
----
-
-## Required Roles
-
-Assign:
-
-- `realm-admin` → full administrative access
-- `create-realm` → permission to create new realms
-
----
-
-## Optional Roles (if needed)
-
-- `manage-users`
-- `manage-clients`
-- `view-realm`
-
----
-
-# 4. Application Configuration
+# 2. Application Configuration
 
 ## application.properties (Quarkus example)
 

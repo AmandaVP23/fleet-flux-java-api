@@ -51,7 +51,7 @@ public class OrganizationResource {
             description = "Allows a Super Admin user to create a new organization"
     )
     @APIResponse(
-            responseCode = "200",
+            responseCode = "201",
             description = "Organization successfully created",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,

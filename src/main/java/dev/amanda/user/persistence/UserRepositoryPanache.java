@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @ApplicationScoped
-public class UserRepositoryPersistence implements UserRepository, PanacheRepository<User> {
+public class UserRepositoryPanache implements UserRepository, PanacheRepository<User> {
     @Override
     public Optional<User> findByEmail(String email){
         return find("email", email).firstResultOptional();
