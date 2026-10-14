@@ -44,6 +44,7 @@ public class CreateTrackingDeviceUseCase {
         trackingDevice.setImei(dto.imei);
         trackingDevice.setModel(dto.model);
         trackingDevice.setOrganization(organization);
+        trackingDevice.setStatus(dto.status);
 
         trackingDeviceRepositoryPanache.persist(trackingDevice);
 

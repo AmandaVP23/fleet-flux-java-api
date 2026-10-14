@@ -6,14 +6,15 @@ import dev.amanda.tracking_device.application.use_cases.CreateTrackingDeviceUseC
 import dev.amanda.tracking_device.dto.CreateTrackingDeviceRequestDTO;
 import dev.amanda.tracking_device.dto.TrackingDeviceResponseDTO;
 import dev.amanda.user.domain.Roles;
+import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 @Path("/tracking-devices")
+@Authenticated()
 public class TrackingDeviceResource {
 
     @Inject
