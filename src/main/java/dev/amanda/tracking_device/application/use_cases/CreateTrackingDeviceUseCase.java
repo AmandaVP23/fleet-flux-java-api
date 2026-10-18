@@ -32,7 +32,7 @@ public class CreateTrackingDeviceUseCase {
 
     @Transactional
     public TrackingDeviceResponseDTO execute(CreateTrackingDeviceRequestDTO dto, AuthContext authContext) {
-        Optional<TrackingDevice> existingDevice = trackingDeviceRepositoryPanache.findByImeiOptional(dto.imei);
+        Optional<TrackingDevice> existingDevice = trackingDeviceRepositoryPanache.findByImeiAndOrganizationOptional(dto.imei, authContext.getOrganizationId());
 
         if (existingDevice.isPresent()) {
             throw new BaseApiException(ApiError.TRACKING_DEVICE_IMEI_CONFLICT);
