@@ -1,5 +1,7 @@
 package dev.amanda.tracking_device.persistence;
 
+import dev.amanda.infrastructure.shared.exception.ApiError;
+import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.tracking_device.domain.TrackingDevice;
 import dev.amanda.tracking_device.domain.TrackingDeviceRepository;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -27,5 +29,12 @@ public class TrackingDeviceRepositoryPanache implements TrackingDeviceRepository
     @Override
     public long count(long organizationId) {
         return count("organization.id = ?1", organizationId);
+    }
+
+    @Override
+    public TrackingDevice findByIdInOrganizationOrThrow(long id, long organizationId) {
+        return find("id = ?1 and organization.id = ?2", id, organizationId)
+                .firstResultOptional()
+                .orElseThrow(() -> new BaseApiException(ApiError.TRACKING_DEVICE_NOT_FOUND));
     }
 }

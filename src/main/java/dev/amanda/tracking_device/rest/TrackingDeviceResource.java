@@ -5,6 +5,8 @@ import dev.amanda.infrastructure.oidc.AuthContextProvider;
 import dev.amanda.infrastructure.shared.PageResult;
 import dev.amanda.tracking_device.application.use_cases.CreateTrackingDeviceUseCase;
 import dev.amanda.tracking_device.application.use_cases.ListTrackingDevicesUseCase;
+import dev.amanda.tracking_device.domain.TrackingDeviceStatus;
+import dev.amanda.tracking_device.dto.ChangeTrackingDeviceStatusRequestDTO;
 import dev.amanda.tracking_device.dto.CreateTrackingDeviceRequestDTO;
 import dev.amanda.tracking_device.dto.TrackingDeviceResponseDTO;
 import dev.amanda.user.domain.Roles;
@@ -54,4 +56,14 @@ public class TrackingDeviceResource {
 
         return listTrackingDevicesUseCase.execute(page, size, sortBy, direction, authContext.getOrganizationId());
     }
+
+    @PATCH
+    @Path("/{id}/status")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({ Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
+    public void changeTrackingDeviceStatus(@PathParam("id") long id, ChangeTrackingDeviceStatusRequestDTO dto) {
+        AuthContext authContext = authContextProvider.get();
+
+    }
+
 }

@@ -12,4 +12,6 @@ public interface TrackingDeviceRepository {
     List<TrackingDevice> findPaginated(int page, int size, Sort sort, long organizationId);
 
     long count(long organizationId);
+
+    TrackingDevice findByIdInOrganizationOrThrow(long id, long organizationId);
 }
