@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class TrackingDeviceRepositoryPanache implements TrackingDeviceRepository, PanacheRepository<TrackingDevice> {
+
     @Override
     public Optional<TrackingDevice> findByImeiAndOrganizationOptional(String imei, long organizationId) {
         return find("imei = ?1 AND organization.id = ?2", imei, organizationId).firstResultOptional();

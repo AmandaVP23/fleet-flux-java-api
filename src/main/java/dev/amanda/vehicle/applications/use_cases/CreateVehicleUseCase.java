@@ -9,7 +9,7 @@ import dev.amanda.vehicle.dto.CreateVehicleRequestDTO;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
 import dev.amanda.vehicle.persistence.VehicleRepositoryPanache;
 import dev.amanda.vehicle_brand.domain.VehicleBrand;
-import dev.amanda.vehicle_brand.persistence.VehicleBrandRepositoryPanache;
+import dev.amanda.vehicle_brand.domain.VehicleBrandRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -21,7 +21,7 @@ public class CreateVehicleUseCase {
     OrganizationRepositoryPanache organizationRepositoryPanache;
 
     @Inject
-    VehicleBrandRepositoryPanache vehicleBrandRepositoryPanache;
+    VehicleBrandRepository vehicleBrandRepository;
 
     @Inject
     VehicleRepositoryPanache vehicleRepositoryPanache;
@@ -40,7 +40,7 @@ public class CreateVehicleUseCase {
         }
 
         Organization organization = organizationRepositoryPanache.findByIdOrThrow(effectiveOrgId);
-        VehicleBrand vehicleBrand = vehicleBrandRepositoryPanache.findActiveByIdOrThrow(dto.brandId());
+        VehicleBrand vehicleBrand = vehicleBrandRepository.findActiveByIdOrThrow(dto.brandId());
 
         Vehicle vehicle = new Vehicle();
         vehicleMapper.updateVehicleFromDto(dto, vehicle);

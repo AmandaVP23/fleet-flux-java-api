@@ -24,6 +24,13 @@ public class VehicleRepositoryPanache implements VehicleRepository, PanacheRepos
     }
 
     @Override
+    public Vehicle findByIdInOrganizationOrThrow(long id, long organizationId) {
+        return find("id = ?1 AND organization.id = ?2", id, organizationId)
+                .firstResultOptional()
+                .orElseThrow(VehicleNotFoundException::new);
+    }
+
+    @Override
     public List<Vehicle> listPaginated(VehicleFilter filter, int page, int size, Sort sort) {
         QueryData queryData = buildQuery(filter);
 

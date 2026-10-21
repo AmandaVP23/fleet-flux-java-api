@@ -8,6 +8,8 @@ import java.util.List;
 public interface VehicleRepository {
     Vehicle findByIdOrThrow(long id);
 
+    Vehicle findByIdInOrganizationOrThrow(long id, long organizationId);
+
     List<Vehicle> listPaginated(VehicleFilter filter, int page, int size, Sort sort);
 
     long countWithQuery(VehicleFilter filter);

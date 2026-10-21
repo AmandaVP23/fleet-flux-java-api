@@ -13,7 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 
-@Path("/vehicle-assignment")
+@Path("/assignments/drivers")
 public class VehicleDriverAssignmentResource {
 
     @Inject
@@ -24,6 +24,8 @@ public class VehicleDriverAssignmentResource {
 
     @Inject
     ListVehicleDriverAssignmentsUseCase listVehicleDriverAssignmentsUseCase;
+
+    // todo - add endpoint to get current assignment
 
     // todo - sortBy
     // todo - super admin have access to this?

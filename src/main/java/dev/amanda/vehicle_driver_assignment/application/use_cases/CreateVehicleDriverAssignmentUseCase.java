@@ -12,7 +12,7 @@ import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle_driver_assignment.application.AssignmentConflictChecker;
 import dev.amanda.vehicle_driver_assignment.application.mappers.VehicleDriverAssignmentMapper;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignment;
-import dev.amanda.vehicle_driver_assignment.persistence.VehicleDriverAssignmentRepositoryPanache;
+import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignmentRepository;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentListResponseDTO;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentRequestDTO;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -31,7 +31,7 @@ public class CreateVehicleDriverAssignmentUseCase {
     VehicleRepository vehicleRepository;
 
     @Inject
-    VehicleDriverAssignmentRepositoryPanache vehicleDriverAssignmentRepositoryPanache;
+    VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
 
     @Inject
     VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
@@ -63,7 +63,7 @@ public class CreateVehicleDriverAssignmentUseCase {
 
         assignmentConflictChecker.checkVehicleDriverAssignmentConflict(vehicleDriverAssignment);
 
-        vehicleDriverAssignmentRepositoryPanache.persist(vehicleDriverAssignment);
+        vehicleDriverAssignmentRepository.persist(vehicleDriverAssignment);
         return vehicleDriverAssignmentMapper.toDto(vehicleDriverAssignment);
     }
 }
