@@ -4,7 +4,7 @@ import dev.amanda.infrastructure.shared.PageResult;
 import dev.amanda.infrastructure.shared.application.PageRequestHelper;
 import dev.amanda.tracking_device.application.mappers.TrackingDeviceMapper;
 import dev.amanda.tracking_device.dto.TrackingDeviceResponseDTO;
-import dev.amanda.tracking_device.persistence.TrackingDeviceRepositoryPanache;
+import dev.amanda.tracking_device.domain.TrackingDeviceRepository;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,7 +20,7 @@ public class ListTrackingDevicesUseCase {
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("id", "imei", "createdAt");
 
     @Inject
-    TrackingDeviceRepositoryPanache trackingDeviceRepositoryPanache;
+    TrackingDeviceRepository trackingDeviceRepository;
 
     @Inject
     TrackingDeviceMapper trackingDeviceMapper;
@@ -33,9 +33,9 @@ public class ListTrackingDevicesUseCase {
 
         Sort sort = pageRequestHelper.buildSort(sortBy, sortDirection);
 
-        long total = trackingDeviceRepositoryPanache.count(organizationId);
+        long total = trackingDeviceRepository.count(organizationId);
 
-        List<TrackingDeviceResponseDTO> data = trackingDeviceRepositoryPanache
+        List<TrackingDeviceResponseDTO> data = trackingDeviceRepository
                 .findPaginated(page, size, sort, organizationId)
                 .stream()
                 .map(trackingDeviceMapper::toDto)

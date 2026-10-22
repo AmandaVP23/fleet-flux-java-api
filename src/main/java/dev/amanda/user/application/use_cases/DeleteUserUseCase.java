@@ -6,7 +6,7 @@ import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.user.domain.Role;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.persistence.UserRepositoryPanache;
+import dev.amanda.user.domain.UserRepository;
 import dev.amanda.user.exceptions.UserNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -19,7 +19,7 @@ import java.util.Objects;
 public class DeleteUserUseCase {
 
     @Inject
-    UserRepositoryPanache userRepositoryPanache;
+    UserRepository userRepository;
 
     @Inject
     KeycloakAdmin keycloakAdmin;
@@ -28,7 +28,7 @@ public class DeleteUserUseCase {
     public void execute(long id, AuthContext authContext) {
         // todo - if organization will have no org admins left?
 
-        User user = userRepositoryPanache.findByIdOrThrow(id);
+        User user = userRepository.findByIdOrThrow(id);
 
         if (Objects.equals(user.getKeycloakId(), authContext.getUserKeycloakId())) {
             throw new BaseApiException(ApiError.NOT_ALLOWED, "You are not allowed to delete yourself");
@@ -53,6 +53,6 @@ public class DeleteUserUseCase {
         keycloakAdmin.changeUserEnableState(orgRealm, user.getKeycloakId(), false);
 
         user.setDeletedAt(Instant.now());
-        userRepositoryPanache.persist(user);
+        userRepository.persist(user);
     }
 }

@@ -1,7 +1,7 @@
 package dev.amanda.organization.application.use_cases;
 
 import dev.amanda.organization.application.mappers.OrganizationMapper;
-import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
+import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.application.filters.OrganizationStatusFilter;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.infrastructure.shared.PageResult;
@@ -19,7 +19,7 @@ public class ListOrganizationsUseCase {
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("id", "name", "createdAt");
 
     @Inject
-    OrganizationRepositoryPanache organizationRepositoryPanache;
+    OrganizationRepository organizationRepository;
 
     @Inject
     OrganizationMapper organizationMapper;
@@ -32,9 +32,9 @@ public class ListOrganizationsUseCase {
 
         Sort sort = pageRequestHelper.buildSort(sortBy, direction);
 
-        long total = organizationRepositoryPanache.count(filter);
+        long total = organizationRepository.count(filter);
 
-        List<OrganizationResponseDTO> data = organizationRepositoryPanache
+        List<OrganizationResponseDTO> data = organizationRepository
                 .findPaginated(page, size, sort, filter)
                 .stream()
                 .map(organizationMapper::toDto)

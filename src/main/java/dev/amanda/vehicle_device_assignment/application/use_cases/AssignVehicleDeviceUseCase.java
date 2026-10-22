@@ -2,9 +2,9 @@ package dev.amanda.vehicle_device_assignment.application.use_cases;
 
 import dev.amanda.infrastructure.oidc.AuthContext;
 import dev.amanda.tracking_device.domain.TrackingDevice;
-import dev.amanda.tracking_device.persistence.TrackingDeviceRepositoryPanache;
+import dev.amanda.tracking_device.domain.TrackingDeviceRepository;
 import dev.amanda.vehicle.domain.Vehicle;
-import dev.amanda.vehicle.persistence.VehicleRepositoryPanache;
+import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle_device_assignment.application.mappers.VehicleDeviceAssignmentMapper;
 import dev.amanda.vehicle_device_assignment.domain.VehicleDeviceAssignment;
 import dev.amanda.vehicle_device_assignment.domain.VehicleDeviceAssignmentRepository;
@@ -21,10 +21,10 @@ import java.time.Instant;
 public class AssignVehicleDeviceUseCase {
 
     @Inject
-    TrackingDeviceRepositoryPanache trackingDeviceRepositoryPanache;
+    TrackingDeviceRepository trackingDeviceRepository;
 
     @Inject
-    VehicleRepositoryPanache vehicleRepositoryPanache;
+    VehicleRepository vehicleRepository;
 
     @Inject
     VehicleDeviceAssignmentRepository vehicleDeviceAssignmentRepository;
@@ -33,9 +33,9 @@ public class AssignVehicleDeviceUseCase {
     VehicleDeviceAssignmentMapper vehicleDeviceAssignmentMapper;
 
     public VehicleDeviceAssignmentResponseDTO execute(VehicleDeviceAssignmentDTO dto, AuthContext authContext) {
-        Vehicle vehicle = vehicleRepositoryPanache.findByIdInOrganizationOrThrow(dto.vehicleId(), authContext.getOrganizationId());
+        Vehicle vehicle = vehicleRepository.findByIdInOrganizationOrThrow(dto.vehicleId(), authContext.getOrganizationId());
 
-        TrackingDevice trackingDevice = trackingDeviceRepositoryPanache.findByIdInOrganizationOrThrow(dto.deviceId(), authContext.getOrganizationId());
+        TrackingDevice trackingDevice = trackingDeviceRepository.findByIdInOrganizationOrThrow(dto.deviceId(), authContext.getOrganizationId());
 
         VehicleDeviceAssignment vehicleDeviceAssignment = new VehicleDeviceAssignment();
         vehicleDeviceAssignment.setVehicle(vehicle);
