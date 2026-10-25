@@ -25,7 +25,10 @@ public enum ApiError {
     VEHICLE_DRIVER_ASSIGNMENT_VEHICLE_CONFLICT(114, "Vehicle has assignment time conflict", 409),
     VEHICLE_DRIVER_ASSIGNMENT_DRIVER_CONFLICT(115, "Driver has assignment time conflict", 409),
     TRACKING_DEVICE_IMEI_CONFLICT(116, "Already exists a tracking device with given imei", 409),
-    TRACKING_DEVICE_NOT_FOUND(117, "Tracking device not found", 404),;
+    TRACKING_DEVICE_NOT_FOUND(117, "Tracking device not found", 404),
+    TRACKING_DEVICE_ACTIVE_ASSIGNMENT_CONFLICT(118, "Tracking device is currently assigned to a vehicle", 409),
+    VEHICLE_ASSIGNED_TO_TRACKING_DEVICE_CONFLICT(119, "Vehicle is currently assigned to a device", 409),
+    TRACKING_DEVICE_VEHICLE_ACTIVE_ASSIGNMENT_ALREADY_EXISTS(120, "This vehicle and this tracking device are already assigned to each other", 409),;
 
     private final int errorCode;
     private final String message;

@@ -7,8 +7,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
-
 @Entity
 @Getter
 @Setter
@@ -21,6 +19,6 @@ public class VehicleDeviceAssignment extends BaseEntity {
     @JoinColumn(name = "device_id")
     TrackingDevice device;
 
-    @Column(name = "assigned_at")
-    private Instant assignedAt;
+    @Column()
+    private long assignedBy;
 }
