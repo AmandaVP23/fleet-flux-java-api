@@ -16,6 +16,6 @@ public class VehicleDeviceAssignmentRepository implements PanacheRepository<Vehi
     }
 
     public Optional<VehicleDeviceAssignment> findActiveByDevice(long deviceId) {
-        return find("device.id = ?2 and deletedAt IS NULL", deviceId).firstResultOptional();
+        return find("device.id = ?1 and deletedAt IS NULL", deviceId).firstResultOptional();
     }
 }

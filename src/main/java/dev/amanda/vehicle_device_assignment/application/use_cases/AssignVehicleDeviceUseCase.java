@@ -16,6 +16,7 @@ import dev.amanda.vehicle_device_assignment.dto.VehicleDeviceAssignmentDTO;
 import dev.amanda.vehicle_device_assignment.dto.VehicleDeviceAssignmentResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 
 @Log
@@ -37,6 +38,7 @@ public class AssignVehicleDeviceUseCase {
     @Inject
     VehicleDeviceAssignmentMapper vehicleDeviceAssignmentMapper;
 
+    @Transactional
     public VehicleDeviceAssignmentResponseDTO execute(VehicleDeviceAssignmentDTO dto, AuthContext authContext) {
         Vehicle vehicle = vehicleRepository.findByIdInOrganizationOrThrow(dto.vehicleId(), authContext.getOrganizationId());
 
