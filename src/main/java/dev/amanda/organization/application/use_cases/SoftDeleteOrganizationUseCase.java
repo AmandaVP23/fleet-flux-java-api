@@ -3,7 +3,7 @@ package dev.amanda.organization.application.use_cases;
 import dev.amanda.infrastructure.oidc.KeycloakAdmin;
 import dev.amanda.infrastructure.oidc.OrgTenantConfigResolver;
 import dev.amanda.organization.domain.Organization;
-import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
+import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -18,7 +18,7 @@ import java.time.Instant;
 public class SoftDeleteOrganizationUseCase {
 
     @Inject
-    OrganizationRepositoryPanache organizationRepositoryPanache;
+    OrganizationRepository organizationRepository;
 
     @Inject
     KeycloakAdmin keycloakAdmin;
@@ -29,14 +29,14 @@ public class SoftDeleteOrganizationUseCase {
     // TODO wrap Keycloak calls with retry (e.g., 3 attempts)
     @Transactional
     public void execute(long id) {
-        Organization organization = organizationRepositoryPanache.findActiveByIdOrThrow(id);
+        Organization organization = organizationRepository.findActiveByIdOrThrow(id);
 
         if (organization.getDeletedAt() != null) {
             throw new BaseApiException(ApiError.ORGANIZATION_INACTIVE, "Organization was already deleted");
         }
 
         organization.setDeletedAt(Instant.now());
-        organizationRepositoryPanache.persist(organization);
+        organizationRepository.persist(organization);
 
         String realm = organization.getRealm();
 

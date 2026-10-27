@@ -4,9 +4,9 @@ import dev.amanda.infrastructure.config.SuperAdminConfig;
 import dev.amanda.identity.dto.KeycloakConfigResponseDTO;
 import dev.amanda.infrastructure.oidc.KeycloakConfig;
 import dev.amanda.organization.domain.Organization;
-import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
+import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.exceptions.OrganizationNotFoundException;
-import dev.amanda.user.persistence.UserRepositoryPanache;
+import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -15,10 +15,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 public class GetKeycloakConfigUseCase {
 
     @Inject
-    UserRepositoryPanache userRepositoryPanache;
-
-    @Inject
-    OrganizationRepositoryPanache organizationRepositoryPanache;
+    OrganizationRepository organizationRepository;
 
     @Inject
     KeycloakConfig keycloakConfig;
@@ -41,7 +38,7 @@ public class GetKeycloakConfigUseCase {
                     .build();
         }
 
-        Organization organization = organizationRepositoryPanache.findByHostname(hostname)
+        Organization organization = organizationRepository.findByHostname(hostname)
                 .filter(org -> org.getDeletedAt() == null)
                 .orElseThrow(OrganizationNotFoundException::new);
 

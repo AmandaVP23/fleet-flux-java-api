@@ -5,14 +5,14 @@ import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.persistence.UserRepositoryPanache;
+import dev.amanda.user.domain.UserRepository;
 import dev.amanda.user.exceptions.UserNotFoundException;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle_driver_assignment.application.AssignmentConflictChecker;
 import dev.amanda.vehicle_driver_assignment.application.mappers.VehicleDriverAssignmentMapper;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignment;
-import dev.amanda.vehicle_driver_assignment.persistence.VehicleDriverAssignmentRepositoryPanache;
+import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignmentRepository;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentListResponseDTO;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentRequestDTO;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -25,13 +25,13 @@ import lombok.extern.java.Log;
 public class CreateVehicleDriverAssignmentUseCase {
 
     @Inject
-    UserRepositoryPanache userRepositoryPanache;
+    UserRepository userRepository;
 
     @Inject
     VehicleRepository vehicleRepository;
 
     @Inject
-    VehicleDriverAssignmentRepositoryPanache vehicleDriverAssignmentRepositoryPanache;
+    VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
 
     @Inject
     VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
@@ -41,8 +41,8 @@ public class CreateVehicleDriverAssignmentUseCase {
 
     @Transactional
     public VehicleDriverAssignmentListResponseDTO execute(VehicleDriverAssignmentRequestDTO requestDTO, AuthContext auth) {
-        User authenticatedUser = userRepositoryPanache.findByKeycloakIdOrThrow(auth.getUserKeycloakId());
-        User driver = userRepositoryPanache.findByIdOrThrow(requestDTO.driverId);
+        User authenticatedUser = userRepository.findByKeycloakIdOrThrow(auth.getUserKeycloakId());
+        User driver = userRepository.findByIdOrThrow(requestDTO.driverId);
 
         if (!driver.getOrganization().getId().equals(authenticatedUser.getOrganization().getId())) {
             throw new UserNotFoundException();
@@ -63,7 +63,7 @@ public class CreateVehicleDriverAssignmentUseCase {
 
         assignmentConflictChecker.checkVehicleDriverAssignmentConflict(vehicleDriverAssignment);
 
-        vehicleDriverAssignmentRepositoryPanache.persist(vehicleDriverAssignment);
+        vehicleDriverAssignmentRepository.persist(vehicleDriverAssignment);
         return vehicleDriverAssignmentMapper.toDto(vehicleDriverAssignment);
     }
 }

@@ -4,7 +4,7 @@ import dev.amanda.infrastructure.config.SuperAdminConfig;
 import dev.amanda.infrastructure.oidc.KeycloakAdmin;
 import dev.amanda.user.domain.Role;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.persistence.UserRepositoryPanache;
+import dev.amanda.user.domain.UserRepository;
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -30,7 +30,7 @@ public class ApplicationStartUp {
     KeycloakAdmin keycloakAdmin;
 
     @Inject
-    UserRepositoryPanache userRepositoryPanache;
+    UserRepository userRepository;
 
     void onStart(@Observes StartupEvent ev) throws Exception {
         log.info("The application is starting...");
@@ -65,12 +65,12 @@ public class ApplicationStartUp {
                 .orElseGet(() -> keycloakAdmin.createSuperAdminUser())
                 .getId();
 
-        userRepositoryPanache.findByEmail(superAdminConfig.email())
+        userRepository.findByEmail(superAdminConfig.email())
                 .ifPresentOrElse(
-                        user -> log.info("SuperAdmin already exists in DB, skipping creation"),
+                        _ -> log.info("SuperAdmin already exists in DB, skipping creation"),
                         () -> {
                             try {
-                                userRepositoryPanache.persist(buildSuperAdminUser(keycloakId));
+                                userRepository.persist(buildSuperAdminUser(keycloakId));
                                 log.info("SuperAdmin User created!");
                             } catch (Exception e) {
                                 log.severe("SuperAdmin User creation failed!" + e.getMessage());

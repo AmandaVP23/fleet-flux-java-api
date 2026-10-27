@@ -27,8 +27,6 @@ public class GetVehicleByIdUseCase {
             throw new VehicleNotFoundException();
         }
 
-        System.out.println(vehicle.getPlateNumber());
-
         return vehicleMapper.toDto(vehicle);
     }
 }

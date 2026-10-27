@@ -6,7 +6,7 @@ import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.dto.CreateVehicleRequestDTO;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
 import dev.amanda.vehicle.exceptions.VehicleNotFoundException;
-import dev.amanda.vehicle.persistence.VehicleRepositoryPanache;
+import dev.amanda.vehicle.domain.VehicleRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -17,14 +17,14 @@ import java.util.Objects;
 public class EditVehicleUseCase {
 
     @Inject
-    VehicleRepositoryPanache vehicleRepositoryPanache;
+    VehicleRepository vehicleRepository;
 
     @Inject
     VehicleMapper vehicleMapper;
 
     @Transactional
     public VehicleResponseDTO execute(Long id, CreateVehicleRequestDTO createVehicleRequestDTO, AuthContext authContext) {
-        Vehicle vehicle = vehicleRepositoryPanache.findByIdOrThrow(id);
+        Vehicle vehicle = vehicleRepository.findByIdOrThrow(id);
 
         if (!authContext.isSuperAdmin() && !Objects.equals(authContext.getOrganizationId(), vehicle.getOrganization().getId())) {
             throw new VehicleNotFoundException();
@@ -32,7 +32,7 @@ public class EditVehicleUseCase {
 
         vehicleMapper.updateVehicleFromDto(createVehicleRequestDTO, vehicle);
 
-        vehicleRepositoryPanache.persist(vehicle);
+        vehicleRepository.persist(vehicle);
 
         return vehicleMapper.toDto(vehicle);
     }
