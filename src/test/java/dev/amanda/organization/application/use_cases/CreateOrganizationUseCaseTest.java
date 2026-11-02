@@ -3,7 +3,7 @@ package dev.amanda.organization.application.use_cases;
 import dev.amanda.infrastructure.oidc.KeycloakAdmin;
 import dev.amanda.infrastructure.oidc.OrgTenantConfigResolver;
 import dev.amanda.organization.domain.Organization;
-import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
+import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.organization.exceptions.OrganizationAlreadyExistsException;
@@ -11,7 +11,7 @@ import dev.amanda.organization.exceptions.OrganizationWithSameRealmAlreadyExists
 import dev.amanda.organization.exceptions.UserSameEmailAlreadyExistsException;
 import dev.amanda.infrastructure.shared.exception.GenericApiException;
 import dev.amanda.user.domain.User;
-import dev.amanda.user.persistence.UserRepositoryPanache;
+import dev.amanda.user.domain.UserRepository;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -37,10 +37,10 @@ public class CreateOrganizationUseCaseTest {
     CreateOrganizationUseCase createOrganizationUseCase;
 
     @InjectMock
-    OrganizationRepositoryPanache organizationRepositoryPanache;
+    OrganizationRepository organizationRepository;
 
     @InjectMock
-    UserRepositoryPanache userRepositoryPanache;
+    UserRepository userRepository;
 
     @InjectMock
     SaveOrganizationUseCase saveOrganizationUseCase;
@@ -132,7 +132,7 @@ public class CreateOrganizationUseCaseTest {
 
         @Test
         void shouldThrowOrganizationAlreadyExistsException() {
-            when(organizationRepositoryPanache.findByName(ORGANIZATION_NAME))
+            when(organizationRepository.findByName(ORGANIZATION_NAME))
                     .thenReturn(Optional.of(new Organization()));
 
             assertThatThrownBy(() -> createOrganizationUseCase.execute(createDto))
@@ -141,7 +141,7 @@ public class CreateOrganizationUseCaseTest {
 
         @Test
         void shouldNotTouchKeycloakWhenNameConflicts() {
-            when(organizationRepositoryPanache.findByName(ORGANIZATION_NAME))
+            when(organizationRepository.findByName(ORGANIZATION_NAME))
                     .thenReturn(Optional.of(new Organization()));
 
             catchThrowable(() -> createOrganizationUseCase.execute(createDto));
@@ -155,7 +155,7 @@ public class CreateOrganizationUseCaseTest {
 
         @Test
         void shouldThrowOrganizationWithSameRealmAlreadyExistsException() {
-            when(organizationRepositoryPanache.findByRealm(EXPECTED_REALM))
+            when(organizationRepository.findByRealm(EXPECTED_REALM))
                     .thenReturn(Optional.of(new Organization()));
 
             assertThatThrownBy(() -> createOrganizationUseCase.execute(createDto))
@@ -164,7 +164,7 @@ public class CreateOrganizationUseCaseTest {
 
         @Test
         void shouldNotTouchKeycloakWhenRealmConflicts() {
-            when(organizationRepositoryPanache.findByRealm(EXPECTED_REALM))
+            when(organizationRepository.findByRealm(EXPECTED_REALM))
                     .thenReturn(Optional.of(new Organization()));
 
             catchThrowable(() -> createOrganizationUseCase.execute(createDto));
@@ -177,7 +177,7 @@ public class CreateOrganizationUseCaseTest {
     class WhenAdminEmailAlreadyExists {
         @Test
         void shouldThrowUserSameEmailAlreadyExistsException() {
-            when(userRepositoryPanache.findByEmail(ADMIN_EMAIL))
+            when(userRepository.findByEmail(ADMIN_EMAIL))
                     .thenReturn(Optional.of(new User()));
 
             assertThatThrownBy(() -> createOrganizationUseCase.execute(createDto))
@@ -186,7 +186,7 @@ public class CreateOrganizationUseCaseTest {
 
         @Test
         void shouldNotTouchKeycloakWhenEmailConflicts() {
-            when(userRepositoryPanache.findByEmail(ADMIN_EMAIL))
+            when(userRepository.findByEmail(ADMIN_EMAIL))
                     .thenReturn(Optional.of(new User()));
 
             assertThatThrownBy(() -> createOrganizationUseCase.execute(createDto));

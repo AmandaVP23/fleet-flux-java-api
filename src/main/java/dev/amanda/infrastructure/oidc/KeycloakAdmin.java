@@ -39,12 +39,6 @@ public class KeycloakAdmin {
 
     @PostConstruct
     void init() {
-        System.out.println("\n\n\n##########################");
-        System.out.println("serverUrl " + keycloakConfig.serverUrl());
-        System.out.println("realm " + keycloakConfig.realm());
-        System.out.println("clientId " + keycloakConfig.clientId());
-        System.out.println("clientSecret " + keycloakConfig.clientSecret());
-        System.out.println("##########################\n\n\n");
         this.keycloak = KeycloakBuilder.builder()
                 .serverUrl(this.keycloakConfig.serverUrl())
                 .realm(this.keycloakConfig.realm())
@@ -60,6 +54,11 @@ public class KeycloakAdmin {
     }
 
     public RealmRepresentation createRealm(String realmName, String displayName) {
+        log.severe(this.keycloakConfig.serverUrl());
+        log.severe(this.keycloakConfig.realm());
+        log.severe(this.keycloakConfig.clientId());
+        log.severe(this.keycloakConfig.clientSecret());
+
         RealmRepresentation realm = new RealmRepresentation();
         realm.setRealm(realmName);
         realm.setDisplayName(displayName);
@@ -70,6 +69,7 @@ public class KeycloakAdmin {
                 "auth", keycloakSMTPServerConfig.auth(),
                 "starttls", keycloakSMTPServerConfig.starttls()
         ));
+        realm.setSslRequired("NONE");
 
         List<ClientRepresentation> clients = new ArrayList<>();
 

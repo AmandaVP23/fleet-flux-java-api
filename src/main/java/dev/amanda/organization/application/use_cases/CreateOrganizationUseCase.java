@@ -4,7 +4,7 @@ import java.text.Normalizer;
 
 import dev.amanda.infrastructure.oidc.KeycloakAdmin;
 import dev.amanda.infrastructure.oidc.OrgTenantConfigResolver;
-import dev.amanda.organization.persistence.OrganizationRepositoryPanache;
+import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.CreateOrganizationDTO;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import dev.amanda.organization.exceptions.OrganizationAlreadyExistsException;
@@ -14,7 +14,7 @@ import dev.amanda.organization.exceptions.UserSameEmailAlreadyExistsException;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.infrastructure.shared.exception.GenericApiException;
 import dev.amanda.user.domain.Roles;
-import dev.amanda.user.persistence.UserRepositoryPanache;
+import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.java.Log;
@@ -25,10 +25,10 @@ import org.keycloak.representations.idm.RealmRepresentation;
 public class CreateOrganizationUseCase {
 
     @Inject
-    OrganizationRepositoryPanache organizationRepositoryPanache;
+    OrganizationRepository organizationRepository;
 
     @Inject
-    UserRepositoryPanache userRepositoryPanache;
+    UserRepository userRepository;
 
     @Inject
     KeycloakAdmin keycloakAdmin;
@@ -44,20 +44,20 @@ public class CreateOrganizationUseCase {
         String realmId = null;
         String userKeycloakId = null;
 
-        organizationRepositoryPanache.findByName(createOrganizationDTO.name).ifPresent(org -> {
+        organizationRepository.findByName(createOrganizationDTO.name).ifPresent(org -> {
             throw new OrganizationAlreadyExistsException();
         });
 
         // todo - FE requests to see if organization with slug already exists before the create request
-        organizationRepositoryPanache.findByHostname(createOrganizationDTO.hostname).ifPresent(org -> {
+        organizationRepository.findByHostname(createOrganizationDTO.hostname).ifPresent(org -> {
             throw new OrganizationWithSameHostnameAlreadyExistsException();
         });
 
-        organizationRepositoryPanache.findByRealm(realmValue).ifPresent(org -> {
+        organizationRepository.findByRealm(realmValue).ifPresent(_ -> {
             throw new OrganizationWithSameRealmAlreadyExistsException();
         });
 
-        userRepositoryPanache.findByEmail(createOrganizationDTO.adminEmail).ifPresent(admin -> {
+        userRepository.findByEmail(createOrganizationDTO.adminEmail).ifPresent(_ -> {
             throw new UserSameEmailAlreadyExistsException();
         });
 

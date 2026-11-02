@@ -6,6 +6,7 @@ import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import dev.amanda.organization.application.filters.OrganizationStatusFilter;
 import dev.amanda.organization.domain.Organization;
+import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.exceptions.OrganizationNotFoundException;
 import io.agroal.api.AgroalDataSource;
 import io.quarkus.panache.common.Sort;
@@ -23,9 +24,9 @@ import com.github.database.rider.junit5.api.DBRider;
 @DBRider
 @DataSet(value = "datasets/organizations.yml", cleanBefore = true)
 @DBUnit(caseInsensitiveStrategy = Orthography.LOWERCASE, schema = "public")
-public class OrganizationRepositoryPanacheTest {
+public class OrganizationRepositoryTest {
     @Inject
-    OrganizationRepositoryPanache repository;
+    OrganizationRepository repository;
 
     @Inject
     AgroalDataSource dataSource;

@@ -17,7 +17,7 @@ services:
             - postgres_data:/var/lib/postgresql/data
             - ./docker/init:/docker-entrypoint-initdb.d
         ports:
-            - "5432:5432"
+            - "${DB_PORT:-5432}:5432"
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U fleet-flux -d fleet-flux-java"]
             interval: 10s
@@ -31,17 +31,38 @@ services:
         networks:
             - app-network
         ports:
-            - "8081:8080"
+            - "${KEYCLOAK_PORT:-8081}:8080"
         environment:
-            KEYCLOAK_ADMIN: admin
-            KEYCLOAK_ADMIN_PASSWORD: admin
-                    
+            KC_BOOTSTRAP_ADMIN_USERNAME: admin
+            KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+            KC_HEALTH_ENABLED: "true"
             KC_HTTP_ENABLED: "true"
             KC_HOSTNAME_STRICT: "false"
         depends_on:
             - mailpit
+        healthcheck:
+            test: ["CMD-SHELL", "{ printf 'GET /health/ready HTTP/1.0\\r\\n\\r\\n' >&0; cat; } 0<>/dev/tcp/127.0.0.1/9000"]
+            interval: 5s
+            timeout: 5s
+            retries: 30
+            start_period: 10s
         command:
             - start-dev
+
+    keycloak-init:
+        image: quay.io/keycloak/keycloak:26.7
+        container_name: keycloak-init
+        networks:
+            - app-network
+        depends_on:
+            keycloak:
+                condition: service_healthy
+        environment:
+            KEYCLOAK_MASTER_CLIENT_SECRET: "${KEYCLOAK_MASTER_CLIENT_SECRET:-test-secret}"
+        volumes:
+            - ./keycloak-dev-init.sh:/init.sh:ro
+        entrypoint: [ "/bin/bash", "/init.sh" ]
+        restart: "no"
 
     keycloak-test:
         image: quay.io/keycloak/keycloak:26.7
@@ -54,7 +75,7 @@ services:
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
             KC_HEALTH_ENABLED: "true"
         ports:
-            - "8180:8080"
+            - "${KEYCLOAK_TEST_PORT:-8180}:8080"
         healthcheck:
             test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000; echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3; grep -q '\"status\": \"UP\"' <&3"]
             interval: 5s
@@ -70,7 +91,7 @@ services:
             keycloak-test:
                 condition: service_healthy
         volumes:
-            - ./keycloak-init.sh:/init.sh:ro
+            - ./keycloak-it-test-init.sh:/init.sh:ro
         entrypoint: ["/bin/bash", "/init.sh"]
         restart: "no"
 
@@ -78,8 +99,8 @@ services:
         image: axllent/mailpit:latest
         container_name: mailpit
         ports:
-            - "8025:8025" # Web UI
-            - "1025:1025" # SMTP
+            - "${MAILPIT_WEB_PORT:-8025}:8025" # Web UI
+            - "${MAILPIT_SMTP_PORT:-1025}:1025" # SMTP
         networks:
             - app-network
             

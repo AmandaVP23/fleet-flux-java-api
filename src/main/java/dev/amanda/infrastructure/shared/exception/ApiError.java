@@ -17,13 +17,18 @@ public enum ApiError {
     ORGANIZATION_INACTIVE(106, "Organization is deleted", 422),
     ORGANIZATION_NOT_INACTIVE(107, "Organization is not deleted", 422),
     USER_NOT_FOUND(108, "User not found", 404),
-    VEHICLE_BRAND_NOT_FOUND(109, "User not found", 404),
+    VEHICLE_BRAND_NOT_FOUND(109, "Vehicle brand not found", 404),
     VEHICLE_BRAND_DELETED(110, "Vehicle brand is already deleted", 422),
     VEHICLE_BRAND_IS_USED(111, "Vehicle brand is being used", 400),
     VEHICLE_NOT_FOUND(112, "Vehicle not found", 404),
     USER_IS_NOT_DRIVER(113, "User is not driver", 400),
     VEHICLE_DRIVER_ASSIGNMENT_VEHICLE_CONFLICT(114, "Vehicle has assignment time conflict", 409),
-    VEHICLE_DRIVER_ASSIGNMENT_DRIVER_CONFLICT(115, "Driver has assignment time conflict", 409),;
+    VEHICLE_DRIVER_ASSIGNMENT_DRIVER_CONFLICT(115, "Driver has assignment time conflict", 409),
+    TRACKING_DEVICE_IMEI_CONFLICT(116, "Already exists a tracking device with given imei", 409),
+    TRACKING_DEVICE_NOT_FOUND(117, "Tracking device not found", 404),
+    TRACKING_DEVICE_ACTIVE_ASSIGNMENT_CONFLICT(118, "Tracking device is currently assigned to a vehicle", 409),
+    VEHICLE_ASSIGNED_TO_TRACKING_DEVICE_CONFLICT(119, "Vehicle is currently assigned to a device", 409),
+    TRACKING_DEVICE_VEHICLE_ACTIVE_ASSIGNMENT_ALREADY_EXISTS(120, "This vehicle and this tracking device are already assigned to each other", 409),;
 
     private final int errorCode;
     private final String message;
