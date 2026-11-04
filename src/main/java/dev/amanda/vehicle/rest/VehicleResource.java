@@ -11,6 +11,7 @@ import dev.amanda.vehicle.applications.use_cases.GetVehicleByIdUseCase;
 import dev.amanda.vehicle.applications.use_cases.ListVehiclesUseCase;
 import dev.amanda.vehicle.dto.CreateVehicleRequestDTO;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
+import dev.amanda.vehicle.dto.VehicleSimulatorDTO;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
