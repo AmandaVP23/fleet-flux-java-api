@@ -23,11 +23,4 @@ public class Organization extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String hostname;
-
-    @OneToMany(mappedBy = "organization",
-            cascade = CascadeType.REMOVE,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<User> users = new ArrayList<>();
 }

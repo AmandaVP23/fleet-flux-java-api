@@ -1,11 +1,14 @@
 #!/bin/bash
 
+openssl genrsa -out certs/ca.key 4096
+openssl req -x509 -new -key certs/ca.key -sha256 -days 3650 \
+  -subj "/CN=Fleet Dev CA" -addext "basicConstraints=critical,CA:TRUE" \
+    -addext "keyUsage=critical,keyCertSign,cRLSign" \
+    -addext "subjectKeyIdentifier=hash" -out certs/ca.crt
+
 #CA_CERT_PASSWORD="${CA_CERT_PASSWORD:password}"
 
 #openssl genrsa -out ca.key.pem -aes256 -passout pass:CA_CERT_PASSWORD
-
-openssl genrsa -out ca.key 4096
-openssl req -x509 -new -key ca.key -sha256 -days 3650 -subj "/CN=Fleet Flux Dev CA" -out ca.crt
 
 #openssl genrsa -out server.key 2048
 #openssl req -new -key server.key -subj "/CN=localhost" -out server.csr
