@@ -6,6 +6,9 @@ import lombok.extern.java.Log;
 @Log
 @ApplicationScoped
 public class ListSimulationVehiclesUseCase {
+    public void execute() {
+
+    }
 }
 
 
@@ -13,4 +16,4 @@ public class ListSimulationVehiclesUseCase {
 //FROM vehicle
 //INNER JOIN vehicle_device_assignment ON vehicle.id = vehicle_device_assignment.id
 //LEFT JOIN vehicle_driver_assignment ON vehicle.id = vehicle_driver_assignment.id
-//WHERE vehicle.status = 'ACTIVE';
+//WHERE vehicle.status = 'ACTIVE' AND (vehicle_driver_assignment.end_date_time IS NULL OR vehicle_driver_assignment.end_date_time > CURRENT_DATE);
