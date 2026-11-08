@@ -7,7 +7,7 @@ import dev.amanda.infrastructure.shared.application.PageRequestHelper;
 import dev.amanda.vehicle_driver_assignment.application.mappers.VehicleDriverAssignmentMapper;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignment;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignmentRepository;
-import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentListResponseDTO;
+import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentResponseDTO;
 import dev.amanda.vehicle_driver_assignment.rest.VehicleDriverAssignmentFilter;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -29,7 +29,7 @@ public class ListVehicleDriverAssignmentsUseCase {
     @Inject
     OrganizationAccessService organizationAccessService;
 
-    public PageResult<VehicleDriverAssignmentListResponseDTO> execute(int pageNumber, int pageSize, String sortBy, String direction, AuthContext authContext, VehicleDriverAssignmentFilter filter) {
+    public PageResult<VehicleDriverAssignmentResponseDTO> execute(int pageNumber, int pageSize, String sortBy, String direction, AuthContext authContext, VehicleDriverAssignmentFilter filter) {
         pageRequestHelper.validate(pageNumber, pageSize, sortBy, direction, null);
 
         Sort sort = pageRequestHelper.buildSort(sortBy, direction);
@@ -39,7 +39,7 @@ public class ListVehicleDriverAssignmentsUseCase {
 
         long total = vehicleDriverAssignmentRepository.count(filter);
         List<VehicleDriverAssignment> vehicleDriverAssignments = vehicleDriverAssignmentRepository.findPaginated(pageNumber, pageSize, sort, filter);
-        List<VehicleDriverAssignmentListResponseDTO> data = vehicleDriverAssignments.stream()
+        List<VehicleDriverAssignmentResponseDTO> data = vehicleDriverAssignments.stream()
                 .map(vehicleDriverAssignmentMapper::toDto)
                 .toList();
 

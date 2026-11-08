@@ -28,7 +28,8 @@ public enum ApiError {
     TRACKING_DEVICE_NOT_FOUND(117, "Tracking device not found", 404),
     TRACKING_DEVICE_ACTIVE_ASSIGNMENT_CONFLICT(118, "Tracking device is currently assigned to a vehicle", 409),
     VEHICLE_ASSIGNED_TO_TRACKING_DEVICE_CONFLICT(119, "Vehicle is currently assigned to a device", 409),
-    TRACKING_DEVICE_VEHICLE_ACTIVE_ASSIGNMENT_ALREADY_EXISTS(120, "This vehicle and this tracking device are already assigned to each other", 409),;
+    TRACKING_DEVICE_VEHICLE_ACTIVE_ASSIGNMENT_ALREADY_EXISTS(120, "This vehicle and this tracking device are already assigned to each other", 409),
+    VEHICLE_DRIVER_ASSIGNMENT_NOT_FOUND(121, "Vehicle to driver assignment not found", 404),;
 
     private final int errorCode;
     private final String message;

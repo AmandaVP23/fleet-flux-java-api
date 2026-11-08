@@ -13,8 +13,8 @@ import dev.amanda.vehicle_driver_assignment.application.AssignmentConflictChecke
 import dev.amanda.vehicle_driver_assignment.application.mappers.VehicleDriverAssignmentMapper;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignment;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignmentRepository;
-import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentListResponseDTO;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentRequestDTO;
+import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -40,7 +40,7 @@ public class CreateVehicleDriverAssignmentUseCase {
     AssignmentConflictChecker assignmentConflictChecker;
 
     @Transactional
-    public VehicleDriverAssignmentListResponseDTO execute(VehicleDriverAssignmentRequestDTO requestDTO, AuthContext auth) {
+    public VehicleDriverAssignmentResponseDTO execute(VehicleDriverAssignmentRequestDTO requestDTO, AuthContext auth) {
         User authenticatedUser = userRepository.findByKeycloakIdOrThrow(auth.getUserKeycloakId());
         User driver = userRepository.findByIdOrThrow(requestDTO.driverId);
 

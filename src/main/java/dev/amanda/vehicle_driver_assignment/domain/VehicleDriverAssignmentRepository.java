@@ -1,6 +1,10 @@
 package dev.amanda.vehicle_driver_assignment.domain;
 
 import dev.amanda.infrastructure.shared.application.QueryData;
+import dev.amanda.infrastructure.shared.exception.ApiError;
+import dev.amanda.infrastructure.shared.exception.BaseApiException;
+import dev.amanda.vehicle.domain.Vehicle;
+import dev.amanda.vehicle.exceptions.VehicleNotFoundException;
 import dev.amanda.vehicle_driver_assignment.rest.VehicleDriverAssignmentFilter;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
@@ -21,6 +25,12 @@ public class VehicleDriverAssignmentRepository implements PanacheRepository<Vehi
         return find(queryData.query(), sort, queryData.params())
                 .page(Page.of(page, size))
                 .list();
+    }
+
+    public VehicleDriverAssignment findByIdInOrganizationOrThrow(long id, long organizationId) {
+        return find("id = ?1 AND vehicle.organization.id = ?2", id, organizationId)
+                .firstResultOptional()
+                .orElseThrow(() -> new BaseApiException(ApiError.VEHICLE_DRIVER_ASSIGNMENT_NOT_FOUND));
     }
 
     public long count(VehicleDriverAssignmentFilter filter) {
