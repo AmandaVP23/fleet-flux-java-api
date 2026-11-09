@@ -1,4 +1,8 @@
 package dev.amanda.route.domain;
 
-public class RouteRepository {
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
+public class RouteRepository implements PanacheRepository<Route> {
 }

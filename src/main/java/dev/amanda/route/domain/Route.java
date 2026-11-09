@@ -1,12 +1,19 @@
 package dev.amanda.route.domain;
 
+import dev.amanda.infrastructure.shared.domain.BaseEntity;
 import dev.amanda.infrastructure.shared.domain.Coordinates;
 import dev.amanda.vehicle.domain.Vehicle;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 
-public class Route {
+@Entity
+@Table(name = "route")
+@Getter
+@Setter
+public class Route extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "vehicle_id")
@@ -16,6 +23,7 @@ public class Route {
     private Instant scheduledTime;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RouteStatus status;
 
     @Embedded

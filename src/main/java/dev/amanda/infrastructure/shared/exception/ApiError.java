@@ -29,7 +29,9 @@ public enum ApiError {
     TRACKING_DEVICE_ACTIVE_ASSIGNMENT_CONFLICT(118, "Tracking device is currently assigned to a vehicle", 409),
     VEHICLE_ASSIGNED_TO_TRACKING_DEVICE_CONFLICT(119, "Vehicle is currently assigned to a device", 409),
     TRACKING_DEVICE_VEHICLE_ACTIVE_ASSIGNMENT_ALREADY_EXISTS(120, "This vehicle and this tracking device are already assigned to each other", 409),
-    VEHICLE_DRIVER_ASSIGNMENT_NOT_FOUND(121, "Vehicle to driver assignment not found", 404),;
+    VEHICLE_DRIVER_ASSIGNMENT_NOT_FOUND(121, "Vehicle to driver assignment not found", 404),
+    ROUTE_SCHEDULED_DATE_MUST_BE_FUTURE(122, "The scheduled date must be in the future", 400),
+    ORIGIN_MUST_BE_DIFFERENT_THAN_DESTINATION(123, "The origin must be different than destination", 409),;
 
     private final int errorCode;
     private final String message;
