@@ -27,6 +27,8 @@ public class RouteResource {
     @Inject
     GetRouteReviewUseCase getRouteReviewUseCase;
 
+    // todo - list routes summary
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
