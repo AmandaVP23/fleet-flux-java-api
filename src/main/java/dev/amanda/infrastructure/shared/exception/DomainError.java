@@ -7,7 +7,8 @@ public enum DomainError {
     VEHICLE_DRIVER_ASSIGNMENT_START_DATETIME_BEFORE_END_DATETIME(
             "Vehicle-driver assignment start datetime should be before end datetime"
     ),
-    INVALID_COORDINATES("Latitude must be between -90 and 90 and longitude between -180 and 180"),;
+    INVALID_COORDINATES("Latitude must be between -90 and 90 and longitude between -180 and 180"),
+    ACTIVE_ASSIGNMENT_REQUIRES_VEHICLE_OR_DRIVER("Active assignment requires vehicle or driver"),;
 
     private final String message;
 

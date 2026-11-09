@@ -67,6 +67,31 @@ public class VehicleDriverAssignmentRepository implements PanacheRepository<Vehi
         );
     }
 
+    public VehicleDriverAssignment findActiveAtByOrganization(Instant at, Long vehicleId, Long driverId, long organizationId) {
+        StringBuilder query = new StringBuilder("1=1");
+        Map<String, Object> params = new HashMap<>();
+
+        if (vehicleId != null) {
+            query.append(" and vehicle.id = :vehicleId");
+            params.put("vehicleId", vehicleId);
+
+            query.append(" and vehicle.organization.id = :organizationId");
+            params.put("organizationId", organizationId);
+        }
+
+        if (driverId != null) {
+            query.append(" and driver.id = :driverId");
+            params.put("driverId", driverId);
+        }
+
+        query.append(" and startDateTime <= :at AND (endDateTime IS NULL OR endDateTime > :at)");
+        params.put("at", at);
+
+        return find(query.toString(), params)
+                .firstResultOptional()
+                .orElseThrow(() -> new BaseApiException(ApiError.VEHICLE_DRIVER_ASSIGNMENT_NOT_FOUND));
+    }
+
     private boolean verifyAssignmentHasConflict(
             String resourceField,
             long resourceId,
@@ -107,6 +132,16 @@ public class VehicleDriverAssignmentRepository implements PanacheRepository<Vehi
         if (filter.organizationId() != null) {
             query.append(" and vehicle.organization.id = :organizationId");
             params.put("organizationId", filter.organizationId());
+        }
+
+        if (filter.from() != null) {
+            query.append(" and from >= :from");
+            params.put("from", filter.from());
+        }
+
+        if (filter.to() != null) {
+            query.append(" and to <= :to");
+            params.put("to", filter.to());
         }
 
         return new QueryData(query.toString(), params);

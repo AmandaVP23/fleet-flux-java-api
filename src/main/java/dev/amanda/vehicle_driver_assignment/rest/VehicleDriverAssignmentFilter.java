@@ -1,9 +1,10 @@
 package dev.amanda.vehicle_driver_assignment.rest;
 
 
-public record VehicleDriverAssignmentFilter(Long organizationId, Long driverId, Long vehicleId) {
-    // todo - start date - end date
+import java.time.Instant;
+
+public record VehicleDriverAssignmentFilter(Long organizationId, Long driverId, Long vehicleId, Instant from, Instant to) {
     public VehicleDriverAssignmentFilter withOrganizationId(Long organizationId) {
-        return new VehicleDriverAssignmentFilter(organizationId, driverId, vehicleId);
+        return new VehicleDriverAssignmentFilter(organizationId, driverId, vehicleId, from, to);
     }
 }

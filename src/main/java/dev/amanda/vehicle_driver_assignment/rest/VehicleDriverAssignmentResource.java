@@ -6,6 +6,7 @@ import dev.amanda.infrastructure.shared.PageResult;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.vehicle_driver_assignment.application.use_cases.CreateVehicleDriverAssignmentUseCase;
 import dev.amanda.vehicle_driver_assignment.application.use_cases.EditVehicleDriverAssignmentEndDateUseCase;
+import dev.amanda.vehicle_driver_assignment.application.use_cases.GetActiveVehicleDriverAssignmentUseCase;
 import dev.amanda.vehicle_driver_assignment.application.use_cases.ListVehicleDriverAssignmentsUseCase;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentEndDateEditDTO;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentRequestDTO;
@@ -15,6 +16,8 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+
+import java.time.Instant;
 
 @Path("/assignments/drivers")
 public class VehicleDriverAssignmentResource {
@@ -31,10 +34,10 @@ public class VehicleDriverAssignmentResource {
     @Inject
     ListVehicleDriverAssignmentsUseCase listVehicleDriverAssignmentsUseCase;
 
-    // todo - add endpoint to get current assignment
+    @Inject
+    GetActiveVehicleDriverAssignmentUseCase getActiveVehicleDriverAssignmentUseCase;
 
     // todo - sortBy
-    // todo - super admin have access to this?
     @GET
     @RolesAllowed({ Roles.SUPER_ADMIN, Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
     public PageResult<VehicleDriverAssignmentResponseDTO> listVehicleDriverAssignments(
@@ -44,10 +47,12 @@ public class VehicleDriverAssignmentResource {
             @QueryParam("direction") @DefaultValue("asc") String direction,
             @QueryParam("organizationId") Long organizationId,
             @QueryParam("vehicleId") Long vehicleId,
-            @QueryParam("driverId") Long driverId
-    ) {
+            @QueryParam("driverId") Long driverId,
+            @QueryParam("from") Instant from,
+            @QueryParam("to") Instant to
+            ) {
         AuthContext authContext = authProvider.get();
-        VehicleDriverAssignmentFilter filter = new VehicleDriverAssignmentFilter(organizationId, driverId, vehicleId);
+        VehicleDriverAssignmentFilter filter = new VehicleDriverAssignmentFilter(organizationId, driverId, vehicleId, from, to);
 
         return listVehicleDriverAssignmentsUseCase.execute(page, size, sortBy, direction, authContext, filter);
     }
@@ -62,10 +67,25 @@ public class VehicleDriverAssignmentResource {
 
     @PATCH
     @Path("{id}")
+    @RolesAllowed({ Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
     @Operation(summary = "Edit vehicle - driver assignment end date")
     public VehicleDriverAssignmentResponseDTO editVehicleDriverAssignmentEndDate(@PathParam("id") Long id, @Valid VehicleDriverAssignmentEndDateEditDTO requestDTO) {
         AuthContext auth = authProvider.get();
 
         return editVehicleDriverAssignmentEndDateUseCase.execute(id, requestDTO, auth);
+    }
+
+    @GET
+    @Path("active")
+    @RolesAllowed({ Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
+    @Operation(summary = "Get an active assignment for a given time (if at not given defaults to now in UTC)")
+    public VehicleDriverAssignmentResponseDTO getActiveVehicleDriverAssignments(
+            @QueryParam("driverId") Long driverId,
+            @QueryParam("vehicleId") Long vehicleId,
+            @QueryParam("at") Instant at
+            ) {
+        AuthContext authContext = authProvider.get();
+
+        return getActiveVehicleDriverAssignmentUseCase.execute(authContext, vehicleId, driverId, at);
     }
 }
