@@ -4,9 +4,7 @@ import dev.amanda.infrastructure.oidc.AuthContext;
 import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.route.application.mappers.RouteMapper;
-import dev.amanda.route.domain.Route;
-import dev.amanda.route.domain.RouteRepository;
-import dev.amanda.route.domain.RouteStatus;
+import dev.amanda.route.domain.*;
 import dev.amanda.route.dto.CreateRouteRequestDTO;
 import dev.amanda.route.dto.RouteResponseDTO;
 import dev.amanda.vehicle.domain.Vehicle;
@@ -27,7 +25,13 @@ public class CreateRouteUseCase {
     RouteRepository routeRepository;
 
     @Inject
+    RouteDetailsRepository routeDetailsRepository;
+
+    @Inject
     RouteMapper routeMapper;
+
+    @Inject
+    OsrmRoutingService osrmRoutingService;
 
     @Transactional
     public RouteResponseDTO execute(CreateRouteRequestDTO dto, AuthContext authContext) {
@@ -46,8 +50,12 @@ public class CreateRouteUseCase {
         route.setVehicle(vehicle);
         route.setStatus(RouteStatus.SCHEDULED);
 
+        RouteDetails details = osrmRoutingService.details(dto.origin(), dto.destination());
+
         routeRepository.persist(route);
 
-        return routeMapper.toDto(route);
+        routeDetailsRepository.persist(routeMapper.toEntity(details, route));
+
+        return routeMapper.toDto(route, details);
     }
 }

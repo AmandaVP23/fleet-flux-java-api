@@ -2,7 +2,7 @@ package dev.amanda.route.application.use_cases;
 
 import dev.amanda.infrastructure.shared.domain.Coordinates;
 import dev.amanda.route.domain.OsrmRoutingService;
-import dev.amanda.route.domain.RoutePlan;
+import dev.amanda.route.domain.RoutePreview;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -12,7 +12,7 @@ public class GetRouteReviewUseCase {
     @Inject
     OsrmRoutingService osrmRoutingService;
 
-    public RoutePlan execute(Coordinates origin, Coordinates destination) {
-        return osrmRoutingService.plan(origin, destination);
+    public RoutePreview execute(Coordinates origin, Coordinates destination) {
+        return osrmRoutingService.preview(origin, destination);
     }
 }

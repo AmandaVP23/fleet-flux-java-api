@@ -14,17 +14,21 @@ public record OsrmRouteResponse(
     public record Route(
             double distance, // meters
             double duration, // seconds
-            Geometry geometry // only present with overview=simplified|full and geometries=geojson
+            String geometry, // encoded polyline, precision depends on the requested geometries=polyline|polyline6
+            List<Leg> legs
     ) {
     }
 
-    /**
-     * Each position is [longitude, latitude].
-     */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Geometry(
-            String type,
-            List<List<Double>> coordinates
+    public record Leg(
+            Annotation annotation // only present when requested with annotations=...
+    ) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Annotation(
+            List<Double> distance, // meters
+            List<Double> duration  // seconds
     ) {
     }
 }

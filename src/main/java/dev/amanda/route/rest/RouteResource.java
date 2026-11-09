@@ -5,7 +5,7 @@ import dev.amanda.infrastructure.oidc.AuthContextProvider;
 import dev.amanda.infrastructure.shared.domain.Coordinates;
 import dev.amanda.route.application.use_cases.CreateRouteUseCase;
 import dev.amanda.route.application.use_cases.GetRouteReviewUseCase;
-import dev.amanda.route.domain.RoutePlan;
+import dev.amanda.route.domain.RoutePreview;
 import dev.amanda.route.dto.CreateRouteRequestDTO;
 import dev.amanda.route.dto.RouteResponseDTO;
 import dev.amanda.user.domain.Roles;
@@ -41,7 +41,7 @@ public class RouteResource {
     @Path("/review")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({ Roles.SUPER_ADMIN, Roles.ORG_ADMIN, Roles.FLEET_MANAGER })
-    public RoutePlan getReview(@BeanParam @Valid RoutePreviewQuery query) {
+    public RoutePreview getReview(@BeanParam @Valid RoutePreviewQuery query) {
         Coordinates origin = new Coordinates(query.getOriginLat(), query.getOriginLon());
         Coordinates destination = new Coordinates(query.getDestinationLat(), query.getDestinationLon());
 

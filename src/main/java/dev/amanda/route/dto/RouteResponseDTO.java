@@ -19,4 +19,6 @@ public class RouteResponseDTO extends BaseResponseDTO {
     private RouteStatus status;
     private Coordinates origin;
     private Coordinates destination;
+    private double distanceMeters;
+    private double durationSeconds;
 }

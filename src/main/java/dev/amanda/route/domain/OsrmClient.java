@@ -8,7 +8,13 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @RegisterRestClient(configKey="osrm-api")
 public interface OsrmClient {
+
     @GET
-    @Path("/route/v1/driving/{coordinates}") // route/v1/driving/-9.1393,38.7223;-8.6291,41.1579
-    OsrmRouteResponse getRoutePlan(@PathParam("coordinates") String coordinates, @QueryParam("overview") String overview, @QueryParam("geometries") String geometries);
+    @Path("/route/v1/driving/{coordinates}")
+    OsrmRouteResponse getRoute(
+            @PathParam("coordinates") String coordinates,
+            @QueryParam("overview") String overview,
+            @QueryParam("geometries") String geometries,
+            @QueryParam("annotations") String annotations
+    );
 }
