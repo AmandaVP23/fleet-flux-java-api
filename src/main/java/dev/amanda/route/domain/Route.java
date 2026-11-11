@@ -2,6 +2,8 @@ package dev.amanda.route.domain;
 
 import dev.amanda.infrastructure.shared.domain.BaseEntity;
 import dev.amanda.infrastructure.shared.domain.Coordinates;
+import dev.amanda.infrastructure.shared.exception.ApiError;
+import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.vehicle.domain.Vehicle;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -39,4 +41,48 @@ public class Route extends BaseEntity {
             @AttributeOverride(name = "longitude", column = @Column(name = "destination_lon",  nullable = false))
     })
     private Coordinates destination;
+
+    @Column(name = "started_at")
+    private Instant startedAt;
+
+    @Column(name = "completed_at")
+    private Instant completedAt;
+
+    @Column(name = "cancelled_at")
+    private Instant cancelledAt;
+
+    public void start(Instant startedAt) {
+        if (this.status == RouteStatus.IN_PROGRESS) {
+            return;
+        }
+
+        if (this.status == RouteStatus.CANCELED) {
+            throw new BaseApiException(ApiError.ROUTE_ALREADY_CANCELLED);
+        }
+
+        if (this.status == RouteStatus.COMPLETED) {
+            throw new BaseApiException(ApiError.ROUTE_ALREADY_COMPLETED);
+        }
+
+        this.startedAt = startedAt;
+        this.status = RouteStatus.IN_PROGRESS;
+    }
+
+    public void cancel(Instant cancelledAt) {
+        if (this.status == RouteStatus.CANCELED) {
+            return;
+        }
+
+        this.cancelledAt = cancelledAt;
+        this.status = RouteStatus.CANCELED;
+    }
+
+    public  void complete(Instant completedAt) {
+        if (this.status == RouteStatus.COMPLETED) {
+            return;
+        }
+
+        this.completedAt = completedAt;
+        this.status = RouteStatus.COMPLETED;
+    }
 }

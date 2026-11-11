@@ -2,7 +2,7 @@ package dev.amanda.route.domain;
 
 public enum RouteStatus {
     SCHEDULED,
-    IS_PROGRESS,
+    IN_PROGRESS,
     COMPLETED,
     CANCELED,
 }

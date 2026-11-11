@@ -33,7 +33,9 @@ public enum ApiError {
     ROUTE_SCHEDULED_DATE_MUST_BE_FUTURE(122, "The scheduled date must be in the future", 400),
     ORIGIN_MUST_BE_DIFFERENT_THAN_DESTINATION(123, "The origin must be different than destination", 409),
     ROUTE_NOT_FOUND(124, "No route found between the given coordinates", 404),
-    ROUTING_SERVICE_UNAVAILABLE(125, "Routing service is currently unavailable", 503);
+    ROUTING_SERVICE_UNAVAILABLE(125, "Routing service is currently unavailable", 503),
+    ROUTE_ALREADY_CANCELLED(126, "Route is cancelled", 422),
+    ROUTE_ALREADY_COMPLETED(127, "Route is already completed", 422),;
 
     private final int errorCode;
     private final String message;
