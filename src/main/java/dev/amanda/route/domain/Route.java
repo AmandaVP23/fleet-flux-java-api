@@ -51,6 +51,12 @@ public class Route extends BaseEntity {
     @Column(name = "cancelled_at")
     private Instant cancelledAt;
 
+    @Column(name = "distance_meters", nullable = false)
+    private double distanceMeters;
+
+    @Column(name = "duration_seconds", nullable = false)
+    private double durationSeconds;
+
     public void start(Instant startedAt) {
         if (this.status == RouteStatus.IN_PROGRESS) {
             return;

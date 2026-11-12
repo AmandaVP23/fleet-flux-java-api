@@ -24,12 +24,6 @@ public class RouteDetailsEntity extends BaseEntity {
     @Column(name = "geometry_precision", nullable = false)
     private int geometryPrecision;
 
-    @Column(name = "distance_meters", nullable = false)
-    private double distanceMeters;
-
-    @Column(name = "duration_seconds", nullable = false)
-    private double durationSeconds;
-
     // Meters per segment
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "segment_distances", nullable = false, columnDefinition = "double precision[]")

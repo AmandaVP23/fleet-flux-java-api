@@ -45,17 +45,19 @@ public class CreateRouteUseCase {
             throw new BaseApiException(ApiError.ORIGIN_MUST_BE_DIFFERENT_THAN_DESTINATION);
         }
 
+        RouteDetails details = osrmRoutingService.details(dto.origin(), dto.destination());
+
         Route route = new Route();
         routeMapper.updateRouteFromDto(dto, route);
         route.setVehicle(vehicle);
         route.setStatus(RouteStatus.SCHEDULED);
-
-        RouteDetails details = osrmRoutingService.details(dto.origin(), dto.destination());
+        route.setDistanceMeters(details.distanceMeters());
+        route.setDurationSeconds(details.durationSeconds());
 
         routeRepository.persist(route);
 
         routeDetailsRepository.persist(routeMapper.toEntity(details, route));
 
-        return routeMapper.toDto(route, details);
+        return routeMapper.toDto(route);
     }
 }

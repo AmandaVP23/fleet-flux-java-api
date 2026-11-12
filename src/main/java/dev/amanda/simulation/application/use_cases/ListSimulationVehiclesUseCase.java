@@ -1,19 +1,28 @@
 package dev.amanda.simulation.application.use_cases;
 
+import dev.amanda.simulation.domain.SimulationFleetRepository;
+import dev.amanda.simulation.dto.SimulationDeviceResponseDTO;
+import dev.amanda.simulation.dto.SimulationVehicleDTO;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.extern.java.Log;
+
+import java.util.List;
 
 @Log
 @ApplicationScoped
 public class ListSimulationVehiclesUseCase {
-    public void execute() {
 
+    @Inject
+    SimulationFleetRepository simulationFleetRepository;
+
+    public List<SimulationDeviceResponseDTO> execute() {
+        return simulationFleetRepository.getSimulationFleet().stream()
+                .map(row -> new SimulationDeviceResponseDTO(
+                        row.deviceId(),
+                        row.driverId(),
+                        new SimulationVehicleDTO(row.vehicleId(), row.type())
+                ))
+                .toList();
     }
 }
-
-
-//SELECT vehicle.id as vehicle_id, vehicle_device_assignment.device_id as device_id, vehicle_driver_assignment.driver_id as driver_id, type
-//FROM vehicle
-//INNER JOIN vehicle_device_assignment ON vehicle.id = vehicle_device_assignment.id
-//LEFT JOIN vehicle_driver_assignment ON vehicle.id = vehicle_driver_assignment.id
-//WHERE vehicle.status = 'ACTIVE' AND (vehicle_driver_assignment.end_date_time IS NULL OR vehicle_driver_assignment.end_date_time > CURRENT_DATE);

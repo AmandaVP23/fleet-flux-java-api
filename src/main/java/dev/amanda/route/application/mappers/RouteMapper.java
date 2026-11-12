@@ -13,9 +13,7 @@ import org.mapstruct.*;
 @Mapper(componentModel = "jakarta", uses = BaseMapper.class)
 public interface RouteMapper {
 
-    @Mapping(target = "distanceMeters", source = "details.distanceMeters")
-    @Mapping(target = "durationSeconds", source = "details.durationSeconds")
-    RouteResponseDTO toDto(Route route, RouteDetails details);
+    RouteResponseDTO toDto(Route route);
 
     VehicleSummaryResponseDTO toDto(Vehicle vehicle);
 
