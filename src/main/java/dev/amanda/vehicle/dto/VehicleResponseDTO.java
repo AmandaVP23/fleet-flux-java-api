@@ -32,4 +32,6 @@ public class VehicleResponseDTO extends BaseResponseDTO {
     private Instant insuranceExpiryDate;
     private Instant inspectionDueDate;
     private VehicleOwnershipType ownershipType;
+    private Long deviceId;
+    private VehicleDriverDTO driver;
 }

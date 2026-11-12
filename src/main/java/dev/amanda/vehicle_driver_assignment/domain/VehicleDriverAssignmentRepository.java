@@ -3,21 +3,27 @@ package dev.amanda.vehicle_driver_assignment.domain;
 import dev.amanda.infrastructure.shared.application.QueryData;
 import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
-import dev.amanda.vehicle.domain.Vehicle;
-import dev.amanda.vehicle.exceptions.VehicleNotFoundException;
+import dev.amanda.vehicle.dto.VehicleDriverDTO;
 import dev.amanda.vehicle_driver_assignment.rest.VehicleDriverAssignmentFilter;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class VehicleDriverAssignmentRepository implements PanacheRepository<VehicleDriverAssignment> {
+
+    @Inject
+    EntityManager em;
 
     public List<VehicleDriverAssignment> findPaginated(int page, int size, Sort sort, VehicleDriverAssignmentFilter filter) {
         QueryData queryData = buildQuery(filter);
@@ -65,6 +71,22 @@ public class VehicleDriverAssignmentRepository implements PanacheRepository<Vehi
                 startDateTime,
                 endDateTime
         );
+    }
+
+    public Map<Long, VehicleDriverDTO> findActiveDriverIdsByVehicleIds(Collection<Long> vehicleIds) {
+        if (vehicleIds.isEmpty()) return Map.of();
+
+        Map<Long, VehicleDriverDTO> result = em.createQuery("""
+            select vdr.vehicle.id, vdr.driver.id, vdr.driver.firstName,  vdr.driver.lastName
+            from VehicleDriverAssignment vdr
+            where vdr.vehicle.id in :ids and vdr.startDateTime <= :now and (vdr.endDateTime is null or vdr.endDateTime > :now)
+        """, Object[].class)
+                .setParameter("ids", vehicleIds)
+                .setParameter("now", Instant.now())
+                .getResultStream()
+                .collect(Collectors.toMap(r -> (Long) r[0], r -> new VehicleDriverDTO((Long) r[1], (String) r[2], (String) r[3])));
+
+        return result;
     }
 
     public VehicleDriverAssignment findActiveAtByOrganization(Instant at, Long vehicleId, Long driverId, long organizationId) {

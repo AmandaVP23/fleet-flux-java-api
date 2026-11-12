@@ -2,6 +2,7 @@ package dev.amanda.vehicle.applications.use_cases;
 
 import dev.amanda.infrastructure.oidc.AuthContext;
 import dev.amanda.vehicle.applications.mappers.VehicleMapper;
+import dev.amanda.vehicle.applications.mappers.VehicleResponseAssembler;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
@@ -18,7 +19,7 @@ public class GetVehicleByIdUseCase {
     VehicleRepository vehicleRepository;
 
     @Inject
-    VehicleMapper vehicleMapper;
+    VehicleResponseAssembler vehicleResponseAssembler;
 
     public VehicleResponseDTO execute(long id, AuthContext authContext) {
         Vehicle vehicle = vehicleRepository.findByIdOrThrow(id);
@@ -27,6 +28,6 @@ public class GetVehicleByIdUseCase {
             throw new VehicleNotFoundException();
         }
 
-        return vehicleMapper.toDto(vehicle);
+        return vehicleResponseAssembler.toResponse(vehicle);
     }
 }

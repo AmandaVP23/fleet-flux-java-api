@@ -6,6 +6,8 @@ import dev.amanda.infrastructure.shared.application.PageRequestHelper;
 import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.vehicle.applications.mappers.VehicleMapper;
+import dev.amanda.vehicle.applications.mappers.VehicleResponseAssembler;
+import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
 import dev.amanda.vehicle.applications.filters.VehicleFilter;
@@ -27,7 +29,7 @@ public class ListVehiclesUseCase {
     PageRequestHelper pageRequestHelper;
 
     @Inject
-    VehicleMapper vehicleMapper;
+    VehicleResponseAssembler vehicleResponseAssembler;
 
     public PageResult<VehicleResponseDTO> execute(int page, int size, String sortBy, String direction, VehicleFilter filter, AuthContext authContext) {
         if (!authContext.isSuperAdmin() && filter.getOrganizationId() != null) {
@@ -46,11 +48,9 @@ public class ListVehiclesUseCase {
 
         long total = vehicleRepository.countWithQuery(filter);
 
-        List<VehicleResponseDTO> data = vehicleRepository
-                .listPaginated(filter, page, size, sort)
-                .stream()
-                .map(vehicleMapper::toDto)
-                .toList();
+        List<Vehicle> vehicles = vehicleRepository.listPaginated(filter, page, size, sort);
+
+        List<VehicleResponseDTO> data = vehicleResponseAssembler.toResponses(vehicles);
 
         return new PageResult<>(data, total, page, size);
     }

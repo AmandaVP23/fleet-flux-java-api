@@ -4,6 +4,7 @@ import dev.amanda.infrastructure.oidc.AuthContext;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.vehicle.applications.mappers.VehicleMapper;
+import dev.amanda.vehicle.applications.mappers.VehicleResponseAssembler;
 import dev.amanda.vehicle.domain.*;
 import dev.amanda.vehicle.dto.CreateVehicleRequestDTO;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
@@ -29,6 +30,9 @@ public class CreateVehicleUseCase {
     @Inject
     VehicleMapper vehicleMapper;
 
+    @Inject
+    VehicleResponseAssembler vehicleResponseAssembler;
+
     @Transactional
     public VehicleResponseDTO execute(CreateVehicleRequestDTO dto, AuthContext authContext) {
         long effectiveOrgId;
@@ -49,6 +53,6 @@ public class CreateVehicleUseCase {
 
         vehicleRepository.persist(vehicle);
 
-        return vehicleMapper.toDto(vehicle);
+        return vehicleResponseAssembler.toResponse(vehicle);
     }
 }
