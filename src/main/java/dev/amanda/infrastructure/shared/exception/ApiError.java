@@ -35,7 +35,8 @@ public enum ApiError {
     ROUTE_NOT_FOUND(124, "No route found between the given coordinates", 404),
     ROUTING_SERVICE_UNAVAILABLE(125, "Routing service is currently unavailable", 503),
     ROUTE_ALREADY_CANCELLED(126, "Route is cancelled", 422),
-    ROUTE_ALREADY_COMPLETED(127, "Route is already completed", 422),;
+    ROUTE_ALREADY_COMPLETED(127, "Route is already completed", 422),
+    ROUTE_DETAILS_NOT_FOUND(128, "Route details not found", 404),;
 
     private final int errorCode;
     private final String message;
