@@ -6,6 +6,7 @@ import dev.amanda.vehicle_brand.domain.VehicleBrand;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.TenantId;
 
 import java.time.Instant;
 
@@ -18,6 +19,7 @@ public class Vehicle extends BaseEntity {
     @JoinColumn(name = "vehicle_brand_id")
     private VehicleBrand brand;
 
+    @TenantId
     @ManyToOne
     @JoinColumn(name = "organization_id")
     private Organization organization;
