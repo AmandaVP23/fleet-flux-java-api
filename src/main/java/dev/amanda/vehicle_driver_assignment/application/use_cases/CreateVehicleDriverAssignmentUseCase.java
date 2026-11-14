@@ -42,17 +42,15 @@ public class CreateVehicleDriverAssignmentUseCase {
     @Transactional
     public VehicleDriverAssignmentResponseDTO execute(VehicleDriverAssignmentRequestDTO requestDTO, AuthContext auth) {
         User authenticatedUser = userRepository.findByKeycloakIdOrThrow(auth.getUserKeycloakId());
-        User driver = userRepository.findByIdOrThrow(requestDTO.driverId);
-
-        if (!driver.getOrganization().getId().equals(authenticatedUser.getOrganization().getId())) {
-            throw new UserNotFoundException();
-        }
+        User driver = auth.isSuperAdmin()
+                ? userRepository.findByIdOrThrow(requestDTO.driverId)
+                : userRepository.findByIdInOrganizationOrThrow(requestDTO.driverId, auth.getOrganizationId());
 
         if (!driver.getRole().getValue().equals(Roles.DRIVER)) {
             throw new BaseApiException(ApiError.USER_IS_NOT_DRIVER);
         }
 
-        Vehicle vehicle = vehicleRepository.findByIdOrThrow(requestDTO.vehicleId);
+        Vehicle vehicle = vehicleRepository.findByIdInOrganizationOrThrow(requestDTO.vehicleId, auth.getOrganizationId());
 
         VehicleDriverAssignment vehicleDriverAssignment = new VehicleDriverAssignment();
         vehicleDriverAssignment.setDriver(driver);

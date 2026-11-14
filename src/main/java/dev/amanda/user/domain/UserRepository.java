@@ -53,6 +53,12 @@ public class UserRepository implements PanacheRepository<User> {
                 .orElseThrow(UserNotFoundException::new);
     }
 
+    public User findByIdInOrganizationOrThrow(long id, long organizationId) {
+        return find("id = ?1 AND organization.id = ?2", id, organizationId)
+                .firstResultOptional()
+                .orElseThrow(UserNotFoundException::new);
+    }
+
     private QueryData buildQuery(UserFilter filter) {
         StringBuilder query = new StringBuilder("1=1");
         Map<String, Object> params = new HashMap<>();

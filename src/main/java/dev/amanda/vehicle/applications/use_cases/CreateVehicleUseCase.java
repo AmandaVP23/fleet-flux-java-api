@@ -35,7 +35,7 @@ public class CreateVehicleUseCase {
 
     @Transactional
     public VehicleResponseDTO execute(CreateVehicleRequestDTO dto, AuthContext authContext) {
-        long effectiveOrgId;
+        Long effectiveOrgId;
 
         if (authContext.isSuperAdmin()) {
             effectiveOrgId = dto.organizationId();

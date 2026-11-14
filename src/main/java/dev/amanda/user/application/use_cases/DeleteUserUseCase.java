@@ -28,16 +28,12 @@ public class DeleteUserUseCase {
     public void execute(long id, AuthContext authContext) {
         // todo - if organization will have no org admins left?
 
-        User user = userRepository.findByIdOrThrow(id);
+        User user = authContext.isSuperAdmin()
+                ? userRepository.findByIdOrThrow(id)
+                : userRepository.findByIdInOrganizationOrThrow(id, authContext.getOrganizationId());
 
         if (Objects.equals(user.getKeycloakId(), authContext.getUserKeycloakId())) {
             throw new BaseApiException(ApiError.NOT_ALLOWED, "You are not allowed to delete yourself");
-        }
-
-        long userOrgId = user.getOrganization().getId();
-
-        if (!authContext.isSuperAdmin() && authContext.getOrganizationId() != null && userOrgId != authContext.getOrganizationId()) {
-            throw new UserNotFoundException();
         }
 
         if (!authContext.isSuperAdmin() && user.getRole() == Role.ORG_ADMIN) {
