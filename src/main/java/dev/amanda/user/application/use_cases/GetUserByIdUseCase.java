@@ -5,26 +5,20 @@ import dev.amanda.user.application.mappers.UserMapper;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
 import dev.amanda.user.dto.UserResponseDTO;
-import dev.amanda.user.exceptions.UserNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class GetUserByIdUseCase {
 
-    @Inject
-    UserRepository userRepository;
-
-    @Inject
-    UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public UserResponseDTO execute(long id, AuthContext authContext) {
-        User user = userRepository.findByIdOrThrow(id);
-        long userOrgId = user.getOrganization().getId();
-
-        if (!authContext.isSuperAdmin() && authContext.getOrganizationId() != null && userOrgId != authContext.getOrganizationId()) {
-            throw new UserNotFoundException();
-        }
+        User user = authContext.isSuperAdmin()
+            ? userRepository.findByIdOrThrow(id)
+            : userRepository.findByIdInOrganizationOrThrow(id, authContext.getOrganizationId());
 
         return userMapper.toDto(user);
     }

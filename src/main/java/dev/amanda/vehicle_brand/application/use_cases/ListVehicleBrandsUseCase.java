@@ -7,18 +7,16 @@ import dev.amanda.vehicle_brand.domain.VehicleBrandRepository;
 import dev.amanda.vehicle_brand.dto.VehicleBrandResponseDTO;
 import dev.amanda.vehicle_brand.rest.VehicleBrandDeletionFilter;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class ListVehicleBrandsUseCase {
 
-    @Inject
-    VehicleBrandMapper vehicleBrandMapper;
-
-    @Inject
-    VehicleBrandRepository vehicleBrandRepository;
+    private final VehicleBrandMapper vehicleBrandMapper;
+    private final VehicleBrandRepository vehicleBrandRepository;
 
     public List<VehicleBrandResponseDTO> execute(VehicleBrandDeletionFilter filter, AuthContext authContext) {
         VehicleBrandDeletionFilter effectiveFilter = filter;

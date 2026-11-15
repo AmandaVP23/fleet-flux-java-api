@@ -1,0 +1,55 @@
+package dev.amanda.route.application.use_cases;
+
+import dev.amanda.infrastructure.oidc.AuthContext;
+import dev.amanda.infrastructure.shared.exception.ApiError;
+import dev.amanda.infrastructure.shared.exception.BaseApiException;
+import dev.amanda.route.application.mappers.RouteMapper;
+import dev.amanda.route.domain.*;
+import dev.amanda.route.dto.CreateRouteRequestDTO;
+import dev.amanda.route.dto.RouteResponseDTO;
+import dev.amanda.vehicle.domain.Vehicle;
+import dev.amanda.vehicle.domain.VehicleRepository;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
+
+import java.time.Instant;
+import lombok.RequiredArgsConstructor;
+
+@ApplicationScoped
+@RequiredArgsConstructor
+public class CreateRouteUseCase {
+
+    private final VehicleRepository vehicleRepository;
+    private final RouteRepository routeRepository;
+    private final RouteDetailsRepository routeDetailsRepository;
+    private final RouteMapper routeMapper;
+    private final OsrmRoutingService osrmRoutingService;
+
+    @Transactional
+    public RouteResponseDTO execute(CreateRouteRequestDTO dto, AuthContext authContext) {
+        Vehicle vehicle = vehicleRepository.findByIdInOrganizationOrThrow(dto.vehicleId(), authContext.getOrganizationId());
+
+        if (dto.scheduledTime().isBefore(Instant.now())) {
+            throw new BaseApiException(ApiError.ROUTE_SCHEDULED_DATE_MUST_BE_FUTURE);
+        }
+
+        if (dto.origin().equals(dto.destination())) {
+            throw new BaseApiException(ApiError.ORIGIN_MUST_BE_DIFFERENT_THAN_DESTINATION);
+        }
+
+        RouteDetails details = osrmRoutingService.details(dto.origin(), dto.destination());
+
+        Route route = new Route();
+        routeMapper.updateRouteFromDto(dto, route);
+        route.setVehicle(vehicle);
+        route.setStatus(RouteStatus.SCHEDULED);
+        route.setDistanceMeters(details.distanceMeters());
+        route.setDurationSeconds(details.durationSeconds());
+
+        routeRepository.persist(route);
+
+        routeDetailsRepository.persist(routeMapper.toEntity(details, route));
+
+        return routeMapper.toDto(route);
+    }
+}

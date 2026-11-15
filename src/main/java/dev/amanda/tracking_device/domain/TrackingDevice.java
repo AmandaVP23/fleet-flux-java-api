@@ -23,7 +23,7 @@ public class TrackingDevice extends BaseEntity {
     @Enumerated(EnumType.STRING)
     TrackingDeviceStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organization_id")
     Organization organization;
 }

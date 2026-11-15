@@ -15,28 +15,20 @@ import dev.amanda.vehicle_device_assignment.domain.VehicleDeviceAssignmentReposi
 import dev.amanda.vehicle_device_assignment.dto.VehicleDeviceAssignmentDTO;
 import dev.amanda.vehicle_device_assignment.dto.VehicleDeviceAssignmentResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
+import lombok.RequiredArgsConstructor;
 
 @Log
 @ApplicationScoped
+@RequiredArgsConstructor
 public class AssignVehicleDeviceUseCase {
 
-    @Inject
-    TrackingDeviceRepository trackingDeviceRepository;
-
-    @Inject
-    UserRepository userRepository;
-
-    @Inject
-    VehicleRepository vehicleRepository;
-
-    @Inject
-    VehicleDeviceAssignmentRepository vehicleDeviceAssignmentRepository;
-
-    @Inject
-    VehicleDeviceAssignmentMapper vehicleDeviceAssignmentMapper;
+    private final TrackingDeviceRepository trackingDeviceRepository;
+    private final UserRepository userRepository;
+    private final VehicleRepository vehicleRepository;
+    private final VehicleDeviceAssignmentRepository vehicleDeviceAssignmentRepository;
+    private final VehicleDeviceAssignmentMapper vehicleDeviceAssignmentMapper;
 
     @Transactional
     public VehicleDeviceAssignmentResponseDTO execute(VehicleDeviceAssignmentDTO dto, AuthContext authContext) {

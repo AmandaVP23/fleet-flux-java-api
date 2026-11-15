@@ -8,24 +8,20 @@ import dev.amanda.infrastructure.shared.PageResult;
 import dev.amanda.infrastructure.shared.application.PageRequestHelper;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 import java.util.List;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class ListOrganizationsUseCase {
 
+    private final OrganizationRepository organizationRepository;
+    private final OrganizationMapper organizationMapper;
+    private final PageRequestHelper pageRequestHelper;
+
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("id", "name", "createdAt");
-
-    @Inject
-    OrganizationRepository organizationRepository;
-
-    @Inject
-    OrganizationMapper organizationMapper;
-
-    @Inject
-    PageRequestHelper pageRequestHelper;
 
     public PageResult<OrganizationResponseDTO> execute(int page, int size, String sortBy, String direction, OrganizationStatusFilter filter) {
         pageRequestHelper.validate(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);

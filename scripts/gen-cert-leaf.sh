@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# usage: ./gen-leaf.sh <name> <client|server>
-# ./gen-leaf.sh device-123 client
+# usage: ./scripts/gen-cert-leaf.sh <name> <client|server>
+# ./scripts/gen-cert-leaf.sh device-123 client
 set -euo pipefail
+
+# Always run from the repo root, so certs/ resolves wherever this is called from
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
 NAME=$1; KIND=$2
 EKU=$([ "$KIND" = "server" ] && echo serverAuth || echo clientAuth)
 

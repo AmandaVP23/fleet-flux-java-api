@@ -7,26 +7,22 @@ import dev.amanda.tracking_device.dto.TrackingDeviceResponseDTO;
 import dev.amanda.tracking_device.domain.TrackingDeviceRepository;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.extern.java.Log;
 
 import java.util.List;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 
 @Log
 @ApplicationScoped
+@RequiredArgsConstructor
 public class ListTrackingDevicesUseCase {
 
+    private final TrackingDeviceRepository trackingDeviceRepository;
+    private final TrackingDeviceMapper trackingDeviceMapper;
+    private final PageRequestHelper pageRequestHelper;
+
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("id", "imei", "createdAt");
-
-    @Inject
-    TrackingDeviceRepository trackingDeviceRepository;
-
-    @Inject
-    TrackingDeviceMapper trackingDeviceMapper;
-
-    @Inject
-    PageRequestHelper pageRequestHelper;
 
     public PageResult<TrackingDeviceResponseDTO> execute(int page, int size, String sortBy, String sortDirection, long organizationId) {
         pageRequestHelper.validate(page, size, sortBy, sortDirection, ALLOWED_SORT_FIELDS);

@@ -4,6 +4,7 @@ import dev.amanda.infrastructure.oidc.AuthContext;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.vehicle.applications.mappers.VehicleMapper;
+import dev.amanda.vehicle.applications.mappers.VehicleResponseAssembler;
 import dev.amanda.vehicle.domain.*;
 import dev.amanda.vehicle.dto.CreateVehicleRequestDTO;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
@@ -11,27 +12,22 @@ import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle_brand.domain.VehicleBrand;
 import dev.amanda.vehicle_brand.domain.VehicleBrandRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class CreateVehicleUseCase {
 
-    @Inject
-    OrganizationRepository organizationRepository;
-
-    @Inject
-    VehicleBrandRepository vehicleBrandRepository;
-
-    @Inject
-    VehicleRepository vehicleRepository;
-
-    @Inject
-    VehicleMapper vehicleMapper;
+    private final OrganizationRepository organizationRepository;
+    private final VehicleBrandRepository vehicleBrandRepository;
+    private final VehicleRepository vehicleRepository;
+    private final VehicleMapper vehicleMapper;
+    private final VehicleResponseAssembler vehicleResponseAssembler;
 
     @Transactional
     public VehicleResponseDTO execute(CreateVehicleRequestDTO dto, AuthContext authContext) {
-        long effectiveOrgId;
+        Long effectiveOrgId;
 
         if (authContext.isSuperAdmin()) {
             effectiveOrgId = dto.organizationId();
@@ -49,6 +45,6 @@ public class CreateVehicleUseCase {
 
         vehicleRepository.persist(vehicle);
 
-        return vehicleMapper.toDto(vehicle);
+        return vehicleResponseAssembler.toResponse(vehicle);
     }
 }

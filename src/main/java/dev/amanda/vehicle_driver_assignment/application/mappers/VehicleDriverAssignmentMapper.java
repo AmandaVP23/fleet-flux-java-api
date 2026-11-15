@@ -4,20 +4,20 @@ import dev.amanda.infrastructure.shared.application.BaseMapper;
 import dev.amanda.user.domain.User;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignment;
-import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentListResponseDTO;
+import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "jakarta", uses = { BaseMapper.class })
 public interface VehicleDriverAssignmentMapper {
-    VehicleDriverAssignmentListResponseDTO toDto(VehicleDriverAssignment vehicleDriverAssignment);
+    VehicleDriverAssignmentResponseDTO toDto(VehicleDriverAssignment vehicleDriverAssignment);
 
     @Mapping(target = "brandName", source = "vehicle.brand.name")
-    VehicleDriverAssignmentListResponseDTO.VehicleDTO toVehicleDto(
+    VehicleDriverAssignmentResponseDTO.VehicleDTO toVehicleDto(
             Vehicle vehicle
     );
 
-    VehicleDriverAssignmentListResponseDTO.DriverDTO toDriverDto(
+    VehicleDriverAssignmentResponseDTO.DriverDTO toDriverDto(
             User driver
     );
 }

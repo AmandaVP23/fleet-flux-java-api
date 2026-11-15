@@ -8,6 +8,10 @@ public enum ApiError {
     VALIDATION_ERROR(1, "Validation error: %s", 400),
     GENERIC_BAD_REQUEST(2, "%s", 400),
     NOT_ALLOWED(3, "Not allowed", 403),
+    UNAUTHORIZED(4, "%s", 401),
+    RESOURCE_NOT_FOUND(5, "%s", 404),
+    METHOD_NOT_ALLOWED(6, "%s", 405),
+    UNSUPPORTED_MEDIA_TYPE(7, "%s", 415),
     ORGANIZATION_WITH_SAME_NAME_ALREADY_EXISTS(100, "Organization with same name already exists", 409),
     ORGANIZATION_WITH_SAME_GENERATED_REALM_ALREADY_EXISTS(101, "Organization with same generated realm already exists", 409),
     ORGANIZATION_WITH_SAME_HOSTNAME_ALREADY_EXISTS(102, "Organization with same slug already exists", 409),
@@ -28,7 +32,15 @@ public enum ApiError {
     TRACKING_DEVICE_NOT_FOUND(117, "Tracking device not found", 404),
     TRACKING_DEVICE_ACTIVE_ASSIGNMENT_CONFLICT(118, "Tracking device is currently assigned to a vehicle", 409),
     VEHICLE_ASSIGNED_TO_TRACKING_DEVICE_CONFLICT(119, "Vehicle is currently assigned to a device", 409),
-    TRACKING_DEVICE_VEHICLE_ACTIVE_ASSIGNMENT_ALREADY_EXISTS(120, "This vehicle and this tracking device are already assigned to each other", 409),;
+    TRACKING_DEVICE_VEHICLE_ACTIVE_ASSIGNMENT_ALREADY_EXISTS(120, "This vehicle and this tracking device are already assigned to each other", 409),
+    VEHICLE_DRIVER_ASSIGNMENT_NOT_FOUND(121, "Vehicle to driver assignment not found", 404),
+    ROUTE_SCHEDULED_DATE_MUST_BE_FUTURE(122, "The scheduled date must be in the future", 400),
+    ORIGIN_MUST_BE_DIFFERENT_THAN_DESTINATION(123, "The origin must be different than destination", 409),
+    ROUTE_NOT_FOUND(124, "No route found between the given coordinates", 404),
+    ROUTING_SERVICE_UNAVAILABLE(125, "Routing service is currently unavailable", 503),
+    ROUTE_ALREADY_CANCELLED(126, "Route is cancelled", 422),
+    ROUTE_ALREADY_COMPLETED(127, "Route is already completed", 422),
+    ROUTE_DETAILS_NOT_FOUND(128, "Route details not found", 404),;
 
     private final int errorCode;
     private final String message;
@@ -38,6 +50,21 @@ public enum ApiError {
         this.errorCode = errorCode;
         this.message = message;
         this.status = status;
+    }
+
+    /**
+     * Maps an HTTP status coming from a JAX-RS WebApplicationException to the matching error code,
+     * falling back to GENERIC_BAD_REQUEST for statuses without a dedicated code.
+     */
+    public static ApiError fromHttpStatus(int status) {
+        return switch (status) {
+            case 401 -> UNAUTHORIZED;
+            case 403 -> NOT_ALLOWED;
+            case 404 -> RESOURCE_NOT_FOUND;
+            case 405 -> METHOD_NOT_ALLOWED;
+            case 415 -> UNSUPPORTED_MEDIA_TYPE;
+            default -> GENERIC_BAD_REQUEST;
+        };
     }
 
     public String format(Object... args) {

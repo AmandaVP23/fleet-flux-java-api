@@ -5,15 +5,15 @@ import dev.amanda.tracking_device.domain.TrackingDevice;
 import dev.amanda.tracking_device.dto.ChangeTrackingDeviceStatusRequestDTO;
 import dev.amanda.tracking_device.domain.TrackingDeviceRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.extern.java.Log;
+import lombok.RequiredArgsConstructor;
 
 @Log
 @ApplicationScoped
+@RequiredArgsConstructor
 public class ChangeTrackingDeviceStatusUseCase {
 
-    @Inject
-    TrackingDeviceRepository trackingDeviceRepository;
+    private final TrackingDeviceRepository trackingDeviceRepository;
 
     public void execute(long trackingDeviceId, ChangeTrackingDeviceStatusRequestDTO dto, AuthContext authContext) {
         TrackingDevice trackingDevice = trackingDeviceRepository.findByIdInOrganizationOrThrow(trackingDeviceId, authContext.getOrganizationId());

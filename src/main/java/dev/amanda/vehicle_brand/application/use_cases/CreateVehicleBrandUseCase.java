@@ -6,17 +6,15 @@ import dev.amanda.vehicle_brand.domain.VehicleBrandRepository;
 import dev.amanda.vehicle_brand.dto.CreateVehicleBrandRequestDTO;
 import dev.amanda.vehicle_brand.dto.VehicleBrandResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class CreateVehicleBrandUseCase {
 
-    @Inject
-    VehicleBrandRepository vehicleBrandRepository;
-
-    @Inject
-    VehicleBrandMapper vehicleBrandMapper;
+    private final VehicleBrandRepository vehicleBrandRepository;
+    private final VehicleBrandMapper vehicleBrandMapper;
 
     @Transactional
     public VehicleBrandResponseDTO execute(CreateVehicleBrandRequestDTO createVehicleBrandRequestDTO) {

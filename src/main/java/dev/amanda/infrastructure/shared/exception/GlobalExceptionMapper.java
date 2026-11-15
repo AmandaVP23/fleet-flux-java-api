@@ -31,9 +31,12 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
         }
 
         if (exception instanceof WebApplicationException e) {
+            int status = e.getResponse().getStatus();
+            ApiError error = ApiError.fromHttpStatus(status);
             return Response
-                    .status(400)
-                    .entity(new ErrorResponse(ApiError.GENERIC_BAD_REQUEST, e.getMessage()))
+                    .status(status)
+                    .entity(new ErrorResponse(error.getErrorCode(), e.getMessage(), status))
+                    .type(MediaType.APPLICATION_JSON)
                     .build();
         }
 

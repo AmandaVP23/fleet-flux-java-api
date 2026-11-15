@@ -11,23 +11,18 @@ import dev.amanda.user.dto.UserResponseDTO;
 import dev.amanda.user.rest.UserFilter;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class ListUsersUseCase {
-    @Inject
-    UserRepository userRepository;
 
-    @Inject
-    PageRequestHelper pageRequestHelper;
-
-    @Inject
-    UserMapper userMapper;
-
-    @Inject
-    OrganizationAccessService organizationAccessService;
+    private final UserRepository userRepository;
+    private final PageRequestHelper pageRequestHelper;
+    private final UserMapper userMapper;
+    private final OrganizationAccessService organizationAccessService;
 
     public PageResult<UserResponseDTO> execute(int pageNumber, int pageSize, String sortBy, String direction, UserFilter userFilter, AuthContext authContext) {
         pageRequestHelper.validate(pageNumber, pageSize, sortBy, direction, null);
