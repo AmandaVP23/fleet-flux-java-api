@@ -103,7 +103,28 @@ services:
             - "${MAILPIT_SMTP_PORT:-1025}:1025" # SMTP
         networks:
             - app-network
-            
+
+    emqx:
+        image: emqx/emqx:5.8.6
+        container_name: fleet-emqx
+        ports:
+            - "1883:1883"     # MQTT (plain, for now)
+            - "8083:8083"     # MQTT over WebSocket (for the dashboard client)
+            - "8883:8883"     # MQTT over TLS
+            - "18083:18083"   # dashboard
+        environment:
+            EMQX_NODE__NAME: emqx@127.0.0.1
+            EMQX_DASHBOARD__DEFAULT_USERNAME: ${EMQX_DASHBOARD_USER:-admin}
+            EMQX_DASHBOARD__DEFAULT_PASSWORD: ${EMQX_DASHBOARD_PASSWORD:-admin}
+        volumes:
+            - emqx-data:/opt/emqx/data
+        healthcheck:
+            test: [ "CMD", "emqx", "ctl", "status" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
 volumes:
     postgres_data:
+    emqx-data:
                         
