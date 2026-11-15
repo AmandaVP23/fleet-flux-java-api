@@ -8,22 +8,18 @@ import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignmentReposi
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentEndDateEditDTO;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
+import lombok.RequiredArgsConstructor;
 
 @Log
 @ApplicationScoped
+@RequiredArgsConstructor
 public class EditVehicleDriverAssignmentEndDateUseCase {
 
-    @Inject
-    VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
-
-    @Inject
-    VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
-
-    @Inject
-    AssignmentConflictChecker assignmentConflictChecker;
+    private final VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
+    private final VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
+    private final AssignmentConflictChecker assignmentConflictChecker;
 
     @Transactional
     public VehicleDriverAssignmentResponseDTO execute(long id, VehicleDriverAssignmentEndDateEditDTO requestDTO, AuthContext auth) {

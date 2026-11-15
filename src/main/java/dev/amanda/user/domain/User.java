@@ -24,7 +24,7 @@ public class User extends BaseEntity {
     @Column(name = "keycloak_id", nullable = false, unique = true)
     private String keycloakId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organization_id")
     private Organization organization;
 

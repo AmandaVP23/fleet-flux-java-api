@@ -1,7 +1,6 @@
 package dev.amanda.vehicle_driver_assignment.application.use_cases;
 
 import dev.amanda.infrastructure.oidc.AuthContext;
-import dev.amanda.infrastructure.shared.application.OrganizationAccessService;
 import dev.amanda.infrastructure.shared.exception.DomainError;
 import dev.amanda.infrastructure.shared.exception.DomainException;
 import dev.amanda.vehicle_driver_assignment.application.mappers.VehicleDriverAssignmentMapper;
@@ -9,18 +8,16 @@ import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignment;
 import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignmentRepository;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 import java.time.Instant;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class GetActiveVehicleDriverAssignmentUseCase {
-    @Inject
-    VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
 
-    @Inject
-    VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
-
+    private final VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
+    private final VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
 
     public VehicleDriverAssignmentResponseDTO execute(AuthContext authContext, Long vehicleId, Long driverId, Instant at) {
         if (vehicleId == null && driverId == null) {

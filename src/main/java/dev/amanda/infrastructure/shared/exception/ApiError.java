@@ -8,6 +8,10 @@ public enum ApiError {
     VALIDATION_ERROR(1, "Validation error: %s", 400),
     GENERIC_BAD_REQUEST(2, "%s", 400),
     NOT_ALLOWED(3, "Not allowed", 403),
+    UNAUTHORIZED(4, "%s", 401),
+    RESOURCE_NOT_FOUND(5, "%s", 404),
+    METHOD_NOT_ALLOWED(6, "%s", 405),
+    UNSUPPORTED_MEDIA_TYPE(7, "%s", 415),
     ORGANIZATION_WITH_SAME_NAME_ALREADY_EXISTS(100, "Organization with same name already exists", 409),
     ORGANIZATION_WITH_SAME_GENERATED_REALM_ALREADY_EXISTS(101, "Organization with same generated realm already exists", 409),
     ORGANIZATION_WITH_SAME_HOSTNAME_ALREADY_EXISTS(102, "Organization with same slug already exists", 409),
@@ -46,6 +50,21 @@ public enum ApiError {
         this.errorCode = errorCode;
         this.message = message;
         this.status = status;
+    }
+
+    /**
+     * Maps an HTTP status coming from a JAX-RS WebApplicationException to the matching error code,
+     * falling back to GENERIC_BAD_REQUEST for statuses without a dedicated code.
+     */
+    public static ApiError fromHttpStatus(int status) {
+        return switch (status) {
+            case 401 -> UNAUTHORIZED;
+            case 403 -> NOT_ALLOWED;
+            case 404 -> RESOURCE_NOT_FOUND;
+            case 405 -> METHOD_NOT_ALLOWED;
+            case 415 -> UNSUPPORTED_MEDIA_TYPE;
+            default -> GENERIC_BAD_REQUEST;
+        };
     }
 
     public String format(Object... args) {

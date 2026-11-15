@@ -11,23 +11,18 @@ import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentResponseD
 import dev.amanda.vehicle_driver_assignment.rest.VehicleDriverAssignmentFilter;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class ListVehicleDriverAssignmentsUseCase {
-    @Inject
-    VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
 
-    @Inject
-    VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
-
-    @Inject
-    PageRequestHelper pageRequestHelper;
-
-    @Inject
-    OrganizationAccessService organizationAccessService;
+    private final VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
+    private final VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
+    private final PageRequestHelper pageRequestHelper;
+    private final OrganizationAccessService organizationAccessService;
 
     public PageResult<VehicleDriverAssignmentResponseDTO> execute(int pageNumber, int pageSize, String sortBy, String direction, AuthContext authContext, VehicleDriverAssignmentFilter filter) {
         pageRequestHelper.validate(pageNumber, pageSize, sortBy, direction, null);

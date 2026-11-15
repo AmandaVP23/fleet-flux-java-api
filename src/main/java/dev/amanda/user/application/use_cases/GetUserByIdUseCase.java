@@ -6,16 +6,14 @@ import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
 import dev.amanda.user.dto.UserResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class GetUserByIdUseCase {
 
-    @Inject
-    UserRepository userRepository;
-
-    @Inject
-    UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public UserResponseDTO execute(long id, AuthContext authContext) {
         User user = authContext.isSuperAdmin()

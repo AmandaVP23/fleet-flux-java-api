@@ -1,6 +1,5 @@
 package dev.amanda.user.domain;
 
-import dev.amanda.infrastructure.shared.application.QueryData;
 import dev.amanda.user.exceptions.UserNotFoundException;
 import dev.amanda.user.rest.UserFilter;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -8,6 +7,7 @@ import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,17 +21,17 @@ public class UserRepository implements PanacheRepository<User> {
     }
 
     public List<User> findPaginated(int page, int size, Sort sort, UserFilter filter) {
-        QueryData queryData = buildQuery(filter);
+        Filter f = buildFilter(filter);
 
-        return find(queryData.query(), sort, queryData.params())
+        return find("from User u left join fetch u.organization" + f.where(), sort, f.params())
                 .page(Page.of(page, size))
                 .list();
     }
 
     public long count(UserFilter filter) {
-        QueryData queryData = buildQuery(filter);
+        Filter f = buildFilter(filter);
 
-        return count(queryData.query(), queryData.params());
+        return count("from User u" + f.where(), f.params());
     }
 
     public Optional<User> findByKeycloakId(String keycloakId) {
@@ -54,25 +54,30 @@ public class UserRepository implements PanacheRepository<User> {
     }
 
     public User findByIdInOrganizationOrThrow(long id, long organizationId) {
-        return find("id = ?1 AND organization.id = ?2", id, organizationId)
+        return find("from User u left join fetch u.organization " +
+                "where u.id = ?1 and u.organization.id = ?2", id, organizationId)
                 .firstResultOptional()
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    private QueryData buildQuery(UserFilter filter) {
-        StringBuilder query = new StringBuilder("1=1");
+    private Filter buildFilter(UserFilter filter) {
+        List<String> conditions = new ArrayList<>();
         Map<String, Object> params = new HashMap<>();
 
         if (filter.organizationId() != null) {
-            query.append(" and organization.id = :orgId");
+            conditions.add("u.organization.id = :orgId");
             params.put("orgId", filter.organizationId());
         }
 
         if (filter.role() != null) {
-            query.append(" and role = :role");
+            conditions.add("u.role = :role");
             params.put("role", filter.role());
         }
 
-        return new QueryData(query.toString(), params);
+        String where = conditions.isEmpty() ? "" : " where " + String.join(" and ", conditions);
+        return new Filter(where, params);
+    }
+
+    private record Filter(String where, Map<String, Object> params) {
     }
 }

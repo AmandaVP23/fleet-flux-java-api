@@ -29,13 +29,6 @@ public class SimulatorResource {
     GetSimulationRouteDetailsUseCase getSimulationRouteDetailsUseCase;
 
     @GET
-    @RolesAllowed("simulator")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getSimulatorData() {
-        return "Hello World!";
-    }
-
-    @GET
     @Path("/devices")
     @RolesAllowed("simulator")
     @Produces(MediaType.APPLICATION_JSON)

@@ -7,17 +7,15 @@ import dev.amanda.simulation.application.mappers.SimulationRouteDetailsMapper;
 import dev.amanda.simulation.domain.SimulationFleetRepository;
 import dev.amanda.simulation.dto.SimulationRouteDetailsResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class GetSimulationRouteDetailsUseCase {
 
-    @Inject
-    SimulationFleetRepository simulationFleetRepository;
-
-    @Inject
-    SimulationRouteDetailsMapper simulationRouteDetailsMapper;
+    private final SimulationFleetRepository simulationFleetRepository;
+    private final SimulationRouteDetailsMapper simulationRouteDetailsMapper;
 
     @Transactional
     public SimulationRouteDetailsResponseDTO execute(long routeId) {

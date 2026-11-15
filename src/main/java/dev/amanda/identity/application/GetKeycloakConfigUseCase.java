@@ -6,25 +6,27 @@ import dev.amanda.infrastructure.oidc.KeycloakConfig;
 import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.exceptions.OrganizationNotFoundException;
-import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class GetKeycloakConfigUseCase {
 
-    @Inject
-    OrganizationRepository organizationRepository;
+    private final OrganizationRepository organizationRepository;
+    private final KeycloakConfig keycloakConfig;
+    private final SuperAdminConfig superAdminConfig;
+    private final String defaultWebClientName;
 
-    @Inject
-    KeycloakConfig keycloakConfig;
-
-    @Inject
-    SuperAdminConfig superAdminConfig;
-
-    @ConfigProperty(name = "quarkus.keycloak.default-web-client-name")
-    String defaultWebClientName;
+    public GetKeycloakConfigUseCase(
+            OrganizationRepository organizationRepository,
+            KeycloakConfig keycloakConfig,
+            SuperAdminConfig superAdminConfig,
+            @ConfigProperty(name = "quarkus.keycloak.default-web-client-name") String defaultWebClientName) {
+        this.organizationRepository = organizationRepository;
+        this.keycloakConfig = keycloakConfig;
+        this.superAdminConfig = superAdminConfig;
+        this.defaultWebClientName = defaultWebClientName;
+    }
 
     public KeycloakConfigResponseDTO execute(String hostname) {
         KeycloakConfigResponseDTO.KeycloakConfigResponseDTOBuilder keycloakConfigResponseDTOBuilder = KeycloakConfigResponseDTO

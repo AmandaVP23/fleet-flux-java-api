@@ -9,20 +9,18 @@ import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
 import dev.amanda.user.exceptions.UserNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.time.Instant;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class DeleteUserUseCase {
 
-    @Inject
-    UserRepository userRepository;
-
-    @Inject
-    KeycloakAdmin keycloakAdmin;
+    private final UserRepository userRepository;
+    private final KeycloakAdmin keycloakAdmin;
 
     @Transactional
     public void execute(long id, AuthContext authContext) {

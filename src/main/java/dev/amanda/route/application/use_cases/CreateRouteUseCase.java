@@ -10,28 +10,20 @@ import dev.amanda.route.dto.RouteResponseDTO;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.time.Instant;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class CreateRouteUseCase {
 
-    @Inject
-    VehicleRepository vehicleRepository;
-
-    @Inject
-    RouteRepository routeRepository;
-
-    @Inject
-    RouteDetailsRepository routeDetailsRepository;
-
-    @Inject
-    RouteMapper routeMapper;
-
-    @Inject
-    OsrmRoutingService osrmRoutingService;
+    private final VehicleRepository vehicleRepository;
+    private final RouteRepository routeRepository;
+    private final RouteDetailsRepository routeDetailsRepository;
+    private final RouteMapper routeMapper;
+    private final OsrmRoutingService osrmRoutingService;
 
     @Transactional
     public RouteResponseDTO execute(CreateRouteRequestDTO dto, AuthContext authContext) {

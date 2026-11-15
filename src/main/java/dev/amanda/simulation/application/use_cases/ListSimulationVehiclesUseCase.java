@@ -4,17 +4,17 @@ import dev.amanda.simulation.domain.SimulationFleetRepository;
 import dev.amanda.simulation.dto.SimulationDeviceResponseDTO;
 import dev.amanda.simulation.dto.SimulationVehicleDTO;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.extern.java.Log;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Log
 @ApplicationScoped
+@RequiredArgsConstructor
 public class ListSimulationVehiclesUseCase {
 
-    @Inject
-    SimulationFleetRepository simulationFleetRepository;
+    private final SimulationFleetRepository simulationFleetRepository;
 
     public List<SimulationDeviceResponseDTO> execute() {
         return simulationFleetRepository.getSimulationFleet().stream()

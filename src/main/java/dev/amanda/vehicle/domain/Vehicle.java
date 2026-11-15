@@ -14,11 +14,11 @@ import java.time.Instant;
 @Setter
 public class Vehicle extends BaseEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_brand_id")
     private VehicleBrand brand;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
@@ -34,8 +34,8 @@ public class Vehicle extends BaseEntity {
     @Column(length = 30)
     private String vin;
 
-    @Column(length = 4)
-    private int yearOfManufacture;
+    @Column
+    private Integer yearOfManufacture;
 
     @Column()
     @Enumerated(EnumType.STRING)
@@ -78,11 +78,3 @@ public class Vehicle extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private VehicleOwnershipType ownershipType;
 }
-
-
-//        - odomoter (last know value)
-//	- insurance_policy_number, insurance_expiry, insurance_company, inspection_due_date, ownership_type (owned, leased, rented)
-//	- last_service_date
-//	- next_service_due_date
-//	- service_interval_km
-//	- service_interval_days

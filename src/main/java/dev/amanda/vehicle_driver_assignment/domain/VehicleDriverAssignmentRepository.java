@@ -1,6 +1,5 @@
 package dev.amanda.vehicle_driver_assignment.domain;
 
-import dev.amanda.infrastructure.shared.application.QueryData;
 import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.vehicle.dto.VehicleDriverDTO;
@@ -13,6 +12,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -26,9 +26,9 @@ public class VehicleDriverAssignmentRepository implements PanacheRepository<Vehi
     EntityManager em;
 
     public List<VehicleDriverAssignment> findPaginated(int page, int size, Sort sort, VehicleDriverAssignmentFilter filter) {
-        QueryData queryData = buildQuery(filter);
+        Filter f = buildFilter(filter);
 
-        return find(queryData.query(), sort, queryData.params())
+        return find(f.where(), sort, f.params())
                 .page(Page.of(page, size))
                 .list();
     }
@@ -40,9 +40,9 @@ public class VehicleDriverAssignmentRepository implements PanacheRepository<Vehi
     }
 
     public long count(VehicleDriverAssignmentFilter filter) {
-        QueryData queryData = buildQuery(filter);
+        Filter f = buildFilter(filter);
 
-        return count(queryData.query(), queryData.params());
+        return count(f.where(), f.params());
     }
 
     public boolean verifyVehicleAssignmentHasConflict(
@@ -90,26 +90,26 @@ public class VehicleDriverAssignmentRepository implements PanacheRepository<Vehi
     }
 
     public VehicleDriverAssignment findActiveAtByOrganization(Instant at, Long vehicleId, Long driverId, long organizationId) {
-        StringBuilder query = new StringBuilder("1=1");
+        List<String> conditions = new ArrayList<>();
         Map<String, Object> params = new HashMap<>();
 
         if (vehicleId != null) {
-            query.append(" and vehicle.id = :vehicleId");
+            conditions.add("vehicle.id = :vehicleId");
             params.put("vehicleId", vehicleId);
 
-            query.append(" and vehicle.organization.id = :organizationId");
+            conditions.add("vehicle.organization.id = :organizationId");
             params.put("organizationId", organizationId);
         }
 
         if (driverId != null) {
-            query.append(" and driver.id = :driverId");
+            conditions.add("driver.id = :driverId");
             params.put("driverId", driverId);
         }
 
-        query.append(" and startDateTime <= :at AND (endDateTime IS NULL OR endDateTime > :at)");
+        conditions.add("startDateTime <= :at AND (endDateTime IS NULL OR endDateTime > :at)");
         params.put("at", at);
 
-        return find(query.toString(), params)
+        return find(String.join(" and ", conditions), params)
                 .firstResultOptional()
                 .orElseThrow(() -> new BaseApiException(ApiError.VEHICLE_DRIVER_ASSIGNMENT_NOT_FOUND));
     }
@@ -120,52 +120,56 @@ public class VehicleDriverAssignmentRepository implements PanacheRepository<Vehi
             Instant startDateTime,
             Instant endDateTime
     ) {
-        StringBuilder query = new StringBuilder("1=1");
+        List<String> conditions = new ArrayList<>();
         Map<String, Object> params = new HashMap<>();
 
-        query.append(" and ").append(resourceField).append(" = :resourceId");
+        conditions.add(resourceField + " = :resourceId");
         params.put("resourceId", resourceId);
 
-        query.append(" and (endDateTime IS NULL OR endDateTime > :startDateTime)");
+        conditions.add("(endDateTime IS NULL OR endDateTime > :startDateTime)");
         params.put("startDateTime", startDateTime);
 
         if (endDateTime != null) {
-            query.append(" and :endDateTime > startDateTime");
+            conditions.add(":endDateTime > startDateTime");
             params.put("endDateTime", endDateTime);
         }
 
-        return count(query.toString(), params) > 0;
+        return count(String.join(" and ", conditions), params) > 0;
     }
 
-    private QueryData buildQuery(VehicleDriverAssignmentFilter filter) {
-        StringBuilder query = new StringBuilder("1=1");
+    private Filter buildFilter(VehicleDriverAssignmentFilter filter) {
+        List<String> conditions = new ArrayList<>();
         Map<String, Object> params = new HashMap<>();
 
         if (filter.driverId() != null) {
-            query.append(" and driver.id = :driverId");
+            conditions.add("driver.id = :driverId");
             params.put("driverId", filter.driverId());
         }
 
         if (filter.vehicleId() != null) {
-            query.append(" and vehicle.id = :vehicleId");
+            conditions.add("vehicle.id = :vehicleId");
             params.put("vehicleId", filter.vehicleId());
         }
 
         if (filter.organizationId() != null) {
-            query.append(" and vehicle.organization.id = :organizationId");
+            conditions.add("vehicle.organization.id = :organizationId");
             params.put("organizationId", filter.organizationId());
         }
 
         if (filter.from() != null) {
-            query.append(" and from >= :from");
+            conditions.add("from >= :from");
             params.put("from", filter.from());
         }
 
         if (filter.to() != null) {
-            query.append(" and to <= :to");
+            conditions.add("to <= :to");
             params.put("to", filter.to());
         }
 
-        return new QueryData(query.toString(), params);
+        // Panache treats a query without "from" as the where clause; empty means no filter
+        return new Filter(String.join(" and ", conditions), params);
+    }
+
+    private record Filter(String where, Map<String, Object> params) {
     }
 }

@@ -8,20 +8,16 @@ import dev.amanda.vehicle.dto.CreateVehicleRequestDTO;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class EditVehicleUseCase {
 
-    @Inject
-    VehicleRepository vehicleRepository;
-
-    @Inject
-    VehicleMapper vehicleMapper;
-
-    @Inject
-    VehicleResponseAssembler vehicleResponseAssembler;
+    private final VehicleRepository vehicleRepository;
+    private final VehicleMapper vehicleMapper;
+    private final VehicleResponseAssembler vehicleResponseAssembler;
 
     @Transactional
     public VehicleResponseDTO execute(Long id, CreateVehicleRequestDTO createVehicleRequestDTO, AuthContext authContext) {

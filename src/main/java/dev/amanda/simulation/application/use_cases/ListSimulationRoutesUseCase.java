@@ -4,19 +4,17 @@ import dev.amanda.route.application.mappers.RouteMapper;
 import dev.amanda.route.dto.RouteResponseDTO;
 import dev.amanda.simulation.domain.SimulationFleetRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class ListSimulationRoutesUseCase {
 
-    @Inject
-    SimulationFleetRepository simulationFleetRepository;
-
-    @Inject
-    RouteMapper routeMapper;
+    private final SimulationFleetRepository simulationFleetRepository;
+    private final RouteMapper routeMapper;
 
     // Transactional so the lazy Route.vehicle can be read while mapping
     @Transactional

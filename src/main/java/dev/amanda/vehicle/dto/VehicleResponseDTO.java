@@ -21,7 +21,7 @@ public class VehicleResponseDTO extends BaseResponseDTO {
     private VehicleBrandResponseDTO brand;
     private OrganizationResponseDTO organization;
     private String plateNumber;
-    private int yearOfManufacture;
+    private Integer yearOfManufacture;
     private VehicleStatus status;
     private String vin;
     private VehicleCategory category;

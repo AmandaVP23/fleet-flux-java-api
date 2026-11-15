@@ -6,7 +6,6 @@ import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
-import dev.amanda.user.exceptions.UserNotFoundException;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle_driver_assignment.application.AssignmentConflictChecker;
@@ -16,28 +15,20 @@ import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignmentReposi
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentRequestDTO;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
+import lombok.RequiredArgsConstructor;
 
 @Log
 @ApplicationScoped
+@RequiredArgsConstructor
 public class CreateVehicleDriverAssignmentUseCase {
 
-    @Inject
-    UserRepository userRepository;
-
-    @Inject
-    VehicleRepository vehicleRepository;
-
-    @Inject
-    VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
-
-    @Inject
-    VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
-
-    @Inject
-    AssignmentConflictChecker assignmentConflictChecker;
+    private final UserRepository userRepository;
+    private final VehicleRepository vehicleRepository;
+    private final VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
+    private final VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
+    private final AssignmentConflictChecker assignmentConflictChecker;
 
     @Transactional
     public VehicleDriverAssignmentResponseDTO execute(VehicleDriverAssignmentRequestDTO requestDTO, AuthContext auth) {
