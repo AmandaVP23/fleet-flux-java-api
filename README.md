@@ -84,7 +84,7 @@ This script deletes all Keycloak realms except protected ones (`master`, `fleet-
 ### Run it
 
 ```bash
-./clean-realms.sh
+./scripts/keycloak-cleanup.sh
 ```
 
 ### Config (optional)
@@ -95,7 +95,7 @@ You can override defaults:
 KEYCLOAK_URL=http://localhost:8081 \
 ADMIN_USER=admin \
 ADMIN_PASS=admin \
-./clean-realms.sh
+./scripts/keycloak-cleanup.sh
 ```
 
 ### What it does
@@ -130,7 +130,7 @@ ADMIN_PASS=admin \
 4. (Optional) Reset Keycloak:
 
    ```bash
-   ./clean-realms.sh
+   ./scripts/keycloak-cleanup.sh
    ```
 
 ---

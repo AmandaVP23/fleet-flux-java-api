@@ -5,16 +5,14 @@ import dev.amanda.organization.domain.Organization;
 import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.organization.dto.OrganizationResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class GetOrganizationByIdUseCase {
 
-    @Inject
-    OrganizationRepository organizationRepository;
-
-    @Inject
-    OrganizationMapper organizationMapper;
+    private final OrganizationRepository organizationRepository;
+    private final OrganizationMapper organizationMapper;
 
     public OrganizationResponseDTO execute(long id) {
         Organization organization = organizationRepository.findActiveByIdOrThrow(id);

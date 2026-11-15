@@ -18,9 +18,10 @@ public record CreateVehicleRequestDTO(
         @NotNull() String plateNumber,
         // todo validate vin
         String vin,
+        @NotNull()
         @Min(1950)
         @CurrentYearMax()
-        int yearOfManufacture,
+        Integer yearOfManufacture,
         VehicleCategory category,
         VehicleType type,
         VehicleFuelType fuelType,

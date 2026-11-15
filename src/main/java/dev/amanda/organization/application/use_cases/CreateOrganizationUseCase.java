@@ -16,35 +16,27 @@ import dev.amanda.infrastructure.shared.exception.GenericApiException;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.extern.java.Log;
 import org.keycloak.representations.idm.RealmRepresentation;
+import lombok.RequiredArgsConstructor;
 
 @Log
 @ApplicationScoped
+@RequiredArgsConstructor
 public class CreateOrganizationUseCase {
 
-    @Inject
-    OrganizationRepository organizationRepository;
-
-    @Inject
-    UserRepository userRepository;
-
-    @Inject
-    KeycloakAdmin keycloakAdmin;
-
-    @Inject
-    SaveOrganizationUseCase saveOrganizationUseCase;
-
-    @Inject
-    OrgTenantConfigResolver tenantConfigResolver;
+    private final OrganizationRepository organizationRepository;
+    private final UserRepository userRepository;
+    private final KeycloakAdmin keycloakAdmin;
+    private final SaveOrganizationUseCase saveOrganizationUseCase;
+    private final OrgTenantConfigResolver tenantConfigResolver;
 
     public OrganizationResponseDTO execute(CreateOrganizationDTO createOrganizationDTO) {
         String realmValue = this.getOrganizationRealm(createOrganizationDTO.name);
         String realmId = null;
         String userKeycloakId = null;
 
-        organizationRepository.findByName(createOrganizationDTO.name).ifPresent(org -> {
+        organizationRepository.findByName(createOrganizationDTO.name).ifPresent(_ -> {
             throw new OrganizationAlreadyExistsException();
         });
 

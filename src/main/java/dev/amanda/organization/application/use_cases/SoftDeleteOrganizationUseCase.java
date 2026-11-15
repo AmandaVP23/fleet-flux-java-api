@@ -7,24 +7,20 @@ import dev.amanda.organization.domain.OrganizationRepository;
 import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 
 import java.time.Instant;
+import lombok.RequiredArgsConstructor;
 
 @Log
 @ApplicationScoped
+@RequiredArgsConstructor
 public class SoftDeleteOrganizationUseCase {
 
-    @Inject
-    OrganizationRepository organizationRepository;
-
-    @Inject
-    KeycloakAdmin keycloakAdmin;
-
-    @Inject
-    OrgTenantConfigResolver tenantConfigResolver;
+    private final OrganizationRepository organizationRepository;
+    private final KeycloakAdmin keycloakAdmin;
+    private final OrgTenantConfigResolver tenantConfigResolver;
 
     // TODO wrap Keycloak calls with retry (e.g., 3 attempts)
     @Transactional

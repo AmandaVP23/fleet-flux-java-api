@@ -5,29 +5,27 @@ import dev.amanda.infrastructure.shared.PageResult;
 import dev.amanda.infrastructure.shared.application.PageRequestHelper;
 import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
-import dev.amanda.vehicle.applications.mappers.VehicleMapper;
+import dev.amanda.vehicle.applications.mappers.VehicleResponseAssembler;
+import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
 import dev.amanda.vehicle.applications.filters.VehicleFilter;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 import java.util.List;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class ListVehiclesUseCase {
+
+    private final VehicleRepository vehicleRepository;
+    private final PageRequestHelper pageRequestHelper;
+    private final VehicleResponseAssembler vehicleResponseAssembler;
+
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("id", "createdAt");
-
-    @Inject
-    VehicleRepository vehicleRepository;
-
-    @Inject
-    PageRequestHelper pageRequestHelper;
-
-    @Inject
-    VehicleMapper vehicleMapper;
 
     public PageResult<VehicleResponseDTO> execute(int page, int size, String sortBy, String direction, VehicleFilter filter, AuthContext authContext) {
         if (!authContext.isSuperAdmin() && filter.getOrganizationId() != null) {
@@ -46,11 +44,9 @@ public class ListVehiclesUseCase {
 
         long total = vehicleRepository.countWithQuery(filter);
 
-        List<VehicleResponseDTO> data = vehicleRepository
-                .listPaginated(filter, page, size, sort)
-                .stream()
-                .map(vehicleMapper::toDto)
-                .toList();
+        List<Vehicle> vehicles = vehicleRepository.listPaginated(filter, page, size, sort);
+
+        List<VehicleResponseDTO> data = vehicleResponseAssembler.toResponses(vehicles);
 
         return new PageResult<>(data, total, page, size);
     }

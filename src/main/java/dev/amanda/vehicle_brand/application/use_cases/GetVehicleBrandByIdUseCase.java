@@ -6,16 +6,14 @@ import dev.amanda.vehicle_brand.domain.VehicleBrandRepository;
 import dev.amanda.vehicle_brand.dto.VehicleBrandResponseDTO;
 import dev.amanda.vehicle_brand.exceptions.VehicleBrandNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class GetVehicleBrandByIdUseCase {
 
-    @Inject
-    VehicleBrandRepository vehicleBrandRepository;
-
-    @Inject
-    VehicleBrandMapper vehicleBrandMapper;
+    private final VehicleBrandRepository vehicleBrandRepository;
+    private final VehicleBrandMapper vehicleBrandMapper;
 
     public VehicleBrandResponseDTO execute(long id) {
         VehicleBrand vehicleBrand = vehicleBrandRepository.findByIdOrThrow(id);

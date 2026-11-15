@@ -11,26 +11,20 @@ import dev.amanda.user.domain.UserRepository;
 import dev.amanda.user.dto.CreateUserRequestDTO;
 import dev.amanda.user.dto.UserResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class CreateUserUseCase {
 
-    @Inject
-    KeycloakAdmin keycloakAdmin;
-
-    @Inject
-    OrganizationRepository organizationRepository;
-
-    @Inject
-    UserRepository userRepository;
-
-    @Inject
-    UserMapper userMapper;
+    private final KeycloakAdmin keycloakAdmin;
+    private final OrganizationRepository organizationRepository;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Transactional
     public UserResponseDTO execute(CreateUserRequestDTO dto, AuthContext authContext) {

@@ -10,7 +10,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @NoArgsConstructor
-public class VehicleDriverAssignmentListResponseDTO extends BaseResponseDTO {
+public class VehicleDriverAssignmentResponseDTO extends BaseResponseDTO {
     private Instant startDateTime;
     private Instant endDateTime;
     private VehicleDTO vehicle;

@@ -11,24 +11,20 @@ import dev.amanda.tracking_device.dto.CreateTrackingDeviceRequestDTO;
 import dev.amanda.tracking_device.dto.TrackingDeviceResponseDTO;
 import dev.amanda.tracking_device.domain.TrackingDeviceRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @Log
 @ApplicationScoped
+@RequiredArgsConstructor
 public class CreateTrackingDeviceUseCase {
 
-    @Inject
-    TrackingDeviceRepository trackingDeviceRepository;
-
-    @Inject
-    OrganizationRepository organizationRepository;
-
-    @Inject
-    TrackingDeviceMapper trackingDeviceMapper;
+    private final TrackingDeviceRepository trackingDeviceRepository;
+    private final OrganizationRepository organizationRepository;
+    private final TrackingDeviceMapper trackingDeviceMapper;
 
     @Transactional
     public TrackingDeviceResponseDTO execute(CreateTrackingDeviceRequestDTO dto, AuthContext authContext) {

@@ -17,4 +17,5 @@ public class VehicleSummaryResponseDTO extends BaseResponseDTO {
     private String model;
     private String plateNumber;
     private VehicleCategory category;
+    private VehicleType type;
 }

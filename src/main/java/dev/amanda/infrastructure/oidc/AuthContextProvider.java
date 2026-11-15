@@ -1,6 +1,7 @@
 package dev.amanda.infrastructure.oidc;
 
 import dev.amanda.user.domain.Roles;
+import io.quarkus.security.ForbiddenException;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -24,15 +25,27 @@ public class AuthContextProvider {
             ctx.role =  Roles.ORG_ADMIN;
         }
 
+        if (ctx.role == null) {
+            throw new ForbiddenException("Role is null");
+        }
+
         ctx.userKeycloakId = getUserKeycloakId();
-        ctx.organizationId = this.getOrganizationId();
+        ctx.organizationId =  ctx.role.equals(Roles.SUPER_ADMIN) ? null : this.getOrganizationId();
 
         return ctx;
     }
 
     public Long getOrganizationId() {
         String value = jwt.getClaim("organization_id");
-        return value != null ? Long.valueOf(value) : null;
+
+        if (value == null || value.isEmpty()) {
+            throw new ForbiddenException("Missing organization_id claim");
+        }
+        try {
+            return Long.valueOf(value.trim());
+        } catch (NumberFormatException e) {
+            throw new ForbiddenException("Invalid organization_id claim");
+        }
     }
 
     public boolean hasRole(String role) {

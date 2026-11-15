@@ -9,19 +9,16 @@ import dev.amanda.user.domain.Role;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class SaveOrganizationUseCase {
-    @Inject
-    OrganizationRepository organizationRepository;
 
-    @Inject
-    UserRepository userRepository;
-
-    @Inject
-    OrganizationMapper organizationMapper;
+    private final OrganizationRepository organizationRepository;
+    private final UserRepository userRepository;
+    private final OrganizationMapper organizationMapper;
 
     @Transactional
     public OrganizationResponseDTO execute(CreateOrganizationDTO dto, String realm, String userKeycloakId) {

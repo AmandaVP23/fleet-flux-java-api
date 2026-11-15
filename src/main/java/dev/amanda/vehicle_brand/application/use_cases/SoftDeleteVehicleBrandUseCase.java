@@ -9,22 +9,20 @@ import dev.amanda.vehicle_brand.domain.VehicleBrand;
 import dev.amanda.vehicle_brand.domain.VehicleBrandRepository;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 
 import java.time.Instant;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Log
 @ApplicationScoped
+@RequiredArgsConstructor
 public class SoftDeleteVehicleBrandUseCase {
 
-    @Inject
-    VehicleBrandRepository vehicleBrandRepository;
-
-    @Inject
-    VehicleRepository vehicleRepository;
+    private final VehicleBrandRepository vehicleBrandRepository;
+    private final VehicleRepository vehicleRepository;
 
     @Transactional
     public void execute(long id) {

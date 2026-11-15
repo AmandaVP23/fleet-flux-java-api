@@ -1,32 +1,25 @@
 package dev.amanda.vehicle.applications.use_cases;
 
 import dev.amanda.infrastructure.oidc.AuthContext;
-import dev.amanda.vehicle.applications.mappers.VehicleMapper;
+import dev.amanda.vehicle.applications.mappers.VehicleResponseAssembler;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import dev.amanda.vehicle.dto.VehicleResponseDTO;
-import dev.amanda.vehicle.exceptions.VehicleNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
-import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class GetVehicleByIdUseCase {
 
-    @Inject
-    VehicleRepository vehicleRepository;
-
-    @Inject
-    VehicleMapper vehicleMapper;
+    private final VehicleRepository vehicleRepository;
+    private final VehicleResponseAssembler vehicleResponseAssembler;
 
     public VehicleResponseDTO execute(long id, AuthContext authContext) {
-        Vehicle vehicle = vehicleRepository.findByIdOrThrow(id);
+        Vehicle vehicle = authContext.isSuperAdmin()
+                ? vehicleRepository.findByIdOrThrow(id)
+                : vehicleRepository.findByIdInOrganizationOrThrow(id, authContext.getOrganizationId());
 
-        if (!authContext.isSuperAdmin() && !Objects.equals(authContext.getOrganizationId(), vehicle.getOrganization().getId())) {
-            throw new VehicleNotFoundException();
-        }
-
-        return vehicleMapper.toDto(vehicle);
+        return vehicleResponseAssembler.toResponse(vehicle);
     }
 }
