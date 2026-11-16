@@ -23,7 +23,11 @@ public class UserRepository implements PanacheRepository<User> {
     public List<User> findPaginated(int page, int size, Sort sort, UserFilter filter) {
         Filter f = buildFilter(filter);
 
-        return find("from User u left join fetch u.organization" + f.where(), sort, f.params())
+        // Qualify sort columns with the root alias: organization also has id/createdAt (BaseEntity)
+        Sort qualifiedSort = Sort.empty().disableEscaping();
+        sort.getColumns().forEach(c -> qualifiedSort.and("u." + c.getName(), c.getDirection()));
+
+        return find("from User u left join fetch u.organization" + f.where(), qualifiedSort, f.params())
                 .page(Page.of(page, size))
                 .list();
     }

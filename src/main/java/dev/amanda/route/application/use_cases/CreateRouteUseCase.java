@@ -7,9 +7,11 @@ import dev.amanda.route.application.mappers.RouteMapper;
 import dev.amanda.route.domain.*;
 import dev.amanda.route.dto.CreateRouteRequestDTO;
 import dev.amanda.route.dto.RouteResponseDTO;
+import dev.amanda.simulation.domain.SimulationConfigChanged;
 import dev.amanda.vehicle.domain.Vehicle;
 import dev.amanda.vehicle.domain.VehicleRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
 import jakarta.transaction.Transactional;
 
 import java.time.Instant;
@@ -24,6 +26,7 @@ public class CreateRouteUseCase {
     private final RouteDetailsRepository routeDetailsRepository;
     private final RouteMapper routeMapper;
     private final OsrmRoutingService osrmRoutingService;
+    private final Event<SimulationConfigChanged> events;
 
     @Transactional
     public RouteResponseDTO execute(CreateRouteRequestDTO dto, AuthContext authContext) {
@@ -49,6 +52,8 @@ public class CreateRouteUseCase {
         routeRepository.persist(route);
 
         routeDetailsRepository.persist(routeMapper.toEntity(details, route));
+
+        events.fire(new SimulationConfigChanged(SimulationConfigChanged.Type.ROUTE_CREATED, route.getId()));
 
         return routeMapper.toDto(route);
     }

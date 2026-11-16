@@ -3,6 +3,7 @@ package dev.amanda.vehicle_device_assignment.application.use_cases;
 import dev.amanda.infrastructure.oidc.AuthContext;
 import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
+import dev.amanda.simulation.domain.SimulationConfigChanged;
 import dev.amanda.tracking_device.domain.TrackingDevice;
 import dev.amanda.tracking_device.domain.TrackingDeviceRepository;
 import dev.amanda.user.domain.User;
@@ -15,6 +16,7 @@ import dev.amanda.vehicle_device_assignment.domain.VehicleDeviceAssignmentReposi
 import dev.amanda.vehicle_device_assignment.dto.VehicleDeviceAssignmentDTO;
 import dev.amanda.vehicle_device_assignment.dto.VehicleDeviceAssignmentResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class AssignVehicleDeviceUseCase {
     private final VehicleRepository vehicleRepository;
     private final VehicleDeviceAssignmentRepository vehicleDeviceAssignmentRepository;
     private final VehicleDeviceAssignmentMapper vehicleDeviceAssignmentMapper;
+    private final Event<SimulationConfigChanged> events;
 
     @Transactional
     public VehicleDeviceAssignmentResponseDTO execute(VehicleDeviceAssignmentDTO dto, AuthContext authContext) {
@@ -56,6 +59,8 @@ public class AssignVehicleDeviceUseCase {
         vehicleDeviceAssignment.setAssignedBy(assignedByUser.getId());
 
         vehicleDeviceAssignmentRepository.persist(vehicleDeviceAssignment);
+
+        events.fire(new SimulationConfigChanged(SimulationConfigChanged.Type.DEVICE_ASSIGNED, vehicleDeviceAssignment.getId()));
 
         return vehicleDeviceAssignmentMapper.toDTO(vehicleDeviceAssignment);
     }

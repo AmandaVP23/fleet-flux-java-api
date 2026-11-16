@@ -30,10 +30,14 @@ public class VehicleRepository implements PanacheRepository<Vehicle> {
     public List<Vehicle> listPaginated(VehicleFilter filter, int page, int size, Sort sort) {
         Filter f = buildFilter(filter);
 
+        // Qualify sort columns with the root alias: brand and organization also have id/createdAt (BaseEntity)
+        Sort qualifiedSort = Sort.empty().disableEscaping();
+        sort.getColumns().forEach(c -> qualifiedSort.and("v." + c.getName(), c.getDirection()));
+
         return find("from Vehicle v " +
                 "left join fetch v.brand " +
                 "left join fetch v.organization" +
-                f.where(), sort, f.params())
+                f.where(), qualifiedSort, f.params())
                 .page(Page.of(page, size))
                 .list();
     }
