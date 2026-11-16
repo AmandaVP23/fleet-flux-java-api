@@ -3,6 +3,7 @@ package dev.amanda.vehicle_driver_assignment.application.use_cases;
 import dev.amanda.infrastructure.oidc.AuthContext;
 import dev.amanda.infrastructure.shared.exception.ApiError;
 import dev.amanda.infrastructure.shared.exception.BaseApiException;
+import dev.amanda.simulation.domain.SimulationConfigChanged;
 import dev.amanda.user.domain.Roles;
 import dev.amanda.user.domain.User;
 import dev.amanda.user.domain.UserRepository;
@@ -15,6 +16,7 @@ import dev.amanda.vehicle_driver_assignment.domain.VehicleDriverAssignmentReposi
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentRequestDTO;
 import dev.amanda.vehicle_driver_assignment.dto.VehicleDriverAssignmentResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class CreateVehicleDriverAssignmentUseCase {
     private final VehicleDriverAssignmentRepository vehicleDriverAssignmentRepository;
     private final VehicleDriverAssignmentMapper vehicleDriverAssignmentMapper;
     private final AssignmentConflictChecker assignmentConflictChecker;
+    private final Event<SimulationConfigChanged> events;
 
     @Transactional
     public VehicleDriverAssignmentResponseDTO execute(VehicleDriverAssignmentRequestDTO requestDTO, AuthContext auth) {
@@ -53,6 +56,7 @@ public class CreateVehicleDriverAssignmentUseCase {
         assignmentConflictChecker.checkVehicleDriverAssignmentConflict(vehicleDriverAssignment);
 
         vehicleDriverAssignmentRepository.persist(vehicleDriverAssignment);
+        events.fire(new SimulationConfigChanged(SimulationConfigChanged.Type.UPDATE_DEVICES, vehicle.getId()));
         return vehicleDriverAssignmentMapper.toDto(vehicleDriverAssignment);
     }
 }

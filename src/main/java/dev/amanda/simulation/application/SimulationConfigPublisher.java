@@ -21,7 +21,7 @@ public class SimulationConfigPublisher {
 
     void onChange(@Observes(during = TransactionPhase.AFTER_SUCCESS) SimulationConfigChanged event) {
         String topic = switch (event.type()) {
-            case DEVICE_ASSIGNED -> "fleet/config/devices";
+            case UPDATE_DEVICES -> "fleet/config/devices";
             case ROUTE_CREATED -> "fleet/config/routes";
         };
         try {
