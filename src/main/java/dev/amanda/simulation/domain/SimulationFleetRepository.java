@@ -45,6 +45,12 @@ public class SimulationFleetRepository {
         return routeRepository.find("from Route r join fetch r.vehicle where r.status = ?1", RouteStatus.SCHEDULED).list();
     }
 
+    public Optional<Route> getSimulationRoute(long routeId) {
+        return routeRepository
+                .find("from Route r join fetch r.vehicle where r.id = ?1 and r.status = ?2", routeId, RouteStatus.SCHEDULED)
+                .firstResultOptional();
+    }
+
     public Optional<RouteDetailsEntity> getSimulationRouteDetails(long routeId) {
         Optional<RouteDetailsEntity> routeDetails = routeDetailsRepository
                 .find("id = ?1 AND route.status = ?2", routeId, RouteStatus.SCHEDULED)

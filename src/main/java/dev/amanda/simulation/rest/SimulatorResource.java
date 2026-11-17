@@ -2,6 +2,7 @@ package dev.amanda.simulation.rest;
 
 import dev.amanda.route.dto.RouteResponseDTO;
 import dev.amanda.simulation.application.use_cases.GetSimulationRouteDetailsUseCase;
+import dev.amanda.simulation.application.use_cases.GetSimulationRouteSummaryUseCase;
 import dev.amanda.simulation.application.use_cases.ListSimulationRoutesUseCase;
 import dev.amanda.simulation.application.use_cases.ListSimulationVehiclesUseCase;
 import dev.amanda.simulation.dto.SimulationDeviceResponseDTO;
@@ -28,6 +29,9 @@ public class SimulatorResource {
     @Inject
     GetSimulationRouteDetailsUseCase getSimulationRouteDetailsUseCase;
 
+    @Inject
+    GetSimulationRouteSummaryUseCase getSimulationRouteSummaryUseCase;
+
     @GET
     @Path("/devices")
     @RolesAllowed("simulator")
@@ -42,6 +46,14 @@ public class SimulatorResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<RouteResponseDTO> getRoutes() {
         return listSimulationRoutesUseCase.execute();
+    }
+
+    @GET
+    @Path("/routes/{id}/summary")
+    @RolesAllowed("simulator")
+    @Produces(MediaType.APPLICATION_JSON)
+    public RouteResponseDTO getRouteSummary(@PathParam("id") long id) {
+        return getSimulationRouteSummaryUseCase.execute(id);
     }
 
     @GET
