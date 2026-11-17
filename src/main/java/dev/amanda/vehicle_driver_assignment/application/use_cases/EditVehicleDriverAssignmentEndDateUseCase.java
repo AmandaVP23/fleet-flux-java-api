@@ -33,7 +33,7 @@ public class EditVehicleDriverAssignmentEndDateUseCase {
         assignmentConflictChecker.checkVehicleDriverAssignmentConflict(vehicleDriverAssignment);
 
         vehicleDriverAssignmentRepository.persist(vehicleDriverAssignment);
-        events.fire(new SimulationConfigChanged(SimulationConfigChanged.Type.UPDATE_DEVICES, vehicleDriverAssignment.getVehicle().getId()));
+        events.fire(SimulationConfigChanged.updateDevices());
         return vehicleDriverAssignmentMapper.toDto(vehicleDriverAssignment);
     }
 }

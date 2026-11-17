@@ -40,7 +40,7 @@ public class EditVehicleUseCase {
         vehicleRepository.persist(vehicle);
 
         if (!Objects.equals(previousStatus, vehicle.getStatus()) || !Objects.equals(previousType, vehicle.getType())) {
-            events.fire(new SimulationConfigChanged(SimulationConfigChanged.Type.UPDATE_DEVICES, vehicle.getId()));
+            events.fire(SimulationConfigChanged.updateDevices());
         }
 
         return vehicleResponseAssembler.toResponse(vehicle);

@@ -60,7 +60,7 @@ public class AssignVehicleDeviceUseCase {
 
         vehicleDeviceAssignmentRepository.persist(vehicleDeviceAssignment);
 
-        events.fire(new SimulationConfigChanged(SimulationConfigChanged.Type.UPDATE_DEVICES, vehicleDeviceAssignment.getId()));
+        events.fire(SimulationConfigChanged.updateDevices());
 
         return vehicleDeviceAssignmentMapper.toDTO(vehicleDeviceAssignment);
     }

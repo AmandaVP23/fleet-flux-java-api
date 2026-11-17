@@ -56,7 +56,7 @@ public class CreateVehicleDriverAssignmentUseCase {
         assignmentConflictChecker.checkVehicleDriverAssignmentConflict(vehicleDriverAssignment);
 
         vehicleDriverAssignmentRepository.persist(vehicleDriverAssignment);
-        events.fire(new SimulationConfigChanged(SimulationConfigChanged.Type.UPDATE_DEVICES, vehicle.getId()));
+        events.fire(SimulationConfigChanged.updateDevices());
         return vehicleDriverAssignmentMapper.toDto(vehicleDriverAssignment);
     }
 }
